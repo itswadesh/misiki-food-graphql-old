@@ -11,6 +11,7 @@ export * from './slot'
 export * from './wishlist'
 export * from './chat'
 export * from './brand'
+export * from './pay'
 
 export * from './message'
 

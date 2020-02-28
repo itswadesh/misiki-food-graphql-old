@@ -2,13 +2,13 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Mutation {
-    sendPay(chatId: ID!, body: String!): Pay @auth
+    razorpay(address: String!): Pay @auth
+    capturePay(payment_id: String!, oid: String!): Pay @auth
   }
 
   type Pay {
     id: ID!
-    body: String!
-    sender: User!
+    payment: String!
     createdAt: String!
     updatedAt: String!
   }

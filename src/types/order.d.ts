@@ -10,7 +10,17 @@ import {
 export interface OrderDocument extends Document {
   uid: UserDocument['_id']
   orderNo: string
-  amount: number
+  amount: {
+    qty: number,
+    subtotal: number,
+    tax: number,
+    discount: number,
+    shipping: number,
+    total: number,
+    currency: string,
+    exchange_rate: number,
+    offer: any
+  }
   address: AddressDocument['_id']
   vendor: UserDocument['_id']
   payment_order_id: string

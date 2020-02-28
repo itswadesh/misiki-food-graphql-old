@@ -5,6 +5,7 @@ export interface CartDocument extends Document {
   body: string
   uid: UserDocument['_id']
   cart_id: CartDocument['_id']
+  rate: number
   qty: number
   discount: CouponDocument['_id']
   subtotal: number

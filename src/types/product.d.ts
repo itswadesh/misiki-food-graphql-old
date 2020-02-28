@@ -28,8 +28,26 @@ export interface ProductDocument extends Document {
   keyFeatures: [UserDocument['_id']]
   vendor: UserDocument['_id']
   active: boolean
-  meta: object
-  badge: object
-  stats: object
+  meta: {
+    info: string,
+    title: string,
+    description: string,
+    keywords: string
+  },
+  badge: {
+    recommended: boolean,
+    hot: boolean,
+    sale: boolean,
+    new: boolean,
+    featured: boolean,
+    approved: boolean
+  },
+  stats: {
+    position: number,
+    popularity: number,
+    sales: number,
+    ratings: number,
+    reviews: number
+  },
   related: [ProductDocument['_id']]
 }

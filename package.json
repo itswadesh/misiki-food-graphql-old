@@ -13,13 +13,13 @@
     "build": "tsc -p tsconfig.prod.json",
     "test": "jest"
   },
-  "homepage": "https://github.com/alex996/graphql-chat#readme",
+  "homepage": "https://bitbucket.org/itswadesh/misiki-graphql#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/alex996/graphql-chat.git"
+    "url": "git+https://bitbucket.org/itswadesh/misiki-graphql.git"
   },
   "bugs": {
-    "url": "https://github.com/alex996/graphql-chat/issues"
+    "url": "https://bitbucket.org/itswadesh/misiki-graphql/issues"
   },
   "dependencies": {
     "@hapi/joi": "^16.1.8",
@@ -33,6 +33,7 @@
     "graphql-fields": "^2.0.3",
     "ioredis": "^4.14.1",
     "mongoose": "^5.7.13",
+    "razorpay": "^2.0.6",
     "source-map-support": "^0.5.15"
   },
   "devDependencies": {
@@ -49,14 +50,6 @@
     "@types/mongoose": "^5.5.32",
     "@types/node": "^12.12.14",
     "@types/supertest": "^2.0.8",
-    "graphql-redis-subscriptions": "^2.1.1",
-    "jest": "^24.9.0",
-    "mongodb-memory-server": "^6.0.1",
-    "rimraf": "^3.0.0",
-    "supertest": "^4.0.2",
-    "ts-jest": "^24.2.0",
-    "ts-node-dev": "^1.0.0-pre.43",
-    "typescript": "^3.7.2",
     "eslint": "^6.7.2",
     "eslint-config-prettier": "^6.7.0",
     "eslint-plugin-import": "^2.18.2",
@@ -66,6 +59,14 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react": "^7.17.0",
     "eslint-plugin-react-hooks": "^2.3.0",
-    "prettier": "^1.19.1"
+    "graphql-redis-subscriptions": "^2.1.1",
+    "jest": "^24.9.0",
+    "mongodb-memory-server": "^6.0.1",
+    "prettier": "^1.19.1",
+    "rimraf": "^3.0.0",
+    "supertest": "^4.0.2",
+    "ts-jest": "^24.2.0",
+    "ts-node-dev": "^1.0.0-pre.43",
+    "typescript": "^3.7.2"
   }
 }
