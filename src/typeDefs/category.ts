@@ -10,7 +10,7 @@ export default gql`
     index: Int
     name: String
     slug: String
-    pid: String
+    pid: [Product!]
     path: String
     slugPath: String
     namePath: String

@@ -6,74 +6,43 @@ const { ObjectId } = Schema.Types
 const orderSchema = new Schema(
   {
     uid: { type: ObjectId, ref: 'User' },
-    email: String,
-    user_ref: String,
-    phone: String,
     orderNo: String,
-    address: {
-      type: Object,
-      default: { recipient_name: '', city: 'Sunabeda', country_code: 'India' }
-    },
+    address: { type: ObjectId, ref: 'Address' }, // TODO: save full address object
+    vendor: { type: ObjectId, ref: 'User' },
+    cartId: String,
     payment: {
       type: Object,
-      default: { method: 'COD', status: 'Pending', details: '' }
-    },
-    shipping: {
-      type: Object,
       default: {
-        method: 'Standard Delivery',
-        amount: 0,
+        method: 'COD',
         status: 'Pending',
-        weight: 0,
-        qty: 0
+        details: String,
+        payment_order_id: String
       }
     },
+    delivery: {
+      type: Object,
+      default: { received: 0, weight: 0, status: 'Pending' }
+    },
     amount: {
-      total: Number,
+      qty: Number,
       subtotal: Number,
+      tax: Number,
       discount: Number,
       shipping: Number,
-      qty: Number,
-      tax: Number,
+      total: Number,
       currency: String,
       exchange_rate: Number,
       offer: Object
     },
-    items: [
-      {
-        name: String,
-        sku: String,
-        pid: { type: ObjectId, ref: 'Product' },
-        slug: String,
-        description: String,
-        vid: String,
-        variant_sku: String,
-        size: String,
-        color: String,
-        img: Object,
-        mrp: Number,
-        price: Number,
-        discount: Number,
-        qty: Number,
-        currency: String,
-        url: String,
-        status: { type: String, default: 'Placed' },
-        comment: String,
-        vendor_id: String,
-        vendor_email: String,
-        vendor_name: String,
-        delivery_days: Number
-      }
-    ],
-    status: { type: String, default: 'Received' },
+    items: [{ type: ObjectId, ref: 'Product' }],
+    status: { type: String, default: 'Waiting for confirmation' },
     comment: String,
     cancellationReason: String,
     cancellationComment: String,
     returnComment: String,
-    platform: { type: String, default: 'website' },
+    reviewed: { type: Boolean, default: false },
     otp: String,
-    active: { type: Boolean, default: true },
-    q: String
+    active: { type: Boolean, default: true }
   },
   { versionKey: false, timestamps: true }
 )

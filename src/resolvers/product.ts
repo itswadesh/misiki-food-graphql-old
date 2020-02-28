@@ -5,62 +5,78 @@ import {
   ForbiddenError,
   withFilter
 } from 'apollo-server-express'
-import { Request, MessageDocument, UserDocument } from '../types'
-import { sendMessage } from '../validators'
-import { Chat, Message } from '../models'
+import {
+  Request,
+  MessageDocument,
+  UserDocument,
+  ProductDocument,
+  ChatDocument
+} from '../types'
+import { sendMessage, objectId } from '../validators'
+import { Chat, Message, Product } from '../models'
 import { fields, hasSubfields } from '../utils'
 import pubsub from '../pubsub'
 
 const MESSAGE_SENT = 'MESSAGE_SENT'
 
 const resolvers: IResolvers = {
-  Mutation: {
-    sendMessage: async (
-      root,
-      args: { chatId: string; body: string },
-      { req }: { req: Request }
-    ): Promise<MessageDocument> => {
-      await sendMessage.validateAsync(args, { abortEarly: false })
-
-      const { userId } = req.session
-      const { chatId, body } = args
-
-      const chat = await Chat.findById(chatId).select('users')
-
-      if (!chat) {
-        throw new UserInputError('Chat was not found.')
-      } else if (!chat.users.some((id: Types.ObjectId) => id.equals(userId))) {
-        throw new ForbiddenError(
-          'Cannot join the chat. Please ask for an invite.'
-        )
-      }
-
-      const message = await Message.create({
-        body,
-        sender: userId,
-        chat: chatId
-      })
-
-      pubsub.publish(MESSAGE_SENT, { messageSent: message, users: chat.users })
-
-      chat.lastMessage = message
-      await chat.save()
-
-      return message
+  Query: {
+    products: (root, args, ctx, info): Promise<ProductDocument[]> => {
+      return Product.find({}, fields(info)).exec()
     }
   },
 
-  Message: {
-    sender: async (
-      message: MessageDocument,
-      args,
-      ctx,
-      info
-    ): Promise<UserDocument> => {
-      return (await message.populate('sender', fields(info)).execPopulate())
-        .sender
+  Mutation: {
+    createProduct: async (
+      root,
+      args: { name: string; slug: string },
+      { req }: { req: Request }
+    ): Promise<ProductDocument> => {
+      // await createProduct.validateAsync(args, { abortEarly: false })
+
+      const { userId } = req.session
+      const { name, slug } = args
+
+      const product = await Product.create({ name, slug })
+
+      await product.save()
+
+      return product
     }
   }
+
+  // Product: {
+  // products: (root, args, ctx, info): Promise<ProductDocument[]> => {
+  //   return Product.find({}, fields(info)).exec()
+  // }
+  // product: async (
+  //   root,
+  //   args: { id: string },
+  //   ctx,
+  //   info
+  // ): Promise<ProductDocument | null> => {
+  //   await objectId.validateAsync(args)
+  //   return Product.findById(args.id, fields(info))
+  // }
+  // products: (
+  //   product: ProductDocument,
+  //   args,
+  //   ctx,
+  //   info
+  // ): Promise<ProductDocument[]> => {
+  //   // TODO: pagination
+  //   return Product.find({}, fields(info)).exec()
+  // },
+  // lastMessage: async (
+  //   chat: ChatDocument,
+  //   args,
+  //   ctx,
+  //   info
+  // ): Promise<MessageDocument> => {
+  //   return (await chat.populate('lastMessage', fields(info)).execPopulate())
+  //     .lastMessage
+  // }
+  // }
 }
 
 export default resolvers

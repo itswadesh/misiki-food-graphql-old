@@ -1,6 +1,7 @@
 import mongoose, { Schema } from 'mongoose'
 import { FeatureDocument } from '../types'
-import Category from './category'
+
+const { ObjectId } = Schema.Types
 
 const optionsSchema = new Schema({
   name: { type: String },
@@ -14,7 +15,7 @@ let featureSchema = new mongoose.Schema(
     options: [optionsSchema],
     key: String,
     val: String,
-    categories: [Category],
+    categories: [{ type: ObjectId, ref: 'Category' }],
     position: { type: Number, default: 0 },
     info: String,
     slug: String,

@@ -3,12 +3,19 @@ import { CartDocument } from '../types'
 
 const { ObjectId } = Schema.Types
 
+const itemSchema = new Schema({
+  id: { type: ObjectId, ref: 'Product' },
+  name: String,
+  img: String,
+  slug: String,
+  rate: Number,
+  qty: Number
+})
+
 const cartSchema = new Schema(
   {
     uid: { type: ObjectId, ref: 'User' },
     cart_id: String,
-    phone: String,
-    email: String,
     qty: Number,
     discount: Object,
     subtotal: Number,
@@ -16,11 +23,8 @@ const cartSchema = new Schema(
     tax: Object,
     total: Number,
     offer_total: Number,
-    items: Array,
+    items: [itemSchema],
     vendor: { type: ObjectId, ref: 'User' },
-    vendor_name: String,
-    restaurant: String,
-    q: String,
     active: { type: Boolean, default: true }
   },
   {

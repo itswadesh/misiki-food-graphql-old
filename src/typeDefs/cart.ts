@@ -16,10 +16,19 @@ export default gql`
     tax: String
     total: Float
     offer_total: Float
-    items: [Product]
+    items: [CartItem]
     vendor: User
     active: Boolean
     createdAt: String!
     updatedAt: String!
+  }
+
+  type CartItem {
+    id: Product
+    name: String
+    img: String
+    slug: String
+    rate: Float
+    qty: Int
   }
 `

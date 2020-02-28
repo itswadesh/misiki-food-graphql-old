@@ -1,8 +1,13 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
+  extend type Query {
+    products: Product
+    product(id: ID!): Product
+  }
+
   extend type Mutation {
-    sendProduct(chatId: ID!, body: String!): Product @auth
+    createProduct(name: String!): Product
   }
 
   type Variant {
@@ -31,39 +36,43 @@ export default gql`
 
   type Product {
     id: ID!
+    name: String!
+    slug: String
     sku: String
     group: String
-    name: String
-    slug: String!
-    img: [String]
+    img: String
     enableZips: Boolean
     zips: [String!]
     category: Category
     parentCategory: Category
     categories: [Category!]
-    status: String
-    brand: Brand
     description: String
+    status: String
+    type: String
+    stock: Int
+    rate: Int
+    time: String
+    daily: Boolean
     meta: String
     metaTitle: String
     metaDescription: String
     metaKeywords: String
-    variants: [Variant]
     features: [String]
+    featured: Boolean
     position: Float
     keyFeatures: [Feature]
     popularity: Float
     uid: User!
     active: String
-    featured: Boolean
     approved: Boolean
+    recommended: Boolean
     hot: Boolean
     sale: Boolean
     new: Boolean
+    ratings: Int
+    reviews: Int
+    sales: Int
     related: [Product!]
-    sizechart: String
-    validFromDate: String
-    validToDate: String
     createdAt: String!
     updatedAt: String!
   }

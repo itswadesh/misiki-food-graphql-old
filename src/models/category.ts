@@ -29,10 +29,9 @@ const categorySchema = new Schema(
     featured: { type: Boolean, default: false },
     shopbycategory: Boolean,
     children: [{ type: ObjectId, ref: 'Category' }],
-    uid: String,
+    uid: { type: ObjectId, ref: 'User' },
     count: Number,
     sizechart: String,
-    q: String,
     updated: { type: Date, default: Date.now },
     active: { type: Boolean, default: true }
   },
