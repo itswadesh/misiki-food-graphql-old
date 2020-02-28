@@ -1,11 +1,13 @@
-import Joi from "./joi";
+import Joi from './joi'
 
-export const sendMessage = Joi.object().keys({
-  chatId: Joi.objectId()
+export const createCart = Joi.object().keys({
+  pid: Joi.objectId()
     .required()
-    .label("Chat ID"),
-  body: Joi.string()
+    .label('Product ID'),
+  vid: Joi.objectId()
+    .allow('')
+    .label('Variant'),
+  qty: Joi.number()
     .required()
-    .max(4_000) // TODO: Truncate into multiple msgs
-    .label("Body")
-});
+    .label('Qty')
+})

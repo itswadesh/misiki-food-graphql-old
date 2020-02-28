@@ -5,60 +5,43 @@ import {
   ForbiddenError,
   withFilter
 } from 'apollo-server-express'
-import { Request, MessageDocument, UserDocument } from '../types'
-import { sendMessage } from '../validators'
-import { Chat, Message } from '../models'
+import { Request, MessageDocument, UserDocument, CartDocument } from '../types'
+import { createCart, objectId } from '../validators'
+import { Chat, Cart } from '../models'
 import { fields, hasSubfields } from '../utils'
-import pubsub from '../pubsub'
-
-const MESSAGE_SENT = 'MESSAGE_SENT'
 
 const resolvers: IResolvers = {
-  Mutation: {
-    sendMessage: async (
+  Query: {
+    carts: (root, args, ctx, info): Promise<CartDocument[]> => {
+      return Cart.find({}, fields(info)).exec()
+    },
+    cart: async (
       root,
-      args: { chatId: string; body: string },
-      { req }: { req: Request }
-    ): Promise<MessageDocument> => {
-      await sendMessage.validateAsync(args, { abortEarly: false })
-
-      const { userId } = req.session
-      const { chatId, body } = args
-
-      const chat = await Chat.findById(chatId).select('users')
-
-      if (!chat) {
-        throw new UserInputError('Chat was not found.')
-      } else if (!chat.users.some((id: Types.ObjectId) => id.equals(userId))) {
-        throw new ForbiddenError(
-          'Cannot join the chat. Please ask for an invite.'
-        )
-      }
-
-      const message = await Message.create({
-        body,
-        sender: userId,
-        chat: chatId
-      })
-
-      pubsub.publish(MESSAGE_SENT, { messageSent: message, users: chat.users })
-
-      chat.lastMessage = message
-      await chat.save()
-
-      return message
-    }
-  },
-
-  Message: {
-    sender: async (
-      message: MessageDocument,
-      args,
+      args: { id: string },
       ctx,
       info
-    ): Promise<UserDocument> => {
-      return (await message.populate('sender', fields(info)).execPopulate())
-        .sender
+    ): Promise<CartDocument | null> => {
+      await objectId.validateAsync(args)
+      return Cart.findById(args.id, fields(info))
+    }
+  },
+  Mutation: {
+    addToCart: async (
+      root,
+      args: {
+        pid: string
+        vid: string
+        qty: number
+      },
+      { req }: { req: Request }
+    ): Promise<CartDocument> => {
+      await createCart.validateAsync(args, { abortEarly: false })
+      const { userId } = req.session
+      const cart = await Cart.create({ ...args, uid: userId })
+
+      await cart.save()
+
+      return cart
     }
   }
 }

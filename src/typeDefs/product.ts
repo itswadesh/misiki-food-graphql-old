@@ -2,17 +2,24 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Query {
-    products: Product
+    products: [Product!]
     product(id: ID!): Product
   }
 
   extend type Mutation {
-    createProduct(name: String!): Product
+    createProduct(
+      name: String!
+      type: String
+      rate: Int
+      qty: Int
+      img: String
+      time: String
+    ): Product @auth
   }
 
   type Variant {
     id: ID!
-    img: [String!]!
+    img: [String!]
     price: Float!
     mrp: Float
     discount: Float
@@ -36,7 +43,7 @@ export default gql`
 
   type Product {
     id: ID!
-    name: String!
+    name: String
     slug: String
     sku: String
     group: String
@@ -49,31 +56,43 @@ export default gql`
     description: String
     status: String
     type: String
-    stock: Int
+    qty: Int
     rate: Int
     time: String
     daily: Boolean
-    meta: String
-    metaTitle: String
-    metaDescription: String
-    metaKeywords: String
     features: [String]
-    featured: Boolean
-    position: Float
     keyFeatures: [Feature]
-    popularity: Float
-    uid: User!
-    active: String
-    approved: Boolean
+    vendor: User!
+    active: Boolean
+    meta: Meta
+    badge: Badge
+    stats: Stats
+    related: [Product!]
+    createdAt: String!
+    updatedAt: String!
+  }
+
+  type Meta {
+    info: String
+    title: String
+    description: String
+    keywords: String
+  }
+
+  type Badge {
     recommended: Boolean
     hot: Boolean
     sale: Boolean
     new: Boolean
-    ratings: Int
-    reviews: Int
+    featured: Boolean
+    approved: Boolean
+  }
+
+  type Stats {
+    position: Float
+    popularity: Float
     sales: Int
-    related: [Product!]
-    createdAt: String!
-    updatedAt: String!
+    ratings: Float
+    reviews: Int
   }
 `

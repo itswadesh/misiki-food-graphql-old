@@ -1,8 +1,13 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
+  extend type Query {
+    wishlists: [Wishlist!]
+    wishlist(id: ID!): Wishlist
+  }
+
   extend type Mutation {
-    sendWishlist(chatId: ID!, body: String!): Wishlist @auth
+    createWishlist(chatId: ID!, body: String!): Wishlist @auth
   }
 
   type Wishlist {

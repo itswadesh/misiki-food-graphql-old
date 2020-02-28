@@ -5,60 +5,51 @@ import {
   ForbiddenError,
   withFilter
 } from 'apollo-server-express'
-import { Request, MessageDocument, UserDocument } from '../types'
-import { sendMessage } from '../validators'
-import { Chat, Message } from '../models'
+import { Request, MessageDocument, UserDocument, MediaDocument } from '../types'
+import { createMedia, objectId } from '../validators'
+import { Chat, Media } from '../models'
 import { fields, hasSubfields } from '../utils'
 import pubsub from '../pubsub'
 
 const MESSAGE_SENT = 'MESSAGE_SENT'
 
 const resolvers: IResolvers = {
-  Mutation: {
-    sendMessage: async (
+  Query: {
+    medias: (root, args, ctx, info): Promise<MediaDocument[]> => {
+      return Media.find({}, fields(info)).exec()
+    },
+    media: async (
       root,
-      args: { chatId: string; body: string },
-      { req }: { req: Request }
-    ): Promise<MessageDocument> => {
-      await sendMessage.validateAsync(args, { abortEarly: false })
-
-      const { userId } = req.session
-      const { chatId, body } = args
-
-      const chat = await Chat.findById(chatId).select('users')
-
-      if (!chat) {
-        throw new UserInputError('Chat was not found.')
-      } else if (!chat.users.some((id: Types.ObjectId) => id.equals(userId))) {
-        throw new ForbiddenError(
-          'Cannot join the chat. Please ask for an invite.'
-        )
-      }
-
-      const message = await Message.create({
-        body,
-        sender: userId,
-        chat: chatId
-      })
-
-      pubsub.publish(MESSAGE_SENT, { messageSent: message, users: chat.users })
-
-      chat.lastMessage = message
-      await chat.save()
-
-      return message
-    }
-  },
-
-  Message: {
-    sender: async (
-      message: MessageDocument,
-      args,
+      args: { id: string },
       ctx,
       info
-    ): Promise<UserDocument> => {
-      return (await message.populate('sender', fields(info)).execPopulate())
-        .sender
+    ): Promise<MediaDocument | null> => {
+      await objectId.validateAsync(args)
+      return Media.findById(args.id, fields(info))
+    }
+  },
+  Mutation: {
+    createMedia: async (
+      root,
+      args: {
+        originalFilename: string
+        src: string
+        path: string
+        size: string
+        type: string
+        name: string
+        use: string
+        active: boolean
+      },
+      { req }: { req: Request }
+    ): Promise<MediaDocument> => {
+      await createMedia.validateAsync(args, { abortEarly: false })
+      const { userId } = req.session
+      const media = await Media.create({ ...args, uid: userId })
+
+      await media.save()
+
+      return media
     }
   }
 }

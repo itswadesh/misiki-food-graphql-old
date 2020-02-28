@@ -5,60 +5,54 @@ import {
   ForbiddenError,
   withFilter
 } from 'apollo-server-express'
-import { Request, MessageDocument, UserDocument } from '../types'
-import { sendMessage } from '../validators'
-import { Chat, Message } from '../models'
+import { Request, AddressDocument, UserDocument } from '../types'
+import { createAddress, objectId } from '../validators'
+import { Chat, Message, Address } from '../models'
 import { fields, hasSubfields } from '../utils'
 import pubsub from '../pubsub'
 
 const MESSAGE_SENT = 'MESSAGE_SENT'
 
 const resolvers: IResolvers = {
-  Mutation: {
-    sendMessage: async (
+  Query: {
+    addresses: (root, args, ctx, info): Promise<AddressDocument[]> => {
+      return Address.find({}, fields(info)).exec()
+    },
+    address: async (
       root,
-      args: { chatId: string; body: string },
-      { req }: { req: Request }
-    ): Promise<MessageDocument> => {
-      await sendMessage.validateAsync(args, { abortEarly: false })
-
-      const { userId } = req.session
-      const { chatId, body } = args
-
-      const chat = await Chat.findById(chatId).select('users')
-
-      if (!chat) {
-        throw new UserInputError('Chat was not found.')
-      } else if (!chat.users.some((id: Types.ObjectId) => id.equals(userId))) {
-        throw new ForbiddenError(
-          'Cannot join the chat. Please ask for an invite.'
-        )
-      }
-
-      const message = await Message.create({
-        body,
-        sender: userId,
-        chat: chatId
-      })
-
-      pubsub.publish(MESSAGE_SENT, { messageSent: message, users: chat.users })
-
-      chat.lastMessage = message
-      await chat.save()
-
-      return message
-    }
-  },
-
-  Message: {
-    sender: async (
-      message: MessageDocument,
-      args,
+      args: { id: string },
       ctx,
       info
-    ): Promise<UserDocument> => {
-      return (await message.populate('sender', fields(info)).execPopulate())
-        .sender
+    ): Promise<AddressDocument | null> => {
+      await objectId.validateAsync(args)
+      return Address.findById(args.id, fields(info))
+    }
+  },
+  Mutation: {
+    createAddress: async (
+      root,
+      args: {
+        email: string
+        firstName: string
+        lastName: string
+        address: string
+        town: string
+        city: string
+        country: string
+        state: string
+        zip: number
+        phone: string
+        coords: { lat: number; lng: number }
+      },
+      { req }: { req: Request }
+    ): Promise<AddressDocument> => {
+      await createAddress.validateAsync(args, { abortEarly: false })
+      const { userId } = req.session
+      const address = await Address.create({ ...args, uid: userId })
+
+      await address.save()
+
+      return address
     }
   }
 }

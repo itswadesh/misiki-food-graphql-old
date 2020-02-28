@@ -1,8 +1,13 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
+  extend type Query {
+    reviews: [Review!]
+    review(id: ID!): Review
+  }
+
   extend type Mutation {
-    sendReview(chatId: ID!, body: String!): Review @auth
+    createReview(chatId: ID!, body: String!): Review @auth
   }
 
   type Review {

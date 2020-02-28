@@ -7,35 +7,29 @@ import {
 } from './'
 
 export interface ProductDocument extends Document {
-  sku: string
-  group: string
   name: string
   slug: string
-  img: [string]
+  sku: string
+  group: string
+  img: string
   enableZips: boolean
   zips: [string]
   category: CategoryDocument['_id']
   parentCategory: CategoryDocument['_id']
   categories: [CategoryDocument['_id']]
-  status: string
-  brand: BrandDocument['_id']
   description: string
-  meta: string
-  metaTitle: string
-  metaDescription: string
-  metaKeywords: string
-  variants: [VariantDocument['_id']]
+  status: string
+  type: string
+  qty: number
+  rate: number
+  time: string
+  daily: boolean
   features: string
-  position: Number
   keyFeatures: [UserDocument['_id']]
-  popularity: Number
-  uid: UserDocument['_id']
-  active: string
-  featured: boolean
-  approved: boolean
-  hot: boolean
-  sale: boolean
-  new: boolean
+  vendor: UserDocument['_id']
+  active: boolean
+  meta: object
+  badge: object
+  stats: object
   related: [ProductDocument['_id']]
-  sizechart: string
 }

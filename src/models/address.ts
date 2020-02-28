@@ -13,10 +13,9 @@ const addressSchema = new Schema(
     city: String,
     country: String,
     state: String,
-    coords: Object,
+    coords: { lat: Number, lng: Number },
     zip: Number,
     phone: String,
-    updated: Number, // gets current timestamp from client
     active: { type: Boolean, default: true },
     uid: { type: ObjectId, ref: 'User' }
   },

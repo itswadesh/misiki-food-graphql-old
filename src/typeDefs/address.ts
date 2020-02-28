@@ -1,8 +1,25 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
+  extend type Query {
+    addresses: [Address!]
+    address(id: ID!): Address
+  }
+
   extend type Mutation {
-    sendAddress(chatId: ID!, body: String!): Address @auth
+    createAddress(
+      email: String
+      firstName: String
+      lastName: String
+      address: String
+      town: String
+      city: String
+      country: String
+      state: String
+      coords: Geo
+      zip: Int
+      phone: String
+    ): Address @auth
   }
 
   type Address {
@@ -15,11 +32,21 @@ export default gql`
     city: String
     country: String
     state: String
-    coords: String
+    coords: Coords
     zip: Int
     phone: String
     active: Boolean
     createdAt: String!
     updatedAt: String!
+  }
+
+  input Geo {
+    lat: Float
+    lng: Float
+  }
+
+  type Coords {
+    lat: Float
+    lng: Float
   }
 `

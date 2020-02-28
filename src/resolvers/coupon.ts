@@ -1,64 +1,48 @@
-import { Types } from 'mongoose'
-import {
-  IResolvers,
-  UserInputError,
-  ForbiddenError,
-  withFilter
-} from 'apollo-server-express'
-import { Request, MessageDocument, UserDocument } from '../types'
-import { sendMessage } from '../validators'
-import { Chat, Message } from '../models'
-import { fields, hasSubfields } from '../utils'
-import pubsub from '../pubsub'
-
-const MESSAGE_SENT = 'MESSAGE_SENT'
+import { IResolvers } from 'apollo-server-express'
+import { Request, CouponDocument } from '../types'
+import { createCoupon, objectId } from '../validators'
+import { Coupon } from '../models'
+import { fields } from '../utils'
 
 const resolvers: IResolvers = {
-  Mutation: {
-    sendMessage: async (
+  Query: {
+    coupons: (root, args, ctx, info): Promise<CouponDocument[]> => {
+      return Coupon.find({}, fields(info)).exec()
+    },
+    coupon: async (
       root,
-      args: { chatId: string; body: string },
-      { req }: { req: Request }
-    ): Promise<MessageDocument> => {
-      await sendMessage.validateAsync(args, { abortEarly: false })
-
-      const { userId } = req.session
-      const { chatId, body } = args
-
-      const chat = await Chat.findById(chatId).select('users')
-
-      if (!chat) {
-        throw new UserInputError('Chat was not found.')
-      } else if (!chat.users.some((id: Types.ObjectId) => id.equals(userId))) {
-        throw new ForbiddenError(
-          'Cannot join the chat. Please ask for an invite.'
-        )
-      }
-
-      const message = await Message.create({
-        body,
-        sender: userId,
-        chat: chatId
-      })
-
-      pubsub.publish(MESSAGE_SENT, { messageSent: message, users: chat.users })
-
-      chat.lastMessage = message
-      await chat.save()
-
-      return message
-    }
-  },
-
-  Message: {
-    sender: async (
-      message: MessageDocument,
-      args,
+      args: { id: string },
       ctx,
       info
-    ): Promise<UserDocument> => {
-      return (await message.populate('sender', fields(info)).execPopulate())
-        .sender
+    ): Promise<CouponDocument | null> => {
+      await objectId.validateAsync(args)
+      return Coupon.findById(args.id, fields(info))
+    }
+  },
+  Mutation: {
+    createCoupon: async (
+      root,
+      args: {
+        code: string
+        value: number
+        type: string
+        info: string
+        msg: string
+        text: string
+        terms: string
+        minimumCartValue: number
+        maxAmount: number
+        from: string
+        to: string
+        active: boolean
+      },
+      { req }: { req: Request }
+    ): Promise<CouponDocument> => {
+      await createCoupon.validateAsync(args, { abortEarly: false })
+      const { userId } = req.session
+      const coupon = await Coupon.create({ ...args, uid: userId })
+      await coupon.save()
+      return coupon
     }
   }
 }

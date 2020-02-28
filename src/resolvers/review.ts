@@ -5,60 +5,53 @@ import {
   ForbiddenError,
   withFilter
 } from 'apollo-server-express'
-import { Request, MessageDocument, UserDocument } from '../types'
-import { sendMessage } from '../validators'
-import { Chat, Message } from '../models'
+import {
+  Request,
+  MessageDocument,
+  UserDocument,
+  ReviewDocument
+} from '../types'
+import { createReview, objectId } from '../validators'
+import { Chat, Review } from '../models'
 import { fields, hasSubfields } from '../utils'
-import pubsub from '../pubsub'
-
-const MESSAGE_SENT = 'MESSAGE_SENT'
 
 const resolvers: IResolvers = {
-  Mutation: {
-    sendMessage: async (
+  Query: {
+    reviews: (root, args, ctx, info): Promise<ReviewDocument[]> => {
+      return Review.find({}, fields(info)).exec()
+    },
+    review: async (
       root,
-      args: { chatId: string; body: string },
-      { req }: { req: Request }
-    ): Promise<MessageDocument> => {
-      await sendMessage.validateAsync(args, { abortEarly: false })
-
-      const { userId } = req.session
-      const { chatId, body } = args
-
-      const chat = await Chat.findById(chatId).select('users')
-
-      if (!chat) {
-        throw new UserInputError('Chat was not found.')
-      } else if (!chat.users.some((id: Types.ObjectId) => id.equals(userId))) {
-        throw new ForbiddenError(
-          'Cannot join the chat. Please ask for an invite.'
-        )
-      }
-
-      const message = await Message.create({
-        body,
-        sender: userId,
-        chat: chatId
-      })
-
-      pubsub.publish(MESSAGE_SENT, { messageSent: message, users: chat.users })
-
-      chat.lastMessage = message
-      await chat.save()
-
-      return message
-    }
-  },
-
-  Message: {
-    sender: async (
-      message: MessageDocument,
-      args,
+      args: { id: string },
       ctx,
       info
-    ): Promise<UserDocument> => {
-      return (await message.populate('sender', fields(info)).execPopulate())
-        .sender
+    ): Promise<ReviewDocument | null> => {
+      await objectId.validateAsync(args)
+      return Review.findById(args.id, fields(info))
+    }
+  },
+  Mutation: {
+    createReview: async (
+      root,
+      args: {
+        originalFilename: string
+        src: string
+        path: string
+        size: string
+        type: string
+        name: string
+        use: string
+        active: boolean
+      },
+      { req }: { req: Request }
+    ): Promise<ReviewDocument> => {
+      await createReview.validateAsync(args, { abortEarly: false })
+      const { userId } = req.session
+      const review = await Review.create({ ...args, uid: userId })
+
+      await review.save()
+
+      return review
     }
   }
 }

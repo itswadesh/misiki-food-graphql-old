@@ -1,8 +1,13 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
+  extend type Query {
+    pages: [Page!]
+    page(id: ID!): Page
+  }
+
   extend type Mutation {
-    sendPage(chatId: ID!, body: String!): Page @auth
+    createPage(chatId: ID!, body: String!): Page @auth
   }
 
   type Page {

@@ -1,8 +1,13 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
+  extend type Query {
+    orders: [Order!]
+    order(id: ID!): Order
+  }
+
   extend type Mutation {
-    sendOrder(chatId: ID!, body: String!): Order @auth
+    createOrder(chatId: ID!, body: String!): Order @auth
   }
 
   type Order {

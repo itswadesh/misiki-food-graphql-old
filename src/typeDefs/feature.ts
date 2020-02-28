@@ -1,6 +1,11 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
+  extend type Query {
+    features: [Feature!]
+    feature(id: ID!): Feature
+  }
+
   extend type Mutation {
     sendFeature(chatId: ID!, body: String!): Review @auth
   }

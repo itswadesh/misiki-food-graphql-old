@@ -1,11 +1,22 @@
-import Joi from "./joi";
+import Joi from './joi'
 
-export const sendMessage = Joi.object().keys({
-  chatId: Joi.objectId()
+export const createProduct = Joi.object().keys({
+  name: Joi.string()
     .required()
-    .label("Chat ID"),
-  body: Joi.string()
+    .max(500)
+    .label('Dish Name'),
+  type: Joi.string()
     .required()
-    .max(4_000) // TODO: Truncate into multiple msgs
-    .label("Body")
-});
+    .max(5)
+    .label('Veg/Non-Veg'),
+  rate: Joi.number()
+    .required()
+    .min(30)
+    .label('Rate'),
+  qty: Joi.number()
+    .required()
+    .min(1)
+    .label('Quantity'),
+  img: Joi.allow(''),
+  time: Joi.allow('')
+})

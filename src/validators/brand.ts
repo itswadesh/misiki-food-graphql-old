@@ -1,12 +1,12 @@
 import Joi from './joi'
 
-export const createAddress = Joi.object().keys({
+export const createBrand = Joi.object().keys({
   email: Joi.allow('').label('Email'),
   firstName: Joi.allow('').label('First Name'),
   lastName: Joi.allow('').label('Last Name'),
   address: Joi.string()
     .required()
-    .label('Address'),
+    .label('Brand'),
   town: Joi.allow('').label('Town'),
   city: Joi.allow('').label('City'),
   country: Joi.allow('').label('Country'),

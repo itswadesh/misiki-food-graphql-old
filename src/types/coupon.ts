@@ -10,4 +10,7 @@ export interface CouponDocument extends Document {
   terms: string
   minimumCartValue: number
   maxAmount: number
+  from: string
+  to: string
+  active: boolean
 }

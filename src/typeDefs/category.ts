@@ -1,8 +1,13 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
+  extend type Query {
+    categories: [Category!]
+    category(id: ID!): Category
+  }
+
   extend type Mutation {
-    sendCategory(chatId: ID!, body: String!): Category @auth
+    createCategory(chatId: ID!, body: String!): Category @auth
   }
 
   type Category {

@@ -1,6 +1,11 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
+  extend type Query {
+    brands: [Brand!]
+    brand(id: ID!): Brand
+  }
+
   extend type Mutation {
     sendBrand(chatId: ID!, body: String!): Address @auth
   }
