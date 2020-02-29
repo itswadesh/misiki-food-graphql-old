@@ -2,24 +2,24 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Query {
-    orders: [Order!]
-    order(id: ID!): Order
+    orders: [Order!] @auth
+    order(id: ID!): Order @auth
   }
 
   extend type Mutation {
-    createOrder(chatId: ID!, body: String!): Order @auth
+    create(chatId: ID!, body: String!): Order @auth
   }
 
   type Order {
     id: ID!
-    uid: User
-    orderNo: String
-    amount: Amount
-    address: Address
+    uid: User!
+    orderNo: String!
+    amount: Amount!
+    address: Address!
     vendor: User
     payment_order_id: String
-    cartId: Cart
-    items: [CartItem!]
+    cartId: Cart!
+    items: [CartItem!]!
     Status: String
     delivery: String
     comment: String

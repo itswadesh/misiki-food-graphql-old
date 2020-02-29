@@ -13,7 +13,12 @@ export interface SettingDocument extends Document {
   homeMeta4: string
   listingMeta: string
   detailMeta: string
-  shipping: { charge: number; free: number; method: string }
+  shipping: {
+    delivery_days: number
+    charge: number
+    free: number
+    method: string
+  }
   tax: {
     cgst: { type: number; default: 0 }
     sgst: { type: number; default: 0 }

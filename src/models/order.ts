@@ -7,7 +7,21 @@ const orderSchema = new Schema(
   {
     uid: { type: ObjectId, ref: 'User' },
     orderNo: String,
-    address: { type: ObjectId, ref: 'Address' }, // TODO: save full address object
+    address: {
+      email: String,
+      firstName: String,
+      lastName: String,
+      address: String,
+      town: String,
+      city: String,
+      country: String,
+      state: String,
+      coords: { lat: Number, lng: Number },
+      zip: Number,
+      phone: String,
+      active: { type: Boolean, default: true },
+      uid: { type: ObjectId, ref: 'User' }
+    },
     vendor: { type: ObjectId, ref: 'User' },
     cartId: String,
     payment: {

@@ -26,23 +26,14 @@ const resolvers: IResolvers = {
     }
   },
   Mutation: {
-    createOrder: async (
+    create: async (
       root,
-      args: {
-        originalFilename: string
-        src: string
-        path: string
-        size: string
-        type: string
-        name: string
-        use: string
-        active: boolean
-      },
+      args: { address: string; comment: string },
       { req }: { req: Request }
     ): Promise<OrderDocument> => {
       await createOrder.validateAsync(args, { abortEarly: false })
       const { userId } = req.session
-      const order = await Order.create({ ...args, uid: userId })
+      const order = await Order.create(req, { ...args, uid: userId })
 
       await order.save()
 

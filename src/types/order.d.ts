@@ -11,17 +11,31 @@ export interface OrderDocument extends Document {
   uid: UserDocument['_id']
   orderNo: string
   amount: {
-    qty: number,
-    subtotal: number,
-    tax: number,
-    discount: number,
-    shipping: number,
-    total: number,
-    currency: string,
-    exchange_rate: number,
+    qty: number
+    subtotal: number
+    tax: number
+    discount: number
+    shipping: number
+    total: number
+    currency: string
+    exchange_rate: number
     offer: any
   }
-  address: AddressDocument['_id']
+  address: {
+    email: string
+    firstName: string
+    lastName: string
+    address: string
+    town: string
+    city: string
+    country: string
+    state: string
+    coords: { lat: number; lng: number }
+    zip: number
+    phone: string
+    active: boolean
+    uid: UserDocument['_id']
+  }
   vendor: UserDocument['_id']
   payment_order_id: string
   cartId: CartDocument['_id']

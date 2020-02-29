@@ -3,7 +3,8 @@ import {
   CartDocument,
   Request,
   ProductDocument,
-  SettingDocument
+  SettingDocument,
+  CartItemDocument
 } from '../types'
 import { UserInputError } from 'apollo-server-express'
 
@@ -97,11 +98,11 @@ export const addToCart = async (
     req.session.cart.vendor &&
     req.session.cart.vendor.toString() != _id.toString() &&
     items.length > 0
-  ) {
+  )
     throw new UserInputError(
       `Your cart contain dishes from ${req.session.cart.restaurant}. Do you wish to clear cart and add dishes from ${info.restaurant}?`
     )
-  }
+
   const record = items.find((p: ProductDocument) => p._id === pid)
 
   if (record) {
@@ -136,7 +137,7 @@ export const removeFromCartSession = async (
   return items
 }
 
-export const getTotalQty = (items: [CartDocument]): number => {
+export const getTotalQty = (items: Array<CartItemDocument>): number => {
   let qty = 0
   items.forEach(item => {
     qty += item.qty
@@ -144,7 +145,7 @@ export const getTotalQty = (items: [CartDocument]): number => {
   return qty
 }
 
-export const getSubTotal = (items: [CartDocument]): number => {
+export const getSubTotal = (items: Array<CartItemDocument>): number => {
   let total = 0
   for (let item of items) {
     let rate = item.rate
@@ -153,6 +154,47 @@ export const getSubTotal = (items: [CartDocument]): number => {
     total += amount
   }
   return Math.round(total)
+}
+
+export const getTotal = async (cart: CartDocument) => {
+  let subtotal = (cart.subtotal = await getSubTotal(cart.items))
+  let offer = cart.discount || {}
+  let code = cart.discount.code
+  try {
+    const coupon = await Coupon.findOne({ code, active: true }).select(
+      'code color type text terms value minimumCartValue maxAmount from to'
+    )
+    if (coupon && coupon && coupon.value) {
+      offer = coupon
+      offer.amount = await applyDiscount(
+        subtotal,
+        offer.value,
+        offer.minimumCartValue,
+        offer.maxAmount,
+        offer.type
+      )
+    } else {
+      offer = { amount: 0 }
+    }
+  } catch (e) {
+    offer = { amount: 0 }
+  }
+  let shipping, tax
+  let setting: SettingDocument | null = await Setting.findOne()
+    .select('shipping tax')
+    .exec()
+  if (!setting) throw new UserInputError(`Invalid settings`)
+  shipping = cart.shipping = setting.shipping
+  tax = setting.tax
+  if (!shipping || !shipping.charge) shipping.charge = 0
+  cart.discount = offer
+  let total = +subtotal - +offer.amount + +shipping.charge
+  cart.tax = {
+    cgst: (total * +tax.cgst) / 100,
+    sgst: (total * +tax.sgst) / 100,
+    igst: (total * +tax.igst) / 100
+  }
+  cart.total = total + total * (+tax.cgst + +tax.sgst + +tax.igst) * 0.01
 }
 
 export const applyDiscount = (

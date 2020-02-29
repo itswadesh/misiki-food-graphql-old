@@ -2,7 +2,10 @@ import { Document } from 'mongoose'
 import { UserDocument, ChatDocument } from './'
 
 export interface SlotDocument extends Document {
-  body: string
-  sender: UserDocument['_id']
-  chat: ChatDocument['_id']
+  name: string
+  val: string
+  slug: string
+  info: string
+  active: boolean
+  uid: ChatDocument['_id']
 }

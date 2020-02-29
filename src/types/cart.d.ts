@@ -13,7 +13,23 @@ export interface CartDocument extends Document {
   tax: object
   total: number
   offer_total: number
-  items: [ProductDocument['_id']]
+  items: [CartItemDocument['_id']]
   vendor: UserDocument['_id']
   active: boolean
+}
+
+export interface CartItemDocument extends Document {
+  id: ProductDocument['_id']
+  name: string
+  sku: string
+  slug: string
+  description: string
+  img: string
+  qty: number
+  rate: number
+  subtotal: number
+  total: number
+  currency: string
+  vendor: UserDocument['_id']
+  delivery_days: number
 }

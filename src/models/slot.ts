@@ -5,15 +5,13 @@ const { ObjectId } = Schema.Types
 
 const slotSchema = new Schema(
   {
-    body: String,
-    sender: {
-      type: ObjectId,
-      ref: 'User'
-    },
-    chat: {
-      type: ObjectId,
-      ref: 'Chat'
-    }
+    name: { type: String, required: true },
+    val: String,
+    slug: String,
+    info: String,
+    uid: { type: ObjectId, ref: 'User' },
+    active: { type: Boolean, default: true },
+    q: String
   },
   {
     timestamps: true

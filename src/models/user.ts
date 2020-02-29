@@ -5,14 +5,8 @@ import { UserDocument, UserModel } from '../types'
 
 const userSchema = new Schema(
   {
-    username: {
-      type: String,
-      validate: [
-        async (username: string): Promise<boolean> =>
-          !(await User.exists({ username })),
-        'Username is already taken.'
-      ]
-    },
+    name: String,
+    phone: String,
     email: {
       type: String,
       validate: [
@@ -21,16 +15,29 @@ const userSchema = new Schema(
         'Email is already taken.'
       ]
     },
-    name: String,
     password: String,
-    chats: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: 'Chat'
-      }
-    ]
+    role: {
+      type: String,
+      default: 'user'
+    },
+    gender: String,
+    info: { type: Object, default: {} },
+    avatar: String,
+    provider: String,
+    facebook: Object,
+    twitter: Object,
+    google: Object,
+    github: Object,
+    active: { type: Boolean, default: true },
+    verified: { type: Boolean, default: false },
+    address: Object,
+    meta: String,
+    metaTitle: String,
+    metaDescription: String,
+    metaKeywords: String
   },
   {
+    versionKey: false,
     timestamps: true
   }
 )
