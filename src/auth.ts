@@ -3,6 +3,20 @@ import { User } from './models'
 import { SESS_NAME } from './config'
 import { Request, Response, UserDocument } from './types'
 
+export const verifyOtp = async (
+  { phone, otp }: { phone: string; otp: string },
+  fields: string
+): Promise<UserDocument> => {
+  const user = await User.findOne({ phone }).select(`${fields} password`)
+  if (!user || !(await user.matchesPassword(otp))) {
+    throw new AuthenticationError(
+      'Incorrect phone or otp. Please try again.'
+    )
+  }
+
+  return user
+}
+
 export const attemptSignIn = async (
   { email, password }: { email: string; password: string },
   fields: string

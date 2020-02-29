@@ -8,22 +8,54 @@ export default gql`
   }
 
   extend type Mutation {
+    getOtp( phone: String! ):String @guest
+    verifyOtp( phone: String!, otp:String! ):User @guest
+
     signUp(
-      email: String!
-      username: String!
-      name: String!
+      name: String
+      email: String
       password: String!
     ): User @guest
+
+    updateProfile(
+      name: String
+      email: String
+      password: String!
+      role: String
+      gender: String
+      info:  String
+      avatar: String
+      provider: String
+      active: Boolean
+      verified: Boolean
+      address: String
+      meta: String
+      metaTitle: String
+      metaDescription: String
+      metaKeywords: String
+    ): User @guest
+
     signIn(email: String!, password: String!): User @guest
     signOut: Boolean @auth
   }
 
   type User {
     id: ID!
-    email: String!
-    username: String!
-    name: String!
-    chats: [Chat!]!
+    name: String
+    phone: String!
+    email: String
+    role: String
+    gender: String,
+    info:  String,
+    avatar: String,
+    provider: String,
+    active: Boolean
+    verified: Boolean
+    address: Address,
+    meta: String,
+    metaTitle: String,
+    metaDescription: String,
+    metaKeywords: String
     createdAt: String!
     updatedAt: String!
   }

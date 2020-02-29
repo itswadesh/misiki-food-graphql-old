@@ -83,7 +83,6 @@ query Users {
   users {
     id
     name
-    username
     email
     chats {
       id
@@ -135,7 +134,6 @@ mutation {
 mutation {
   signUp(
     email: "alex@gmail.com"
-    username: "alex"
     name: "Alex"
     password: "Secret12"
   ) {

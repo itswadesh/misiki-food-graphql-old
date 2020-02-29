@@ -7,27 +7,28 @@ import Redis from 'ioredis'
 import http from 'http'
 import createApp from './app'
 import { DB_URI, DB_OPTIONS, REDIS_OPTIONS, HTTP_PORT } from './config'
-//
-;(async () => {
-  try {
-    await mongoose.connect(DB_URI, DB_OPTIONS)
+  //
+  ; (async () => {
+    try {
+      mongoose.set('useFindAndModify', false);
+      await mongoose.connect(DB_URI, DB_OPTIONS)
 
-    const RedisStore = connectRedis(session)
+      const RedisStore = connectRedis(session)
 
-    const store = new RedisStore({
-      client: new Redis(REDIS_OPTIONS)
-    })
+      const store = new RedisStore({
+        client: new Redis(REDIS_OPTIONS)
+      })
 
-    const { app, server } = createApp(store)
+      const { app, server } = createApp(store)
 
-    const httpServer = http.createServer(app)
-    server.installSubscriptionHandlers(httpServer)
+      const httpServer = http.createServer(app)
+      server.installSubscriptionHandlers(httpServer)
 
-    httpServer.listen(HTTP_PORT, () => {
-      console.log(`http://localhost:${HTTP_PORT}${server.graphqlPath}`)
-      console.log(`ws://localhost:${HTTP_PORT}${server.subscriptionsPath}`)
-    })
-  } catch (e) {
-    console.error(e)
-  }
-})()
+      httpServer.listen(HTTP_PORT, () => {
+        console.log(`http://localhost:${HTTP_PORT}${server.graphqlPath}`)
+        console.log(`ws://localhost:${HTTP_PORT}${server.subscriptionsPath}`)
+      })
+    } catch (e) {
+      console.error(e)
+    }
+  })()

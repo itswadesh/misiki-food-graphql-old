@@ -1,5 +1,21 @@
 import Joi from '@hapi/joi'
 
+const phone = Joi.string()
+  .min(8)
+  .max(13)
+  .trim()
+  .lowercase()
+  .required()
+  .label('Phone')
+
+const otp = Joi.string()
+  .min(3)
+  .max(6)
+  .trim()
+  .lowercase()
+  .required()
+  .label('OTP')
+
 const email = Joi.string()
   .email()
   .min(8)
@@ -8,14 +24,6 @@ const email = Joi.string()
   .lowercase()
   .required()
   .label('Email')
-
-const username = Joi.string()
-  .alphanum()
-  .min(3)
-  .max(50)
-  .trim()
-  .required()
-  .label('Username')
 
 const name = Joi.string()
   .max(100)
@@ -35,7 +43,6 @@ const password = Joi.string()
 
 export const signUp = Joi.object().keys({
   email,
-  username,
   name,
   password
 })
@@ -43,4 +50,9 @@ export const signUp = Joi.object().keys({
 export const signIn = Joi.object().keys({
   email,
   password
+})
+
+export const signInOtp = Joi.object().keys({
+  phone,
+  otp
 })
