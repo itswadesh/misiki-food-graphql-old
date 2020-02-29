@@ -2,12 +2,13 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Query {
-    carts: [Cart!]
-    cart(id: ID!): Cart
+    carts: [Cart!] @auth
+    abandoned: Cart @auth
+    myCart: Cart
   }
 
   extend type Mutation {
-    addToCart(cartId: ID!, qty: Int!): Cart
+    add(pid: ID!, vid: ID!, qty: Int!): Cart
     removeFromCart(cartId: ID!): Cart @auth
   }
 

@@ -9,58 +9,33 @@ import { Request, MessageDocument, UserDocument, CartDocument } from '../types'
 import { createCart, objectId } from '../validators'
 import { Chat, Cart } from '../models'
 import { fields, hasSubfields } from '../utils'
+import { removeFromCartSession, addToCart } from '../utils/cart'
 
 const resolvers: IResolvers = {
   Query: {
+    abandoned: async (root, args, ctx, info): Promise<CartDocument[]> => {
+      return await Cart.find({ subtotal: { $gt: 0 } }, fields(info))
+        .sort('-updatedAt')
+        .exec()
+    },
     carts: (root, args, ctx, info): Promise<CartDocument[]> => {
       return Cart.find({}, fields(info)).exec()
     },
-    cart: async (
+    myCart: async (
       root,
-      args: { id: string },
-      ctx,
+      args,
+      { req }: { req: Request },
       info
     ): Promise<CartDocument | null> => {
-      await objectId.validateAsync(args)
-      return Cart.findById(args.id, fields(info))
+      const { userId } = req.session
+      return (req.session.cart = Cart.findOne(
+        { uid: userId },
+        fields(info)
+      ).exec())
     }
   },
   Mutation: {
-    getTotalQty: async (
-      root,
-      args: {
-        pid: string
-        vid: string
-        qty: number
-      },
-      { req }: { req: Request }
-    ): Promise<CartDocument> => {
-      const { items } = req.session.cart
-      for (var i = 0; i < items.length; i++) {
-        if (items[i]._id === args.pid) {
-          items.splice(i, 1);
-        }
-      }
-      return items;
-    },
-    removeFromCart: async (
-      root,
-      args: {
-        pid: string
-        vid: string
-        qty: number
-      },
-      { req }: { req: Request }
-    ): Promise<CartDocument> => {
-      const { items } = req.session.cart
-      for (var i = 0; i < items.length; i++) {
-        if (items[i]._id === args.pid) {
-          items.splice(i, 1);
-        }
-      }
-      return items;
-    },
-    addToCart: async (
+    add: async (
       root,
       args: {
         pid: string
@@ -70,12 +45,10 @@ const resolvers: IResolvers = {
       { req }: { req: Request }
     ): Promise<CartDocument> => {
       await createCart.validateAsync(args, { abortEarly: false })
-      const { userId } = req.session
-      const cart = await Cart.create({ ...args, uid: userId })
-
-      await cart.save()
-
-      return cart
+      const { pid, vid, qty } = args
+      // const cart = await Cart.create({ pid, vid, qty})
+      // await cart.save()
+      return addToCart(req, { pid, vid, qty })
     }
   }
 }
