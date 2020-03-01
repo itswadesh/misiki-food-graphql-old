@@ -13,7 +13,7 @@ export const createProduct = Joi.object().keys({
     .required()
     .min(30)
     .label('Rate'),
-  qty: Joi.number()
+  stock: Joi.number()
     .required()
     .min(1)
     .label('Quantity'),

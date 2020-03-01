@@ -11,7 +11,7 @@ export default gql`
       name: String!
       type: String
       rate: Int
-      qty: Int
+      stock: Int
       img: String
       time: String
     ): Product @auth
@@ -56,7 +56,7 @@ export default gql`
     description: String
     status: String
     type: String
-    qty: Int
+    stock: Int
     rate: Int
     time: String
     daily: Boolean

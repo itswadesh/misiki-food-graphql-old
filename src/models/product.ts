@@ -19,7 +19,7 @@ let productSchema = new Schema(
     description: String,
     status: String,
     type: String,
-    qty: Number,
+    stock: Number,
     rate: Number,
     time: String,
     daily: Boolean,

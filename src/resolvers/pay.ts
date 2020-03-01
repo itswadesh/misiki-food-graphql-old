@@ -80,16 +80,18 @@ const resolvers: IResolvers = {
         { $set: { payment } }
       );
       for (let i of o.items) {
-        const p: ProductDocument = await Product.findById(i);
-        await Product.update(
-          { _id: i._id },
-          {
-            $set: {
-              popularity: +p.stats.popularity + 10,
-              qty: +p.qty - +i.qty
+        let p: ProductDocument | null = await Product.findById(i);
+        if (p) {
+          await Product.update(
+            { _id: i._id },
+            {
+              $set: {
+                popularity: +p.stats.popularity + 10,
+                stock: +p.stock - +i.qty
+              }
             }
-          }
-        ); // Reduce stock for that
+          ); // Reduce stock for that
+        }
       }
       req.session.cart = {};
       if (payment.captured) return o._id

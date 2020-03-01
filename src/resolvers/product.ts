@@ -42,7 +42,7 @@ const resolvers: IResolvers = {
         name: string
         type: string
         rate: number
-        qty: number
+        stock: number
         img: string
         time: string
       },
@@ -51,12 +51,12 @@ const resolvers: IResolvers = {
       await createProduct.validateAsync(args, { abortEarly: false })
 
       const { userId } = req.session
-      const { name, type, rate, qty, img, time } = args
+      const { name, type, rate, stock, img, time } = args
       const product = await Product.create({
         name,
         type,
         rate,
-        qty,
+        stock,
         img,
         time,
         vendor: userId

@@ -25,11 +25,17 @@ const email = Joi.string()
   .required()
   .label('Email')
 
-const name = Joi.string()
+const firstName = Joi.string()
   .max(100)
   .trim()
   .required()
-  .label('Name')
+  .label('First Name')
+
+const lastName = Joi.string()
+  .max(100)
+  .trim()
+  .required()
+  .label('Last Name')
 
 const password = Joi.string()
   .min(8)
@@ -43,7 +49,8 @@ const password = Joi.string()
 
 export const signUp = Joi.object().keys({
   email,
-  name,
+  firstName,
+  lastName,
   password
 })
 

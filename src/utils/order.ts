@@ -74,7 +74,7 @@ export const placeOrder = async (
     let product: ProductDocument | null = await Product.findById(i._id)
     if (!product) throw new UserInputError('Product not found')
 
-    if (product.qty - i.qty < 0)
+    if (product.stock - i.qty < 0)
       throw new UserInputError(`Not enough quantity for ${product.name}`)
 
     const {
@@ -84,7 +84,7 @@ export const placeOrder = async (
       slug,
       img,
       description,
-      qty,
+      stock,
       rate,
       subtotal,
       total,
@@ -99,7 +99,7 @@ export const placeOrder = async (
       slug,
       description,
       img,
-      qty,
+      stock,
       rate,
       subtotal,
       total,

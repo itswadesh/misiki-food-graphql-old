@@ -20,7 +20,7 @@ export interface ProductDocument extends Document {
   description: string
   status: string
   type: string
-  qty: number
+  stock: number
   rate: number
   time: string
   daily: boolean
