@@ -1,5 +1,6 @@
 import mongoose, { Schema } from 'mongoose'
 import { ProductDocument } from '../types'
+import { generateSlug } from '../utils'
 
 const { ObjectId } = Schema.Types
 
@@ -54,5 +55,11 @@ let productSchema = new Schema(
     timestamps: true
   }
 )
+
+productSchema.pre('save', async function (this: ProductDocument) {
+  if (this.isModified('name')) {
+    this.slug = await generateSlug(this.name)
+  }
+})
 
 export default mongoose.model<ProductDocument>('Product', productSchema)

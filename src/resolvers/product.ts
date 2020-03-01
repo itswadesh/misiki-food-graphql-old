@@ -66,8 +66,19 @@ const resolvers: IResolvers = {
 
       return product
     }
-  }
+  },
 
+  Product: {
+    vendor: async (
+      product: ProductDocument,
+      args,
+      ctx,
+      info
+    ): Promise<UserDocument> => {
+      return (await product.populate('vendor', fields(info)).execPopulate())
+        .vendor
+    }
+  }
   // lastMessage: async (
   //   chat: ChatDocument,
   //   args,

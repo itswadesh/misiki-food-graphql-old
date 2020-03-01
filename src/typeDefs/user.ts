@@ -12,18 +12,19 @@ export default gql`
     verifyOtp( phone: String!, otp:String! ):User @guest
 
     signUp(
-      name: String
+      firstName: String
+      lastName: String
       email: String
       password: String!
     ): User @guest
 
     updateProfile(
-      name: String
+      firstName: String
+      lastName: String
       email: String
-      password: String!
       role: String
       gender: String
-      info:  String
+      info:  InputInfo
       avatar: String
       provider: String
       active: Boolean
@@ -33,20 +34,31 @@ export default gql`
       metaTitle: String
       metaDescription: String
       metaKeywords: String
-    ): User @guest
+    ): User @auth
 
     signIn(email: String!, password: String!): User @guest
     signOut: Boolean @auth
   }
 
+  input InputInfo {
+    restaurant: String
+    kitchenPhotos: [String]
+  }
+
+  type Info {
+    restaurant: String
+    kitchenPhotos: [String]
+  }
+
   type User {
     id: ID!
-    name: String
-    phone: String!
+    firstName: String
+    lastName: String
+    phone: String
     email: String
     role: String
     gender: String,
-    info:  String,
+    info:  Info,
     avatar: String,
     provider: String,
     active: Boolean

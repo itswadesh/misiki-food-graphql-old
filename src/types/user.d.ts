@@ -3,7 +3,8 @@ import { ChatDocument } from './'
 import { AddressDocument } from './address'
 
 export interface UserDocument extends Document {
-  name: string
+  firstName: string
+  lastName: string
   phone: string
   email: string
   password: string
@@ -31,6 +32,8 @@ export interface UserModel extends Model<UserDocument> {
 }
 
 export interface InfoDocument extends Document {
-  popularity: Number
-  avg_rating: Number
+  popularity: number
+  avg_rating: number
+  restaurant: string
+  kitchenPhotos: string[]
 }

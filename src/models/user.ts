@@ -5,7 +5,8 @@ import { UserDocument, UserModel } from '../types'
 
 const userSchema = new Schema(
   {
-    name: String,
+    firstName: String,
+    lastName: String,
     phone: String,
     email: {
       type: String,

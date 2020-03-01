@@ -1,5 +1,5 @@
-import { IResolvers } from 'apollo-server-express'
-import { Request, Response, UserDocument, ChatDocument } from '../types'
+import { IResolvers, UserInputError } from 'apollo-server-express'
+import { Request, Response, UserDocument, ChatDocument, InfoDocument } from '../types'
 import { signUp, signIn, objectId, signInOtp } from '../validators'
 import { attemptSignIn, verifyOtp, signOut } from '../auth'
 import { User } from '../models'
@@ -31,6 +31,22 @@ const resolvers: IResolvers = {
     }
   },
   Mutation: {
+    updateProfile: async (
+      root,
+      args: { firstName: string, lastName: string, info: InfoDocument },
+      { req }: { req: Request },
+      info
+    ): Promise<UserDocument> => {
+      const { userId } = req.session
+      let user = await User.findById(userId)
+      if (!user)
+        throw new UserInputError(`User not found`)
+      user.firstName = args.firstName
+      user.lastName = args.lastName
+      user.info = args.info
+      user.save()
+      return user
+    },
     verifyOtp: async (
       root,
       args: { phone: string, otp: string },
@@ -61,7 +77,7 @@ const resolvers: IResolvers = {
     },
     signUp: async (
       root,
-      args: { email: string; name: string; password: string },
+      args: { email: string; firstName: string; lastName: string; password: string },
       { req }: { req: Request }
     ): Promise<UserDocument> => {
       await signUp.validateAsync(args, { abortEarly: false })
