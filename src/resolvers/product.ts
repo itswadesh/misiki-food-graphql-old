@@ -16,14 +16,10 @@ import { sendMessage, objectId, createProduct, ifImage } from '../validators'
 import { Chat, Message, Product } from '../models'
 import { fields, hasSubfields } from '../utils'
 import pubsub from '../pubsub'
-import { createWriteStream, unlink } from 'fs'
-import mkdirp from 'mkdirp'
-import shortid from 'shortid'
-import { generateImg, storeToFileSystem } from '../utils/image'
 
-const UPLOAD_DIR = './uploads'
+import { generateImg, storeToFileSystem, deleteFile } from '../utils/image'
+
 const MESSAGE_SENT = 'MESSAGE_SENT'
-mkdirp.sync(UPLOAD_DIR)
 const resolvers: IResolvers = {
   Query: {
     files: () => {
@@ -44,19 +40,20 @@ const resolvers: IResolvers = {
   },
 
   Mutation: {
+    deleteProduct: async (root, args, { req }: { req: Request }): Promise<Boolean> => {
+      const product = await Product.findById(args.id)
+      if (!product)
+        return true
+      await deleteFile(product.img)
+      let p = await Product.deleteOne({ _id: args.id })
+      return p.ok == 1
+    },
+    deleteFile: async (root, args, { req }: { req: Request }) => {
+      return await deleteFile(args.path)
+    },
     singleUpload: async (root, args, { req }: { req: Request }) => {
-      const { createReadStream, filename, mimetype, encoding } = await args
-      const stream = createReadStream()
-      const id = shortid.generate()
-      const path1 = `${UPLOAD_DIR}/${id}-${filename}`
       const { userId } = req.session
-      const file = { id, filename, mimetype, encoding, uid: userId }
-      await ifImage.validateAsync({ filename, mimetype, encoding })
-      // if (!filename.match(/\.(jfif|jpg|jpeg|png|gif|webp|ico)$/))
-      //   throw new UserInputError('Only image files are allowed!')
-      // let img = await generateImg(file, 'photoooo', false) // If this image is from Step:3 // req.params.name = brand OR category
-      // return img
-      await storeToFileSystem(stream, path1)
+      const file = await storeToFileSystem(args)
       return file
     },
     updateProduct: async (

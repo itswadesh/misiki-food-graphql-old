@@ -3,7 +3,11 @@ const fsx = require('fs-extra') // Create the directory if not exists
 const path = require('path')
 const dload = require('image-downloader')
 import { createWriteStream, unlink, ReadStream, PathLike } from 'fs'
-import { UPLOAD_DIR } from '../config'
+import { UPLOAD_DIR, STATIC_PATH } from '../config'
+import mkdirp from 'mkdirp'
+import shortid from 'shortid'
+import { ifImage } from '../validators'
+mkdirp.sync(STATIC_PATH + UPLOAD_DIR)
 
 export const imgUrl = (img, single) => {
   let url = '/images'
@@ -25,7 +29,16 @@ export const imgUrl = (img, single) => {
       large: url + img.large
     }
 }
-export const storeToFileSystem = (stream: ReadStream, path: PathLike) => {
+export const storeToFileSystem = async (args: { file: any, folder: String }) => {
+  const folder = args.folder || 'img'
+  mkdirp.sync(STATIC_PATH + UPLOAD_DIR + '/' + folder)
+  let { createReadStream, filename, mimetype, encoding } = await args.file
+  await ifImage.validateAsync({ filename, mimetype, encoding })
+  const stream = createReadStream()
+  const id = shortid.generate()
+  filename = `${UPLOAD_DIR}${folder}/${id}-${filename}`
+  const path = `${STATIC_PATH + filename}`
+  const file = { filename, mimetype, encoding }
   // Store the file in the filesystem.
   return new Promise((resolve, reject) => {
     // Create a stream to which the upload will be written.
@@ -45,6 +58,10 @@ export const storeToFileSystem = (stream: ReadStream, path: PathLike) => {
     stream.on('error', (error: Error) => writeStream.destroy(error))
     // Pipe the upload into the write stream.
     stream.pipe(writeStream)
+  }).then(x => {
+    return file
+  }).catch((e: Error) => {
+    throw e
   })
 }
 export const generateImg = async (
@@ -121,11 +138,11 @@ const download = async (url, dest) => {
     throw e
   }
 }
-export const deleteImage = async image => {
+export const deleteFile = async (path: String) => {
   try {
-    await fsx.unlinkSync(UPLOAD_DIR + image)
+    return await fsx.unlinkSync(STATIC_PATH + path)
   } catch (e) {
-    throw e
+    return null
   }
 }
 export const deleteAllImages = async images => {
@@ -155,7 +172,7 @@ const readFile = async url => {
       stream = await request({ url, encoding: null })
     } else {
       stream = await fsx.createReadStream(path.resolve(url))
-      stream.on('error', function(err) {})
+      stream.on('error', function (err) { })
     }
     return stream
   } catch (e) {

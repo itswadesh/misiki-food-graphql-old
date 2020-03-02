@@ -4,7 +4,7 @@ import { ApolloServer } from 'apollo-server-express'
 import typeDefs from './typeDefs'
 import resolvers from './resolvers'
 import schemaDirectives from './directives'
-import { SESS_OPTIONS, APOLLO_OPTIONS } from './config'
+import { SESS_OPTIONS, APOLLO_OPTIONS, STATIC_PATH } from './config'
 import { Request, Response } from './types'
 import { ensureSignedIn } from './auth'
 
@@ -17,7 +17,7 @@ const createApp = (store?: session.Store) => {
   })
 
   app.use(sessionHandler)
-
+  app.use(express.static(STATIC_PATH));
   const server = new ApolloServer({
     ...APOLLO_OPTIONS,
     typeDefs,

@@ -51,10 +51,10 @@ export const APOLLO_OPTIONS = {
   playground: IN_PROD
     ? false
     : {
-        settings: {
-          'request.credentials': 'include'
-        }
+      settings: {
+        'request.credentials': 'include'
       }
+    }
 }
 
 export const SHOP_NAME = 'Misiki'
@@ -63,4 +63,6 @@ export const PAY_MESSAGE = 'Payment for food @ ' + SHOP_NAME
 
 export const ORDER_PREFIX = 'M'
 
-export const UPLOAD_DIR = 'uploads'
+export const STATIC_PATH = './../misiki-images';
+
+export const UPLOAD_DIR = '/images/'

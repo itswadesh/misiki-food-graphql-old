@@ -5,6 +5,10 @@ export const createProduct = Joi.object().keys({
     .required()
     .max(500)
     .label('Dish Name'),
+  description: Joi.string()
+    .allow('')
+    .max(5000)
+    .label('Dish Description'),
   type: Joi.string()
     .required()
     .max(5)
