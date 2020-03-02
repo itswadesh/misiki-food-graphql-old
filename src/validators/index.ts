@@ -12,6 +12,7 @@ export * from './wishlist'
 export * from './chat'
 export * from './brand'
 export * from './pay'
+export * from './image'
 
 export * from './message'
 

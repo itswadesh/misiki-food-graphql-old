@@ -32,9 +32,13 @@
     "fs-extra": "^8.1.0",
     "graphql": "^14.5.8",
     "graphql-fields": "^2.0.3",
+    "image-downloader": "^3.5.0",
     "ioredis": "^4.14.1",
+    "mkdirp": "^1.0.3",
     "mongoose": "^5.7.13",
     "razorpay": "^2.0.6",
+    "request-promise": "^4.2.5",
+    "shortid": "^2.2.15",
     "source-map-support": "^0.5.15"
   },
   "devDependencies": {
@@ -51,6 +55,7 @@
     "@types/mongodb": "^3.3.11",
     "@types/mongoose": "^5.5.32",
     "@types/node": "^12.12.14",
+    "@types/shortid": "^0.0.29",
     "@types/supertest": "^2.0.8",
     "eslint": "^6.7.2",
     "eslint-config-prettier": "^6.7.0",
@@ -70,5 +75,9 @@
     "ts-jest": "^24.2.0",
     "ts-node-dev": "^1.0.0-pre.43",
     "typescript": "^3.7.2"
+  },
+  "resolutions": {
+    "**/**/fs-capacitor": "^5.0.0",
+    "**/graphql-upload": "^9.0.0"
   }
 }

@@ -2,13 +2,27 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Query {
+    files: [File]
+    uploads: [File]
     products: [Product!]
     product(id: ID!): Product
   }
 
   extend type Mutation {
+    singleUpload(file: Upload!): File
     createProduct(
       name: String!
+      description: String
+      type: String
+      rate: Int
+      stock: Int
+      img: String
+      time: String
+    ): Product @auth
+    updateProduct(
+      id: ID!
+      name: String!
+      description: String
       type: String
       rate: Int
       stock: Int
@@ -16,7 +30,11 @@ export default gql`
       time: String
     ): Product @auth
   }
-
+  type File {
+    filename: String!
+    mimetype: String!
+    encoding: String!
+  }
   type Variant {
     id: ID!
     img: [String!]
@@ -44,6 +62,7 @@ export default gql`
   type Product {
     id: ID!
     name: String
+    description: String
     slug: String
     sku: String
     group: String
@@ -53,7 +72,6 @@ export default gql`
     category: Category
     parentCategory: Category
     categories: [Category!]
-    description: String
     status: String
     type: String
     stock: Int
@@ -62,7 +80,7 @@ export default gql`
     daily: Boolean
     features: [String]
     keyFeatures: [Feature]
-    vendor: User!
+    vendor: User
     active: Boolean
     meta: Meta
     badge: Badge
