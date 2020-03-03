@@ -1,6 +1,7 @@
 import Joi from './joi'
 
 export const createAddress = Joi.object().keys({
+  id: Joi.allow('').label('ID'),
   email: Joi.allow('').label('Email'),
   firstName: Joi.allow('').label('First Name'),
   lastName: Joi.allow('').label('Last Name'),

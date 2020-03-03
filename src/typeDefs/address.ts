@@ -8,6 +8,8 @@ export default gql`
   }
 
   extend type Mutation {
+    deleteAddress(id:ID!):Boolean @auth
+
     createAddress(
       email: String
       firstName: String
@@ -20,6 +22,22 @@ export default gql`
       coords: Geo
       zip: String
       phone: String
+    ): Address @auth
+
+    updateAddress(
+      id:ID!
+      email: String
+      firstName: String
+      lastName: String
+      address: String
+      town: String
+      city: String
+      country: String
+      state: String
+      coords: Geo
+      zip: String
+      phone: String
+      active: Boolean
     ): Address @auth
   }
 

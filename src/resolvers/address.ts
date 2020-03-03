@@ -64,10 +64,45 @@ const resolvers: IResolvers = {
       await createAddress.validateAsync(args, { abortEarly: false })
       const { userId } = req.session
       const address = await Address.create({ ...args, uid: userId })
-
       await address.save()
-
       return address
+    },
+    updateAddress: async (
+      root,
+      args: {
+        uid: string
+        id: string
+        email: string
+        firstName: string
+        lastName: string
+        address: string
+        town: string
+        city: string
+        country: string
+        state: string
+        zip: string
+        phone: string
+        coords: { lat: number; lng: number }
+      },
+      { req }: { req: Request }
+    ): Promise<AddressDocument | null> => {
+      await createAddress.validateAsync(args, { abortEarly: false })
+      const { userId } = req.session
+      args.uid = userId
+      const address = await Address.findOneAndUpdate({ _id: args.id }, args, { new: true })
+      return address
+    },
+    deleteAddress: async (
+      root,
+      args: {
+        id: string
+      },
+      { req }: { req: Request }
+    ): Promise<Boolean> => {
+      const { userId } = req.session
+      const address = await Address.deleteOne({ _id: args.id, uid: userId })
+      console.log('xxxxxxxxxxxxxxxxx', address);
+      return address.deletedCount == 1
     }
   }
 }
