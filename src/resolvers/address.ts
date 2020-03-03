@@ -10,11 +10,26 @@ import { createAddress, objectId } from '../validators'
 import { Chat, Message, Address } from '../models'
 import { fields, hasSubfields } from '../utils'
 import pubsub from '../pubsub'
-
+import axios from 'axios'
+const { OPENCAGE_KEY } = process.env
 const MESSAGE_SENT = 'MESSAGE_SENT'
 
 const resolvers: IResolvers = {
   Query: {
+    getLocation: async (root, args, ctx, info) => {
+      let res = await axios.get(
+        `https://api.opencagedata.com/geocode/v1/json?q=${args.lat},${args.lng}&key=${OPENCAGE_KEY}`
+      )
+      let l = { town: null, city: null, state: null, zip: null }
+      if (res.data.results[0]) {
+        const r: any = res.data.results[0].components
+        l.town = r.county
+        l.zip = r.postcode
+        l.state = r.state
+        l.city = r.state_district
+      }
+      return l
+    },
     addresses: (root, args, ctx, info): Promise<AddressDocument[]> => {
       return Address.find({}, fields(info)).exec()
     },

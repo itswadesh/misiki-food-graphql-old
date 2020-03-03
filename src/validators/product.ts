@@ -1,14 +1,15 @@
 import Joi from './joi'
+import { MinKey } from 'mongodb'
 
-export const createProduct = Joi.object().keys({
+export const productValidation = Joi.object().keys({
+  id: Joi.objectId()
+    .allow('')
+    .label('Dish ID'),
   name: Joi.string()
     .required()
     .max(500)
     .label('Dish Name'),
-  description: Joi.string()
-    .allow('')
-    .max(5000)
-    .label('Dish Description'),
+  description: Joi.allow('').label('Dish Description'),
   type: Joi.string()
     .required()
     .max(5)
@@ -19,7 +20,7 @@ export const createProduct = Joi.object().keys({
     .label('Rate'),
   stock: Joi.number()
     .required()
-    .min(1)
+    .min(0)
     .label('Quantity'),
   img: Joi.allow(''),
   time: Joi.allow('')

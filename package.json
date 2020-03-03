@@ -23,7 +23,9 @@
   },
   "dependencies": {
     "@hapi/joi": "^16.1.8",
+    "@types/axios": "^0.14.0",
     "apollo-server-express": "^2.9.12",
+    "axios": "^0.19.2",
     "bcryptjs": "^2.4.3",
     "connect-redis": "^4.0.3",
     "dotenv": "^8.2.0",

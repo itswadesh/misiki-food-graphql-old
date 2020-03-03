@@ -8,8 +8,8 @@ export default gql`
   }
 
   extend type Mutation {
-    getOtp( phone: String! ):String @guest
-    verifyOtp( phone: String!, otp:String! ):User @guest
+    getOtp(phone: String!): String @guest
+    verifyOtp(phone: String!, otp: String!): User @guest
 
     signUp(
       firstName: String
@@ -24,12 +24,14 @@ export default gql`
       email: String
       role: String
       gender: String
-      info:  InputInfo
+      info: InputInfo
+      phone: String
+      dob: String
       avatar: String
       provider: String
       active: Boolean
       verified: Boolean
-      address: String
+      address: AddressInput
       meta: String
       metaTitle: String
       metaDescription: String
@@ -40,12 +42,27 @@ export default gql`
     signOut: Boolean @auth
   }
 
+  input AddressInput {
+    town: String
+    city: String
+    state: String
+    zip: Int
+    country: String
+    coords: Geo
+    address: String
+    firstName: String
+    lastName: String
+    phone: String
+  }
+
   input InputInfo {
+    public: Boolean
     restaurant: String
     kitchenPhotos: [String]
   }
 
   type Info {
+    public: Boolean
     restaurant: String
     kitchenPhotos: [String]
   }
@@ -57,16 +74,16 @@ export default gql`
     phone: String
     email: String
     role: String
-    gender: String,
-    info:  Info,
-    avatar: String,
-    provider: String,
+    gender: String
+    info: Info
+    avatar: String
+    provider: String
     active: Boolean
     verified: Boolean
-    address: Address,
-    meta: String,
-    metaTitle: String,
-    metaDescription: String,
+    address: Address
+    meta: String
+    metaTitle: String
+    metaDescription: String
     metaKeywords: String
     createdAt: String!
     updatedAt: String!

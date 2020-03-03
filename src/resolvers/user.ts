@@ -1,5 +1,12 @@
 import { IResolvers, UserInputError } from 'apollo-server-express'
-import { Request, Response, UserDocument, ChatDocument, InfoDocument } from '../types'
+import {
+  Request,
+  Response,
+  UserDocument,
+  ChatDocument,
+  InfoDocument,
+  AddressDocument
+} from '../types'
 import { signUp, signIn, objectId, signInOtp } from '../validators'
 import { attemptSignIn, verifyOtp, signOut } from '../auth'
 import { User } from '../models'
@@ -33,23 +40,30 @@ const resolvers: IResolvers = {
   Mutation: {
     updateProfile: async (
       root,
-      args: { firstName: string, lastName: string, info: InfoDocument },
+      args: {
+        firstName: string
+        lastName: string
+        avatar: string
+        info: InfoDocument
+        address: AddressDocument
+      },
       { req }: { req: Request },
       info
     ): Promise<UserDocument> => {
       const { userId } = req.session
-      let user = await User.findById(userId)
-      if (!user)
-        throw new UserInputError(`User not found`)
+      let user: UserDocument | null = await User.findById(userId)
+      if (!user) throw new UserInputError(`User not found`)
       user.firstName = args.firstName
       user.lastName = args.lastName
+      user.avatar = args.avatar
+      user.address = args.address
       user.info = args.info
       user.save()
       return user
     },
     verifyOtp: async (
       root,
-      args: { phone: string, otp: string },
+      args: { phone: string; otp: string },
       { req }: { req: Request },
       info
     ): Promise<UserDocument> => {
@@ -65,10 +79,9 @@ const resolvers: IResolvers = {
       args: { phone: string },
       { req }: { req: Request }
     ): Promise<Number> => {
-      const otp = generateOTP();
+      const otp = generateOTP()
       let user = await User.findOne({ phone: args.phone })
-      if (!user)
-        await User.create({ phone: args.phone, password: otp })
+      if (!user) await User.create({ phone: args.phone, password: otp })
       else {
         user.password = otp.toString()
         await user.save()
@@ -77,7 +90,12 @@ const resolvers: IResolvers = {
     },
     signUp: async (
       root,
-      args: { email: string; firstName: string; lastName: string; password: string },
+      args: {
+        email: string
+        firstName: string
+        lastName: string
+        password: string
+      },
       { req }: { req: Request }
     ): Promise<UserDocument> => {
       await signUp.validateAsync(args, { abortEarly: false })
@@ -109,7 +127,7 @@ const resolvers: IResolvers = {
     ): Promise<boolean> => {
       return signOut(req, res)
     }
-  },
+  }
 }
 
 export default resolvers

@@ -56,8 +56,8 @@ let productSchema = new Schema(
   }
 )
 
-productSchema.pre('save', async function (this: ProductDocument) {
-  if (this.isModified('name')) {
+productSchema.pre('save', async function(this: ProductDocument) {
+  if (!this.slug && this.name) {
     this.slug = await generateSlug(this.name)
   }
 })

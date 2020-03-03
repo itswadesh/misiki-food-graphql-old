@@ -12,7 +12,12 @@ import {
   ProductDocument,
   ChatDocument
 } from '../types'
-import { sendMessage, objectId, createProduct, ifImage } from '../validators'
+import {
+  sendMessage,
+  objectId,
+  productValidation,
+  ifImage
+} from '../validators'
 import { Chat, Message, Product } from '../models'
 import { fields, hasSubfields } from '../utils'
 import pubsub from '../pubsub'
@@ -40,10 +45,13 @@ const resolvers: IResolvers = {
   },
 
   Mutation: {
-    deleteProduct: async (root, args, { req }: { req: Request }): Promise<Boolean> => {
+    deleteProduct: async (
+      root,
+      args,
+      { req }: { req: Request }
+    ): Promise<Boolean> => {
       const product = await Product.findById(args.id)
-      if (!product)
-        return true
+      if (!product) return true
       await deleteFile(product.img)
       let p = await Product.deleteOne({ _id: args.id })
       return p.ok == 1
@@ -70,7 +78,7 @@ const resolvers: IResolvers = {
       },
       { req }: { req: Request }
     ): Promise<ProductDocument> => {
-      // await updateProduct.validateAsync(args, { abortEarly: false })
+      await productValidation.validateAsync(args, { abortEarly: false })
 
       const { userId } = req.session
       const { id, name, description, type, rate, stock, img, time } = args
@@ -106,7 +114,7 @@ const resolvers: IResolvers = {
       },
       { req }: { req: Request }
     ): Promise<ProductDocument> => {
-      await createProduct.validateAsync(args, { abortEarly: false })
+      await productValidation.validateAsync(args, { abortEarly: false })
 
       const { userId } = req.session
       const { name, description, type, rate, stock, img, time } = args

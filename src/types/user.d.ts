@@ -34,6 +34,7 @@ export interface UserModel extends Model<UserDocument> {
 export interface InfoDocument extends Document {
   popularity: number
   avg_rating: number
+  public: boolean
   restaurant: string
   kitchenPhotos: string[]
 }
