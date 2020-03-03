@@ -46,7 +46,7 @@ export default gql`
     town: String
     city: String
     state: String
-    zip: Int
+    zip: String
     country: String
     coords: Geo
     address: String

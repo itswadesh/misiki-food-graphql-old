@@ -9,8 +9,6 @@ export default gql`
   }
 
   extend type Mutation {
-    singleUpload(file: Upload!, folder: String): File
-    deleteFile(path: String): File
     deleteProduct(id: ID): Boolean
     createProduct(
       name: String!

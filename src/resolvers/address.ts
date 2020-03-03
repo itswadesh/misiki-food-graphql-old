@@ -55,7 +55,7 @@ const resolvers: IResolvers = {
         city: string
         country: string
         state: string
-        zip: number
+        zip: string
         phone: string
         coords: { lat: number; lng: number }
       },

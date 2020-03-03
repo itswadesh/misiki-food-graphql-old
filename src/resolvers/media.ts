@@ -10,6 +10,11 @@ import { createMedia, objectId } from '../validators'
 import { Chat, Media } from '../models'
 import { fields, hasSubfields } from '../utils'
 import pubsub from '../pubsub'
+import {
+  storeToFileSystem,
+  store1ToFileSystem,
+  deleteFile
+} from '../utils/image'
 
 const MESSAGE_SENT = 'MESSAGE_SENT'
 
@@ -29,6 +34,19 @@ const resolvers: IResolvers = {
     }
   },
   Mutation: {
+    deleteFile: async (root, args, { req }: { req: Request }) => {
+      return await deleteFile(args.path)
+    },
+    singleUpload: async (root, args, { req }: { req: Request }) => {
+      const { userId } = req.session
+      const file = await store1ToFileSystem(args)
+      return file
+    },
+    fileUpload: async (root, args, { req }: { req: Request }) => {
+      const { userId } = req.session
+      const files = await storeToFileSystem(args)
+      return files
+    },
     createMedia: async (
       root,
       args: {

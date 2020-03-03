@@ -29,7 +29,10 @@ export const imgUrl = (img, single) => {
       large: url + img.large
     }
 }
-export const storeToFileSystem = async (args: { file: any, folder: String }) => {
+export const store1ToFileSystem = async (args: {
+  file: any
+  folder: String
+}) => {
   const folder = args.folder || 'img'
   mkdirp.sync(STATIC_PATH + UPLOAD_DIR + '/' + folder)
   let { createReadStream, filename, mimetype, encoding } = await args.file
@@ -39,30 +42,51 @@ export const storeToFileSystem = async (args: { file: any, folder: String }) => 
   filename = `${UPLOAD_DIR}${folder}/${id}-${filename}`
   const path = `${STATIC_PATH + filename}`
   const file = { filename, mimetype, encoding }
-  // Store the file in the filesystem.
+  try {
+    await fileWriteRequest(stream, path)
+    return { filename, mimetype, encoding }
+  } catch (error) {}
+}
+export const storeToFileSystem = async (args: {
+  files: any
+  folder: String
+}) => {
+  const folder = args.folder || 'img'
+  mkdirp.sync(STATIC_PATH + UPLOAD_DIR + '/' + folder)
+  let files: any[] = []
+  for (let f of args.files) {
+    let { createReadStream, filename, mimetype, encoding }: any = await f
+    // await ifImage.validateAsync({ f.filename, f.mimetype, f.encoding })
+    const stream = createReadStream()
+    const id = shortid.generate()
+    filename = `${UPLOAD_DIR}${folder}/${id}-${filename}`
+    const path = `${STATIC_PATH + filename}`
+    try {
+      await fileWriteRequest(stream, path)
+      files.push({ filename, mimetype, encoding })
+    } catch (error) {}
+  }
+  return files
+}
+
+const fileWriteRequest = async (stream: any, path: PathLike) => {
   return new Promise((resolve, reject) => {
-    // Create a stream to which the upload will be written.
     const writeStream = createWriteStream(path)
-    // When the upload is fully written, resolve the promise.
     writeStream.on('finish', resolve)
-    // If there's an error writing the file, remove the partially written file
-    // and reject the promise.
     writeStream.on('error', error => {
       unlink(path, () => {
         reject(error)
       })
     })
-    // In node <= 13, errors are not automatically propagated between piped
-    // streams. If there is an error receiving the upload, destroy the write
-    // stream with the corresponding error.
     stream.on('error', (error: Error) => writeStream.destroy(error))
-    // Pipe the upload into the write stream.
     stream.pipe(writeStream)
-  }).then(x => {
-    return file
-  }).catch((e: Error) => {
-    throw e
   })
+    .then(() => {
+      return path
+    })
+    .catch((e: Error) => {
+      throw e
+    })
 }
 export const generateImg = async (
   imgUrls: String[],
@@ -172,7 +196,7 @@ const readFile = async url => {
       stream = await request({ url, encoding: null })
     } else {
       stream = await fsx.createReadStream(path.resolve(url))
-      stream.on('error', function (err) { })
+      stream.on('error', function(err) {})
     }
     return stream
   } catch (e) {

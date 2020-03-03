@@ -22,7 +22,7 @@ import { Chat, Message, Product } from '../models'
 import { fields, hasSubfields } from '../utils'
 import pubsub from '../pubsub'
 
-import { generateImg, storeToFileSystem, deleteFile } from '../utils/image'
+import { deleteFile } from '../utils/image'
 
 const MESSAGE_SENT = 'MESSAGE_SENT'
 const resolvers: IResolvers = {
@@ -55,14 +55,6 @@ const resolvers: IResolvers = {
       await deleteFile(product.img)
       let p = await Product.deleteOne({ _id: args.id })
       return p.ok == 1
-    },
-    deleteFile: async (root, args, { req }: { req: Request }) => {
-      return await deleteFile(args.path)
-    },
-    singleUpload: async (root, args, { req }: { req: Request }) => {
-      const { userId } = req.session
-      const file = await storeToFileSystem(args)
-      return file
     },
     updateProduct: async (
       root,

@@ -18,7 +18,7 @@ export default gql`
       country: String
       state: String
       coords: Geo
-      zip: Int
+      zip: String
       phone: String
     ): Address @auth
   }
@@ -34,7 +34,7 @@ export default gql`
     country: String
     state: String
     coords: Coords
-    zip: Int
+    zip: String
     phone: String
     active: Boolean
     createdAt: String!

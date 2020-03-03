@@ -41,6 +41,7 @@ const resolvers: IResolvers = {
     updateProfile: async (
       root,
       args: {
+        uid: string
         firstName: string
         lastName: string
         avatar: string
@@ -49,16 +50,26 @@ const resolvers: IResolvers = {
       },
       { req }: { req: Request },
       info
-    ): Promise<UserDocument> => {
+    ): Promise<UserDocument | null> => {
       const { userId } = req.session
-      let user: UserDocument | null = await User.findById(userId)
-      if (!user) throw new UserInputError(`User not found`)
-      user.firstName = args.firstName
-      user.lastName = args.lastName
-      user.avatar = args.avatar
-      user.address = args.address
-      user.info = args.info
-      user.save()
+      // let user: UserDocument | null = await User.findById(userId)
+      // if (!user) throw new UserInputError(`User not found`)
+      // console.log('zzzzzzzzzzzzzzzzzzzzzzzzzzz', args)
+      // user.firstName = args.firstName
+      // user.lastName = args.lastName
+      // user.avatar = args.avatar
+      // user.address = args.address
+      // user.info = args.info
+      args.uid = userId
+      const user = await User.findOneAndUpdate(
+        { _id: userId },
+        { $set: args },
+        {
+          new: true
+        }
+      )
+      // user = args
+      // user.save()
       return user
     },
     verifyOtp: async (

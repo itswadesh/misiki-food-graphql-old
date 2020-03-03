@@ -11,7 +11,7 @@ export interface AddressDocument extends Document {
   country: string
   state: string
   coords: { lat: [number, string]; lng: [number, string] }
-  zip: number
+  zip: string
   phone: string
   active: boolean
 }
