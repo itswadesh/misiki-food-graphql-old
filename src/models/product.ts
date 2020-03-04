@@ -48,7 +48,8 @@ let productSchema = new Schema(
       ratings: Number,
       reviews: Number
     },
-    related: { type: ObjectId, ref: 'Product' }
+    related: { type: ObjectId, ref: 'Product' },
+    q: String
   },
   {
     versionKey: false,
@@ -56,10 +57,17 @@ let productSchema = new Schema(
   }
 )
 
-productSchema.pre('save', async function(this: ProductDocument) {
-  if (!this.slug && this.name) {
+productSchema.pre('save', async function (this: ProductDocument) {
+  if (!this.slug) {
     this.slug = await generateSlug(this.name)
   }
+  this.q = this.sku ? this.sku + " " : "";
+  this.q = this.name ? this.name.toLocaleLowerCase() + " " : "";
+  this.q += this.description ? this.description.toLocaleLowerCase() + " " : "";
+  this.q += this.category ? this.category.toLocaleLowerCase() + " " : "";
+  this.q += this.status ? this.status.toLocaleLowerCase() + " " : "";
+  this.q += " ";
+  this.q = this.q.trim()
 })
 
 export default mongoose.model<ProductDocument>('Product', productSchema)

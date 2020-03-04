@@ -48,9 +48,9 @@ export const index = async ({ model, args, info, userId }: any) => {
     limit = setting.pageSize || 10
     skip = (page - 1) * (setting.pageSize || 10)
   }
-  if (args.my) {
+  if (args.uid) {
     // Find only records that belong to the logged in user
-    where.uid = userId
+    where.uid = args.uid
   }
 
   let searchString = where

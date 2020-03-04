@@ -38,6 +38,10 @@ const resolvers: IResolvers = {
       // const userId = req.session.userId
       return index({ model: Product, args, info })
     },
+    my: (root, args, { req }: { req: Request }, info) => {
+      args.uid = req.session.userId
+      return index({ model: Product, args, info })
+    },
     product: async (
       root,
       args: { id: string },
@@ -94,7 +98,7 @@ const resolvers: IResolvers = {
       // product.img = img
       // product.vendor = userId
 
-      // await product.save()
+      await product.save() // To fire pre save hoook
 
       return product
     },

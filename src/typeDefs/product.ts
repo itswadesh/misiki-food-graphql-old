@@ -7,12 +7,20 @@ export default gql`
     products: [Product!]
     product(id: ID!): Product
     search(
-      page: String
-      q: String
-      skip: String
-      limit: String
+      page: Int
+      skip: Int
+      limit: Int
       search: String
       sort: String
+      q: String
+    ): SearchRes
+    my(
+      page: Int
+      skip: Int
+      limit: Int
+      search: String
+      sort: String
+      q: String
     ): SearchRes
   }
 

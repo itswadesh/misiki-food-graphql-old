@@ -50,5 +50,6 @@ export interface ProductDocument extends Document {
     ratings: number
     reviews: number
   }
-  related: [ProductDocument['_id']]
+  related: [ProductDocument['_id']],
+  q: string
 }

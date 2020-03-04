@@ -1,6 +1,8 @@
 import { Setting } from '../models'
 
 export const generateSlug = async (str: string) => {
+  if (!str)
+    return ""
   let rawSlug = str
     .toString()
     .toLowerCase()
