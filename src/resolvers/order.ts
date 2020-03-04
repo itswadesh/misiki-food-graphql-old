@@ -9,11 +9,59 @@ import { Request, MessageDocument, UserDocument, OrderDocument } from '../types'
 import { createOrder, objectId } from '../validators'
 import { Chat, Order } from '../models'
 import { fields, hasSubfields } from '../utils'
+import { index } from '../utils/base'
+import { getStartEndDate } from '../utils/dates'
 
 const resolvers: IResolvers = {
   Query: {
     orders: (root, args, ctx, info): Promise<OrderDocument[]> => {
       return Order.find({}, fields(info)).exec()
+    },
+    todaysSummary: async (root, args, { req }: { req: Request }, info) => {
+      const { start, end } = getStartEndDate(0);
+      let result = await Order.aggregate([
+        {
+          $match: {
+            "vendor.phone": req.session.userId,
+            status: "Order Placed",
+            createdAt: { $gte: start, $lte: end }
+          }
+        },
+        {
+          $group: {
+            _id: "$item.name",
+            count: { $sum: "$qty" },
+            amount: { $sum: "$amount" }
+          }
+        }
+      ]);
+      return result
+    },
+    myToday: async (root, args, { req }: { req: Request }, info) => {
+      const { start, end } = getStartEndDate(0);
+      let data = await Order.aggregate([
+        {
+          $match: {
+            createdAt: { $gte: start, $lte: end },
+            vendor: req.session.userId
+          }
+        },
+        {
+          $group: {
+            _id: null,
+            total: { $sum: "$amount" },
+            count: { $sum: 1 }
+          }
+        }
+      ]);
+      return data[0]
+    },
+    myCustomers: (root, args, { req }: { req: Request }, info) => {
+      const { start, end } = getStartEndDate(0);
+      args.vendor = req.session.userId;
+      args.createdAt = { $gte: start, $lte: end };
+      args.uid = req.session.userId
+      return index({ model: Order, args, info })
     },
     order: async (
       root,

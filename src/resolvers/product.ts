@@ -35,7 +35,6 @@ const resolvers: IResolvers = {
       return Product.find({}, fields(info)).exec()
     },
     search: (root, args, { req }: { req: Request }, info) => {
-      // const userId = req.session.userId
       return index({ model: Product, args, info })
     },
     my: (root, args, { req }: { req: Request }, info) => {

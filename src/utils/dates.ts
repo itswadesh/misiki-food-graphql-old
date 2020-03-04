@@ -1,5 +1,5 @@
 const moment = require('moment');
-const { startT, endT } = require('./../../config');
+const { startT, endT } = require('../config');
 export const getStartEndDate3 = (i = 0) => {
     let start = moment().subtract(i + 1, 'day').hour(endT.h).minute(endT.m).second(0).millisecond(0).toDate()
     let end = moment().subtract(i, 'day').hour(startT.h).minute(startT.m).second(0).millisecond(0).toDate()

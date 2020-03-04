@@ -66,3 +66,8 @@ export const ORDER_PREFIX = 'M'
 export const STATIC_PATH = './../misiki-images';
 
 export const UPLOAD_DIR = '/images/'
+
+export const startT = { h: 18, m: 0 }
+export const start = '06:00 pm'
+export const endT = { h: 22, m: 0 }
+export const end = '10:00 pm'
