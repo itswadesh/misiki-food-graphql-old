@@ -23,6 +23,7 @@ import { fields, hasSubfields } from '../utils'
 import pubsub from '../pubsub'
 
 import { deleteFile } from '../utils/image'
+import { index } from '../utils/base'
 
 const MESSAGE_SENT = 'MESSAGE_SENT'
 const resolvers: IResolvers = {
@@ -30,8 +31,12 @@ const resolvers: IResolvers = {
     files: () => {
       // Return the record of files uploaded from your DB or API or filesystem.
     },
-    products: (root, args, ctx, info): Promise<ProductDocument[]> => {
+    products: (root, args, { req }: { req: Request }, info) => {
       return Product.find({}, fields(info)).exec()
+    },
+    search: (root, args, { req }: { req: Request }, info) => {
+      // const userId = req.session.userId
+      return index({ model: Product, args, info })
     },
     product: async (
       root,

@@ -6,6 +6,14 @@ export default gql`
     uploads: [File]
     products: [Product!]
     product(id: ID!): Product
+    search(
+      page: String
+      q: String
+      skip: String
+      limit: String
+      search: String
+      sort: String
+    ): SearchRes
   }
 
   extend type Mutation {
@@ -29,6 +37,13 @@ export default gql`
       img: String
       time: String
     ): Product @auth
+  }
+
+  type SearchRes {
+    data: [Product]
+    count: Int
+    pageSize: Int
+    page: Int
   }
   type File {
     filename: String

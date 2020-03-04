@@ -24,3 +24,7 @@ export const hasSubfields = (info: GraphQLResolveInfo): boolean => {
 export const fields = (info: GraphQLResolveInfo): string => {
   return Object.keys(fieldsMap(info)).join(' ')
 }
+
+export const searchFields = (info: GraphQLResolveInfo): string => {
+  return Object.keys(fieldsMap(info).data).join(' ')
+}
