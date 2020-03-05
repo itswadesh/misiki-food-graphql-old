@@ -2,10 +2,10 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Query {
-    files: [File]
     uploads: [File]
     products: [Product!]
     product(id: ID!): Product
+    productSlug(slug: String!): Product
     search(
       page: Int
       skip: Int

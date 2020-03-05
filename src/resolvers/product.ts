@@ -28,9 +28,6 @@ import { index } from '../utils/base'
 const MESSAGE_SENT = 'MESSAGE_SENT'
 const resolvers: IResolvers = {
   Query: {
-    files: () => {
-      // Return the record of files uploaded from your DB or API or filesystem.
-    },
     products: (root, args, { req }: { req: Request }, info) => {
       return Product.find({}, fields(info)).exec()
     },
@@ -40,6 +37,14 @@ const resolvers: IResolvers = {
     my: (root, args, { req }: { req: Request }, info) => {
       args.uid = req.session.userId
       return index({ model: Product, args, info })
+    },
+    productSlug: async (
+      root,
+      args: { slug: string },
+      ctx,
+      info
+    ): Promise<ProductDocument | null> => {
+      return Product.findOne({ slug: args.slug }, fields(info))
     },
     product: async (
       root,
