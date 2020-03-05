@@ -6,7 +6,7 @@ import {
   withFilter
 } from 'apollo-server-express'
 import { Request, AddressDocument, UserDocument } from '../types'
-import { createAddress, objectId } from '../validators'
+import { addAddress, objectId } from '../validators'
 import { Chat, Message, Address } from '../models'
 import { fields, hasSubfields } from '../utils'
 import pubsub from '../pubsub'
@@ -44,7 +44,7 @@ const resolvers: IResolvers = {
     }
   },
   Mutation: {
-    createAddress: async (
+    addAddress: async (
       root,
       args: {
         email: string
@@ -61,7 +61,7 @@ const resolvers: IResolvers = {
       },
       { req }: { req: Request }
     ): Promise<AddressDocument> => {
-      await createAddress.validateAsync(args, { abortEarly: false })
+      await addAddress.validateAsync(args, { abortEarly: false })
       const { userId } = req.session
       const address = await Address.create({ ...args, uid: userId })
       await address.save()
@@ -86,10 +86,12 @@ const resolvers: IResolvers = {
       },
       { req }: { req: Request }
     ): Promise<AddressDocument | null> => {
-      await createAddress.validateAsync(args, { abortEarly: false })
+      await addAddress.validateAsync(args, { abortEarly: false })
       const { userId } = req.session
       args.uid = userId
-      const address = await Address.findOneAndUpdate({ _id: args.id }, args, { new: true })
+      const address = await Address.findOneAndUpdate({ _id: args.id }, args, {
+        new: true
+      })
       return address
     },
     deleteAddress: async (
@@ -101,7 +103,7 @@ const resolvers: IResolvers = {
     ): Promise<Boolean> => {
       const { userId } = req.session
       const address = await Address.deleteOne({ _id: args.id, uid: userId })
-      console.log('xxxxxxxxxxxxxxxxx', address);
+      console.log('xxxxxxxxxxxxxxxxx', address)
       return address.deletedCount == 1
     }
   }

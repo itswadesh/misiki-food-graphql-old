@@ -7,6 +7,22 @@ export default gql`
   }
 
   extend type Mutation {
+    applyCoupon(code: String!): Coupon @auth
+    updateCoupon(
+      code: String!
+      value: Float!
+      type: String
+      info: String
+      msg: String
+      text: String
+      terms: String
+      color: String
+      minimumCartValue: Float
+      maxAmount: Float
+      from: String
+      to: String
+      active: Boolean
+    ): Coupon @auth
     createCoupon(
       code: String!
       value: Float!
@@ -15,6 +31,7 @@ export default gql`
       msg: String
       text: String
       terms: String
+      color: String
       minimumCartValue: Float
       maxAmount: Float
       from: String
@@ -32,6 +49,7 @@ export default gql`
     msg: String
     text: String
     terms: String
+    color: String
     minimumCartValue: Float
     maxAmount: Float
     from: String

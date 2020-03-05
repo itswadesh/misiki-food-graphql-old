@@ -8,7 +8,7 @@ export default gql`
   }
 
   extend type Mutation {
-    add(pid: ID!, vid: ID!, qty: Int!): Cart
+    addToCart(pid: ID!, qty: Int!): Cart
     removeFromCart(cartId: ID!): Cart @auth
   }
 

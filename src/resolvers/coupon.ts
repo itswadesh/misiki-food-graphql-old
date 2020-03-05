@@ -2,7 +2,7 @@ import { IResolvers } from 'apollo-server-express'
 import { Request, CouponDocument } from '../types'
 import { createCoupon, objectId } from '../validators'
 import { Coupon } from '../models'
-import { fields } from '../utils'
+import { fields, calculateSummary } from '../utils'
 
 const resolvers: IResolvers = {
   Query: {
@@ -20,6 +20,26 @@ const resolvers: IResolvers = {
     }
   },
   Mutation: {
+    applyCoupon: async (
+      root,
+      args,
+      { req }: { req: Request }
+    ): Promise<any> => {
+      await calculateSummary(req)
+      return req.session.cart
+    },
+    updateCoupon: async (
+      root,
+      args,
+      { req }: { req: Request }
+    ): Promise<CouponDocument> => {
+      const { userId } = req.session
+      const coupon = await Coupon.updateOne(
+        { _id: args.id },
+        { ...args, uid: userId }
+      )
+      return coupon
+    },
     createCoupon: async (
       root,
       args: {

@@ -18,27 +18,27 @@ const resolvers: IResolvers = {
       return Order.find({}, fields(info)).exec()
     },
     todaysSummary: async (root, args, { req }: { req: Request }, info) => {
-      const { start, end } = getStartEndDate(0);
+      const { start, end } = getStartEndDate(0)
       let result = await Order.aggregate([
         {
           $match: {
-            "vendor.phone": req.session.userId,
-            status: "Order Placed",
+            'vendor.phone': req.session.userId,
+            status: 'Order Placed',
             createdAt: { $gte: start, $lte: end }
           }
         },
         {
           $group: {
-            _id: "$item.name",
-            count: { $sum: "$qty" },
-            amount: { $sum: "$amount" }
+            _id: '$item.name',
+            count: { $sum: '$qty' },
+            amount: { $sum: '$amount' }
           }
         }
-      ]);
+      ])
       return result
     },
     myToday: async (root, args, { req }: { req: Request }, info) => {
-      const { start, end } = getStartEndDate(0);
+      const { start, end } = getStartEndDate(0)
       let data = await Order.aggregate([
         {
           $match: {
@@ -49,17 +49,17 @@ const resolvers: IResolvers = {
         {
           $group: {
             _id: null,
-            total: { $sum: "$amount" },
+            total: { $sum: '$amount' },
             count: { $sum: 1 }
           }
         }
-      ]);
+      ])
       return data[0]
     },
     myCustomers: (root, args, { req }: { req: Request }, info) => {
-      const { start, end } = getStartEndDate(0);
-      args.vendor = req.session.userId;
-      args.createdAt = { $gte: start, $lte: end };
+      const { start, end } = getStartEndDate(0)
+      args.vendor = req.session.userId
+      args.createdAt = { $gte: start, $lte: end }
       args.uid = req.session.userId
       return index({ model: Order, args, info })
     },
@@ -74,6 +74,20 @@ const resolvers: IResolvers = {
     }
   },
   Mutation: {
+    checkout: async (
+      root,
+      args: { address: string; comment: string },
+      { req }: { req: Request }
+    ): Promise<OrderDocument> => {
+      // await checkout.validateAsync(args, { abortEarly: false })
+      const { userId } = req.session
+
+      const order = await Order.create(req, { ...args, uid: userId })
+
+      await order.save()
+
+      return order
+    },
     create: async (
       root,
       args: { address: string; comment: string },

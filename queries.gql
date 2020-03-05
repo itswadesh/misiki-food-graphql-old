@@ -1,5 +1,5 @@
-mutation createAddress {
-  createAddress(
+mutation addAddress {
+  addAddress(
     email: "admin@codenx.com"
     firstName: "Swadesh"
     lastName: "Behera"
@@ -132,11 +132,7 @@ mutation {
 }
 
 mutation {
-  signUp(
-    email: "alex@gmail.com"
-    name: "Alex"
-    password: "Secret12"
-  ) {
+  signUp(email: "alex@gmail.com", name: "Alex", password: "Secret12") {
     id
   }
 }

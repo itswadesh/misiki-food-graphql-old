@@ -35,7 +35,7 @@ const resolvers: IResolvers = {
     }
   },
   Mutation: {
-    add: async (
+    addToCart: async (
       root,
       args: {
         pid: string

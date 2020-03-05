@@ -8,9 +8,9 @@ export default gql`
   }
 
   extend type Mutation {
-    deleteAddress(id:ID!):Boolean @auth
+    deleteAddress(id: ID!): Boolean @auth
 
-    createAddress(
+    addAddress(
       email: String
       firstName: String
       lastName: String
@@ -25,7 +25,7 @@ export default gql`
     ): Address @auth
 
     updateAddress(
-      id:ID!
+      id: ID!
       email: String
       firstName: String
       lastName: String
