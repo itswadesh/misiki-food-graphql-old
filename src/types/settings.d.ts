@@ -1,6 +1,6 @@
 import { Document } from 'mongoose'
 
-export interface SettingDocument extends Document {
+export interface SettingsDocument extends Document {
   websiteName: string
   closeMessage: { type: string; default: 'Closed 6PM - 10PM' }
   title: string

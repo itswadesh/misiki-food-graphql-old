@@ -16,6 +16,7 @@ import user from './user'
 import review from './review'
 import slot from './slot'
 import wishlist from './wishlist'
+import settings from './settings'
 
 export default [
   root,
@@ -35,5 +36,6 @@ export default [
   pay,
   review,
   slot,
-  wishlist
+  wishlist,
+  settings
 ]

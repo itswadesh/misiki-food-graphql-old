@@ -13,6 +13,7 @@ import review from './review'
 import slot from './slot'
 import user from './user'
 import wishlist from './wishlist'
+import settings from './settings'
 
 export default [
   chat,
@@ -29,5 +30,6 @@ export default [
   pay,
   review,
   slot,
+  settings,
   wishlist
 ]
