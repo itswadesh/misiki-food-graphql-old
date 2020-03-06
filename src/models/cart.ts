@@ -4,7 +4,8 @@ import { CartDocument } from '../types'
 const { ObjectId } = Schema.Types
 
 const itemSchema = new Schema({
-  id: { type: ObjectId, ref: 'Product' },
+  pid: { type: ObjectId, ref: 'Product' },
+  uid: { type: ObjectId, ref: 'User' },
   name: String,
   img: String,
   slug: String,

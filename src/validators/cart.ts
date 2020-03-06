@@ -9,5 +9,6 @@ export const createCart = Joi.object().keys({
     .label('Variant'),
   qty: Joi.number()
     .required()
-    .label('Qty')
+    .label('Qty'),
+  replace: Joi.boolean().label('Replace')
 })

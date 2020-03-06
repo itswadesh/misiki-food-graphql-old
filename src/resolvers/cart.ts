@@ -21,17 +21,27 @@ const resolvers: IResolvers = {
     carts: (root, args, ctx, info): Promise<CartDocument[]> => {
       return Cart.find({}, fields(info)).exec()
     },
-    myCart: async (
+    getCartQty: async (
+      root,
+      args,
+      { req }: { req: Request },
+      info
+    ): Promise<Number> => {
+      const { userId } = req.session
+      return 10
+    },
+    cart: async (
       root,
       args,
       { req }: { req: Request },
       info
     ): Promise<CartDocument | null> => {
       const { userId } = req.session
-      return (req.session.cart = Cart.findOne(
-        { uid: userId },
-        fields(info)
-      ).exec())
+      let cart = null
+      if (!userId) cart = req.session.cart
+      else cart = await Cart.findOne({ uid: userId })
+      if (!cart) cart = req.session.cart
+      return cart || req.session.cart
     }
   },
   Mutation: {
@@ -41,14 +51,15 @@ const resolvers: IResolvers = {
         pid: string
         vid: string
         qty: number
+        replace: boolean
       },
       { req }: { req: Request }
     ): Promise<CartDocument> => {
       await createCart.validateAsync(args, { abortEarly: false })
-      const { pid, vid, qty } = args
+      const { pid, vid, qty, replace } = args
       // const cart = await Cart.create({ pid, vid, qty})
       // await cart.save()
-      return addToCart(req, { pid, vid, qty })
+      return addToCart(req, { pid, vid, qty, replace })
     }
   }
 }

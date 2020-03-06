@@ -9,9 +9,7 @@ export const verifyOtp = async (
 ): Promise<UserDocument> => {
   const user = await User.findOne({ phone }).select(`${fields} password`)
   if (!user || !(await user.matchesPassword(otp))) {
-    throw new AuthenticationError(
-      'Incorrect phone or otp. Please try again.'
-    )
+    throw new AuthenticationError('Incorrect phone or otp. Please try again.')
   }
 
   return user
@@ -48,11 +46,13 @@ export const ensureSignedOut = (req: Request): void => {
 
 export const signOut = (req: Request, res: Response): Promise<boolean> =>
   new Promise((resolve, reject) => {
-    req.session.destroy(err => {
-      if (err) reject(err)
+    req.session.userId = null
+    resolve(true)
+    // req.session.destroy(err => {
+    //   if (err) reject(err)
 
-      res.clearCookie(SESS_NAME)
+    //   res.clearCookie(SESS_NAME)
 
-      resolve(true)
-    })
+    //   resolve(true)
+    // })
   })

@@ -3,8 +3,8 @@ import {
   CartDocument,
   Request,
   ProductDocument,
-  SettingDocument,
-  CartItemDocument
+  CartItemDocument,
+  SettingsDocument
 } from '../types'
 import { UserInputError } from 'apollo-server-express'
 
@@ -12,7 +12,7 @@ export const saveMyCart = async (cart: CartDocument) => {
   const { qty, uid } = cart
   // Silent. no error or success
   if (qty == 0) {
-    await Cart.remove({ uid })
+    await Cart.deleteOne({ uid })
   } else {
     let c = await Cart.findOneAndUpdate({ uid }, cart, {
       new: true,
@@ -55,7 +55,7 @@ export const addToCart = async (
   // Req required for accessing session
   //   console.log("this session id " + req.sessionID);
   let product: any = {}
-  if (!req.session.cart)
+  if (!req.session.cart || !req.session.cart.items)
     req.session.cart = {
       name: 'Arialshop',
       items: [],
@@ -67,9 +67,8 @@ export const addToCart = async (
       cart_id: req.session.id
     }
   let items = req.session.cart.items
-  if (replace) {
-    items = []
-  }
+  if (replace) items = req.session.cart.items = []
+
   if (+qty === 0) {
     // When specifically told to remove from cart
     items = removeFromCartSession(items, pid, vid)
@@ -79,8 +78,8 @@ export const addToCart = async (
   }
   try {
     // Required for stock verification
-    const product = await Product.findById(pid)
-      .select('name slug img rate vendor vendor_name')
+    product = await Product.findById(pid)
+      .select('name slug img rate vendor')
       .populate('vendor')
     vid = 0
     if (!product) {
@@ -92,19 +91,17 @@ export const addToCart = async (
     throw new UserInputError(e.toString())
   }
   if (!product) throw new UserInputError('Product not found')
-  const { _id, info, name, slug, img, rate } = product
-  if (!_id || !info) throw new UserInputError('Restaurant info missing')
+  const { _id, name, slug, img, rate, vendor } = product
+  if (!_id || !vendor.info) throw new UserInputError('Restaurant info missing')
   if (
     req.session.cart.vendor &&
-    req.session.cart.vendor.toString() != _id.toString() &&
+    req.session.cart.vendor._id != vendor._id &&
     items.length > 0
   )
     throw new UserInputError(
-      `Your cart contain dishes from ${req.session.cart.restaurant}. Do you wish to clear cart and add dishes from ${info.restaurant}?`
+      `Your cart contain dishes from ${req.session.cart.restaurant}. Do you wish to clear cart and add dishes from ${vendor.info.restaurant}?`
     )
-
-  const record = items.find((p: ProductDocument) => p._id === pid)
-
+  const record = items.find((p: CartItemDocument) => p.pid === pid)
   if (record) {
     console.log('Already in cart', pid)
     // If the product is already there in cart increase qty
@@ -118,19 +115,19 @@ export const addToCart = async (
     if (+product.qty < +qty) throw new UserInputError('Not enough stock')
     items.push({ pid, name, slug, img, rate, qty })
   }
-
+  req.session.cart.vendor = vendor
   await calculateSummary(req)
 
   return req.session.cart
 }
 
 export const removeFromCartSession = async (
-  items: [CartDocument],
+  items: [CartItemDocument],
   pid: string,
   vid: string
 ) => {
   for (var i = 0; i < items.length; i++) {
-    if (items[i]._id === pid) {
+    if (items[i].pid === pid) {
       items.splice(i, 1)
     }
   }
@@ -180,7 +177,7 @@ export const getTotal = async (cart: CartDocument) => {
     offer = { amount: 0 }
   }
   let shipping, tax
-  let setting: SettingDocument | null = await Setting.findOne()
+  let setting: SettingsDocument | null = await Setting.findOne()
     .select('shipping tax')
     .exec()
   if (!setting) throw new UserInputError(`Invalid settings`)
@@ -218,7 +215,7 @@ export const calculateSummary = async (req: Request) => {
   const { cart, userId, id } = session
   if (!cart) throw new UserInputError('Cart is empty')
   let { items, offer } = cart
-  let code: string = offer.code
+  let code: string = offer && offer.code
   cart.qty = getTotalQty(items)
   let subtotal = (cart.subtotal = await getSubTotal(items))
   try {

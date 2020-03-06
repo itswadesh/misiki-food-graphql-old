@@ -35,7 +35,7 @@ const resolvers: IResolvers = {
       return index({ model: Product, args, info })
     },
     my: (root, args, { req }: { req: Request }, info) => {
-      args.uid = req.session.userId
+      args.vendor = req.session.userId
       return index({ model: Product, args, info })
     },
     productSlug: async (

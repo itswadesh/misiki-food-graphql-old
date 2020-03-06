@@ -4,11 +4,14 @@ export default gql`
   extend type Query {
     carts: [Cart!] @auth
     abandoned: Cart @auth
-    myCart: Cart
+    cart: Cart
+    # checkCart(pid: ID!): Boolean
+    getCartQty(pid: ID!): Int!
+    # getCartValue: Int!
   }
 
   extend type Mutation {
-    addToCart(pid: ID!, qty: Int!): Cart
+    addToCart(pid: ID!, qty: Int!, replace: Boolean): Cart
     removeFromCart(cartId: ID!): Cart @auth
   }
 
@@ -19,7 +22,8 @@ export default gql`
     qty: Int
     discount: Coupon
     subtotal: Float
-    tax: String
+    shipping: Shipping
+    tax: Tax
     total: Float
     offer_total: Float
     items: [CartItem]
@@ -30,11 +34,15 @@ export default gql`
   }
 
   type CartItem {
-    id: Product
+    pid: ID
     name: String
     img: String
     slug: String
     rate: Float
     qty: Int
+  }
+
+  type Shipping {
+    charge: Int
   }
 `

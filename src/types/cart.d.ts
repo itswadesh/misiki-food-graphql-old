@@ -19,7 +19,7 @@ export interface CartDocument extends Document {
 }
 
 export interface CartItemDocument extends Document {
-  id: ProductDocument['_id']
+  pid: ProductDocument['_id']
   name: string
   sku: string
   slug: string
