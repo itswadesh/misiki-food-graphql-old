@@ -5,8 +5,10 @@ const { ObjectId } = Schema.Types
 
 const orderSchema = new Schema(
   {
-    uid: { type: ObjectId, ref: 'User' },
     orderNo: String,
+    cartId: String,
+    uid: { type: ObjectId, ref: 'User' },
+    vendor: { type: ObjectId, ref: 'User' },
     address: {
       email: String,
       firstName: String,
@@ -22,8 +24,6 @@ const orderSchema = new Schema(
       active: { type: Boolean, default: true },
       uid: { type: ObjectId, ref: 'User' }
     },
-    vendor: { type: ObjectId, ref: 'User' },
-    cartId: String,
     payment: {
       type: Object,
       default: {
@@ -77,8 +77,8 @@ const orderSchema = new Schema(
     cancellationComment: String,
     returnComment: String,
     reviewed: { type: Boolean, default: false },
-    otp: String,
-    active: { type: Boolean, default: true }
+    active: { type: Boolean, default: true },
+    payment_order_id: String
   },
   { versionKey: false, timestamps: true }
 )

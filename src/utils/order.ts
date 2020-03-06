@@ -111,9 +111,9 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
   req.session.cart = cart
   saveMyCart(req.session.cart)
 
-  let uid = null,
-    phone = null,
-    email = null
+  // let uid = null,
+  //   phone = null,
+  //   email = null
 
   let delivery = {
     otp: generateOTP(),
@@ -121,9 +121,9 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
     finish: address.coords
   }
   const orderDetails = {
-    uid,
-    phone,
-    email, // id change on every user creation hence email is used
+    cartId: req.session.cart.cart_id,
+    uid: userId,
+    vendor,
     payment: { state: 'Pending', method: req.body.paymentMethod },
     platform: req.body.platform,
     orderNo: ORDER_PREFIX + Math.floor(new Date().valueOf() * Math.random()), //shortId.generate();

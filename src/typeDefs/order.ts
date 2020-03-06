@@ -40,12 +40,12 @@ export default gql`
     cartId: Cart!
     items: [CartItem!]!
     status: String
-    delivery: String
+    delivery: Delivery
     comment: String
     cancellationReason: String
     cancellationComment: String
     returnComment: String
-    payment: String
+    payment: Pay
     reviewed: Boolean
     createdAt: String!
     updatedAt: String!
@@ -60,5 +60,10 @@ export default gql`
     total: Float
     currency: String
     exchange_rate: Float
+  }
+
+  type Delivery{
+    otp:String,
+    finish:Coords
   }
 `

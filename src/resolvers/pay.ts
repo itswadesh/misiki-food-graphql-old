@@ -10,7 +10,8 @@ import {
   MessageDocument,
   UserDocument,
   PayDocument,
-  ProductDocument
+  ProductDocument,
+  OrderDocument
 } from '../types'
 import { objectId, createPay } from '../validators'
 import { PAY_MESSAGE } from '../config'
@@ -34,7 +35,7 @@ const resolvers: IResolvers = {
   Mutation: {
     razorpay: async (
       root,
-      args: { address: string },
+      args: { address: any },
       { req }
     ): Promise<PayDocument> => {
       // await createPay.validateAsync(args, { abortEarly: false })
@@ -52,10 +53,10 @@ const resolvers: IResolvers = {
       // throw new UserInputError("Please specify your address");
       const newOrder: any = await placeOrder(req, { address: args.address })
       const payment = await instance.orders.create({
-        amount: total * 100,
+        amount: Math.round(total * 100),
         receipt: cart_id.toString(),
         notes: {
-          phone: phone,
+          phone,
           purpose: PAY_MESSAGE
         }
       })
@@ -64,7 +65,7 @@ const resolvers: IResolvers = {
         { $set: { payment, payment_order_id: payment.id } }
       )
 
-      await payment.save()
+      // await payment.save()
 
       return payment
     },
@@ -72,10 +73,10 @@ const resolvers: IResolvers = {
       root,
       args: { payment_id: string; oid: string },
       { req }: { req: Request }
-    ): Promise<PayDocument> => {
+    ): Promise<OrderDocument> => {
       let o = await Order.findOne({ payment_order_id: args.oid })
       if (!o) throw new UserInputError('Order not found. Please try again')
-      const amount = o.amount.total * 100
+      const amount = Math.round(o.amount.total * 100)
       const payment = await instance.payments.capture(args.payment_id, amount)
       await Order.updateOne(
         { payment_order_id: payment.order_id },
@@ -96,8 +97,7 @@ const resolvers: IResolvers = {
         }
       }
       req.session.cart = {}
-      if (payment.captured) return o._id
-      else return payment
+      return o
     }
   }
 }

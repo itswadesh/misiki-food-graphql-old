@@ -5,15 +5,17 @@ const { ObjectId } = Schema.Types
 
 const paySchema = new Schema(
   {
-    body: String,
-    sender: {
-      type: ObjectId,
-      ref: 'User'
-    },
-    chat: {
-      type: ObjectId,
-      ref: 'Chat'
-    }
+    id: String,
+    entity: String,
+    amount: Number,
+    amount_paid: Number,
+    amount_due: Number,
+    currency: String,
+    receipt: String,
+    offer_id: String,
+    status: String,
+    attempts: Number,
+    created_at: Date
   },
   {
     timestamps: true

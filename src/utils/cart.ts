@@ -92,14 +92,14 @@ export const addToCart = async (
   }
   if (!product) throw new UserInputError('Product not found')
   const { _id, name, slug, img, rate, vendor } = product
-  if (!_id || !vendor.info) throw new UserInputError('Restaurant info missing')
+  if (!_id || !vendor || !vendor.info) throw new UserInputError('Restaurant info missing')
   if (
     req.session.cart.vendor &&
     req.session.cart.vendor._id != vendor._id &&
     items.length > 0
   )
     throw new UserInputError(
-      `Your cart contain dishes from ${req.session.cart.restaurant}. Do you wish to clear cart and add dishes from ${vendor.info.restaurant}?`
+      `Your cart contain dishes from ${req.session.cart.vendor.info.restaurant}. Do you wish to clear cart and add dishes from ${vendor.info.restaurant}?`
     )
   const record = items.find((p: CartItemDocument) => p.pid === pid)
   if (record) {

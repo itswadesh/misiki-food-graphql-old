@@ -6,13 +6,33 @@ export default gql`
   }
   extend type Mutation {
     razorpay(address: AddressInput!): Pay @auth
-    capturePay(payment_id: String!, oid: String!): Pay @auth
+    capturePay(payment_id: String!, oid: String!): Order @auth
   }
 
   type Pay {
-    id: ID!
-    payment: String!
-    createdAt: String!
-    updatedAt: String!
+    id: String,
+  entity: String,
+  amount: Float,
+  currency: String,
+  status: String,
+  order_id: String,
+  invoice_id: String,
+  international: Boolean,
+  method: String,
+  amount_refunded: Float,
+  refund_status: String,
+  captured: Boolean,
+  description: String,
+  card_id: String,
+  bank: String,
+  wallet: String,
+  vpa: String,
+  email: String,
+  contact: String,
+  fee: Float,
+  tax: Float,
+  error_code: String,
+  error_description: String,
+  created_at: String
   }
 `
