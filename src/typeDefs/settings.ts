@@ -42,15 +42,15 @@ export default gql`
   }
 
   input TaxIp {
-    cgst: Int
-    sgst: Int
-    igst: Int
+    cgst: Float
+    sgst: Float
+    igst: Float
   }
 
   type Tax {
-    cgst: Int
-    sgst: Int
-    igst: Int
+    cgst: Float
+    sgst: Float
+    igst: Float
   }
 
   type Sms {

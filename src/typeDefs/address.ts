@@ -20,7 +20,7 @@ export default gql`
       country: String
       state: String
       coords: Geo
-      zip: String
+      zip: Int
       phone: String
     ): Address @auth
 

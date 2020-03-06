@@ -48,7 +48,29 @@ const orderSchema = new Schema(
       exchange_rate: Number,
       offer: Object
     },
-    items: [{ type: ObjectId, ref: 'Product' }],
+    items: [
+      {
+        pid: {
+          type: ObjectId,
+          ref: 'Product'
+        },
+        name: String,
+        sku: String,
+        slug: String,
+        description: String,
+        img: String,
+        qty: Number,
+        rate: Number,
+        subtotal: Number,
+        total: Number,
+        currency: String,
+        vendor: {
+          type: ObjectId,
+          ref: 'User'
+        },
+        delivery_days: Number
+      }
+    ],
     status: { type: String, default: 'Waiting for confirmation' },
     comment: String,
     cancellationReason: String,

@@ -191,7 +191,8 @@ export const getTotal = async (cart: CartDocument) => {
     sgst: (total * +tax.sgst) / 100,
     igst: (total * +tax.igst) / 100
   }
-  cart.total = total + total * (+tax.cgst + +tax.sgst + +tax.igst) * 0.01
+  return (cart.total =
+    total + total * (+tax.cgst + +tax.sgst + +tax.igst) * 0.01)
 }
 
 export const applyDiscount = (
@@ -210,12 +211,11 @@ export const applyDiscount = (
 }
 
 // Also called from Coupon Controller
-export const calculateSummary = async (req: Request) => {
+export const calculateSummary = async (req: Request, code?: string) => {
   const { session } = req
   const { cart, userId, id } = session
   if (!cart) throw new UserInputError('Cart is empty')
   let { items, offer } = cart
-  let code: string = offer && offer.code
   cart.qty = getTotalQty(items)
   let subtotal = (cart.subtotal = await getSubTotal(items))
   try {

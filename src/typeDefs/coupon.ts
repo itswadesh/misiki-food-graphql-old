@@ -7,7 +7,7 @@ export default gql`
   }
 
   extend type Mutation {
-    applyCoupon(code: String!): Coupon @auth
+    applyCoupon(code: String!): Cart @auth
     updateCoupon(
       code: String!
       value: Float!

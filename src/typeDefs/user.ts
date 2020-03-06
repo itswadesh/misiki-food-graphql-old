@@ -43,16 +43,21 @@ export default gql`
   }
 
   input AddressInput {
-    town: String
-    city: String
-    state: String
-    zip: String
-    country: String
-    coords: Geo
-    address: String
+    id: ID
+    email: String
     firstName: String
     lastName: String
+    address: String
+    town: String
+    city: String
+    country: String
+    state: String
+    coords: Geo
+    zip: Int
     phone: String
+    active: Boolean
+    createdAt: String!
+    updatedAt: String!
   }
 
   input InputInfo {

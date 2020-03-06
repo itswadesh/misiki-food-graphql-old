@@ -25,7 +25,7 @@ const resolvers: IResolvers = {
       args,
       { req }: { req: Request }
     ): Promise<any> => {
-      await calculateSummary(req)
+      await calculateSummary(req, args.code)
       return req.session.cart
     },
     updateCoupon: async (

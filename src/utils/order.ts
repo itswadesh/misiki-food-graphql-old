@@ -44,10 +44,7 @@ export const updateStats = async (pid: Types.ObjectId) => {
   }
 }
 
-export const placeOrder = async (
-  { req }: { req: Request },
-  { address, comment }: any
-) => {
+export const placeOrder = async (req: Request, { address, comment }: any) => {
   let setting: SettingDocument | null = await Setting.findOne().exec()
   if (!setting) throw new UserInputError('Invalid settings')
   if (
@@ -59,58 +56,52 @@ export const placeOrder = async (
     throw new UserInputError('No items in cart')
 
   let { userId, cart } = req.session
-  let { items } = cart
-  if (!items || items.length < 1) throw new UserInputError('Cart is empty.')
-  let vendor: UserDocument | null = await User.findOne({
-    _id: items[0].product.vendor,
-    role: 'chef'
-  })
-    .select('address')
-    .exec()
+  let { items, vendor } = cart
+  if (!items || items.length < 1)
+    throw new UserInputError('Cart is empty.').select('address').exec()
   if (!vendor) throw new UserInputError('Vendor not found')
-
   for (let i of items) {
     // If item not found in cart remove it
-    let product: ProductDocument | null = await Product.findById(i._id)
+    let product: ProductDocument | null = await Product.findById(i.pid)
     if (!product) throw new UserInputError('Product not found')
 
     if (product.stock - i.qty < 0)
       throw new UserInputError(`Not enough quantity for ${product.name}`)
 
-    const {
-      _id,
-      name,
-      sku,
-      slug,
-      img,
-      description,
-      stock,
-      rate,
-      subtotal,
-      total,
-      currency,
-      vendor,
-      delivery_days
-    } = i
-    items.push({
-      id: _id,
-      name,
-      sku,
-      slug,
-      description,
-      img,
-      stock,
-      rate,
-      subtotal,
-      total,
-      currency,
-      vendor,
-      delivery_days
-    })
+    // const {
+    //   pid,
+    //   name,
+    //   sku,
+    //   slug,
+    //   img,
+    //   description,
+    //   stock,
+    //   rate,
+    //   subtotal,
+    //   total,
+    //   currency,
+    //   vendor,
+    //   delivery_days
+    // } = i
+    // items.push({
+    //   pid,
+    //   name,
+    //   sku,
+    //   slug,
+    //   description,
+    //   img,
+    //   stock,
+    //   rate,
+    //   subtotal,
+    //   total,
+    //   currency,
+    //   vendor,
+    //   delivery_days
+    // })
   }
   let subtotal = await getSubTotal(items)
   let total = await getTotal(req.session.cart)
-  let shipping = { method: setting.shipping.method, amount: 0 }
+  let shipping = cart.shipping.charge
   let qty = getTotalQty(items)
   cart.items = items
   cart.subtotal = subtotal
