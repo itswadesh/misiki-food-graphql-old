@@ -56,8 +56,6 @@ export default gql`
     zip: Int
     phone: String
     active: Boolean
-    createdAt: String!
-    updatedAt: String!
   }
 
   input InputInfo {

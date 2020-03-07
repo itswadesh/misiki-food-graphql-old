@@ -56,10 +56,15 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
     throw new UserInputError('No items in cart')
 
   let { userId, cart } = req.session
-  let { items, vendor } = cart
+  let { items } = cart
   if (!items || items.length < 1)
     throw new UserInputError('Cart is empty.').select('address').exec()
+  if (!cart.vendor) throw new UserInputError('Vendor not found')
+  let vendor: UserDocument | null = await User.findById(cart.vendor._id)
   if (!vendor) throw new UserInputError('Vendor not found')
+  if (!vendor.info || !vendor.info.restaurant)
+    throw new UserInputError('Restaurant info missing')
+
   for (let i of items) {
     // If item not found in cart remove it
     let product: ProductDocument | null = await Product.findById(i.pid)
@@ -82,13 +87,17 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
 
   let delivery = {
     otp: generateOTP(),
-    start: vendor.address.coords,
-    finish: address.coords
+    start: vendor.address && vendor.address.coords,
+    finish: address && address.coords
   }
+
   const orderDetails = {
     cartId: req.session.cart.cart_id,
     uid: userId,
-    vendor: { restaurant: vendor.info.restaurant, id: vendor._id },
+    vendor: {
+      restaurant: vendor.info.restaurant,
+      id: vendor._id
+    },
     payment: { state: 'Pending', method: req.body.paymentMethod },
     platform: 'Mobile',
     orderNo: ORDER_PREFIX + Math.floor(new Date().valueOf() * Math.random()), //shortId.generate();
