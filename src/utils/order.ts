@@ -17,6 +17,34 @@ import {
 import { objectId } from '../validators'
 import { UserInputError } from 'apollo-server-express'
 
+export const getData = async (start: Date, end: Date, q: any) => {
+  let data = await Order.aggregate([
+    {
+      $match: {
+      }
+    },
+    { $unwind: '$items' },
+    { $project: { items: 1, createdAt: 1, 'vendor': 1 } },
+    {
+      $group: {
+        _id: {
+          date: {
+            $dateToString: {
+              format: "%d-%m-%Y",
+              date: "$createdAt",
+              timezone: "+0530"
+            }
+          },
+          id: '$items._id', img: '$items.img', slug: '$items.slug', name: '$items.name', rate: '$items.rate', time: '$items.time', type: '$items.type', ratings: '$items.ratings', reviews: '$items.reviews', restaurant: "$vendor.restaurant",
+        },
+        count: { $sum: "$amount.qty" },
+        amount: { $sum: "$amount.subtotal" }
+      }
+    },
+    { $sort: { count: -1 } }
+  ]);
+  return data;
+}
 export const updateStats = async (pid: Types.ObjectId) => {
   await objectId.validateAsync(pid)
   const reviews = await Review.aggregate([

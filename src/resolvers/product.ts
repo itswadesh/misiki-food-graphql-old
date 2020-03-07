@@ -19,17 +19,45 @@ import {
   ifImage
 } from '../validators'
 import { Chat, Message, Product } from '../models'
-import { fields, hasSubfields } from '../utils'
+import { fields, hasSubfields, getData } from '../utils'
 import pubsub from '../pubsub'
 
 import { deleteFile } from '../utils/image'
 import { index } from '../utils/base'
+import { getStartEndDate3 } from '../utils/dates'
 
 const MESSAGE_SENT = 'MESSAGE_SENT'
 const resolvers: IResolvers = {
   Query: {
     products: (root, args, { req }: { req: Request }, info) => {
       return Product.find({}, fields(info)).exec()
+    },
+    popular: (root, args, { req }: { req: Request }, info) => {
+      args.sort = 'stats.popularity'
+      args.limit = 10
+      return index({ model: Product, args, info })
+    },
+    bestSellers: async (root, args, { req }: { req: Request }, info) => {
+      let q: any = {};
+      if (req.query.daily && req.query.daily != "null") {
+        q.daily = req.query.daily;
+      }
+      if (req.query.type && req.query.type != "null") {
+        q.type = req.query.type;
+      }
+      if (req.query.search) q.q = { $regex: new RegExp(req.query.search, "ig") };
+
+      const { start, end } = getStartEndDate3(0);
+      let t = await getData(start, end, q);
+      const startEnd1 = getStartEndDate3(1);
+      let t1 = await getData(startEnd1.start, startEnd1.end, q);
+      const startEnd2 = getStartEndDate3(2);
+      let t2 = await getData(startEnd2.start, startEnd2.end, q);
+      const startEnd3 = getStartEndDate3(3);
+      let t3 = await getData(startEnd3.start, startEnd3.end, q);
+      const startEnd4 = getStartEndDate3(4);
+      let t4 = await getData(startEnd4.start, startEnd4.end, q);
+      return { t, t1, t2, t3, t4 }
     },
     search: (root, args, { req }: { req: Request }, info) => {
       return index({ model: Product, args, info })

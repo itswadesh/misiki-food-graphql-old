@@ -7,7 +7,6 @@ export const index = async ({ model, args, info, userId }: any) => {
   const setting: any = await Setting.findOne()
   let page = !args.page && args.page != 0 ? 1 : parseInt(args.page)
   const qlimit = parseInt(args.limit || 0)
-
   const sort = args.sort || '-_id'
   const search = args.search
   const select = toJson(info)

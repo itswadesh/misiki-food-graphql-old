@@ -5,6 +5,15 @@ export default gql`
     uploads: [File]
     products: [Product!]
     product(id: ID!): Product
+    popular(
+      page: Int
+      skip: Int
+      limit: Int
+      search: String
+      sort: String
+      q: String
+    ): SearchRes
+    bestSellers: BestSellers
     productSlug(slug: String!): Product
     search(
       page: Int
@@ -46,6 +55,35 @@ export default gql`
       time: String
     ): Product @auth
   }
+
+  type BestSellers {
+    t:[BS],
+    t1:[BS],
+    t2:[BS],
+    t3:[BS],
+    t4:[BS] 
+  }
+
+  type BS{
+    _id: BS1
+    count: Int
+    amount: Int
+    updatedAt: String
+  }
+
+type BS1{
+    id: ID
+    date: String
+    name: String
+    slug:String
+    img: String
+    rate: String
+    restaurant: String
+    time: String
+    type: String
+    ratings: String
+    reviews: String
+}
 
   type SearchRes {
     data: [Product]
