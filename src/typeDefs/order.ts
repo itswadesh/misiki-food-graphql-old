@@ -5,7 +5,7 @@ export default gql`
     orders: [Order!] @auth
     order(id: ID!): Order @auth
     myToday: Order @auth
-    todaysSummary: Order @auth
+    todaysSummary: TodaysSummary @auth
     myCustomers(
       page: Int
       skip: Int
@@ -21,6 +21,12 @@ export default gql`
     checkout(qty: String!, pid: String!): Boolean @auth
   }
 
+  type TodaysSummary {
+    _id: String
+    count: Float
+    amount: Float
+  }
+
   type orderRes {
     data: [Order]
     count: Int
@@ -33,7 +39,7 @@ export default gql`
     uid: User!
     otp: String
     orderNo: String
-    amount: Amount!
+    amount: Amount
     address: Address!
     vendor: Vendor
     payment_order_id: String
