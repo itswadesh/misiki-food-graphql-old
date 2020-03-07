@@ -32,10 +32,10 @@ export default gql`
     id: ID!
     uid: User!
     otp: String
-    orderNo: String!
+    orderNo: String
     amount: Amount!
     address: Address!
-    vendor: User
+    vendor: Vendor
     payment_order_id: String
     cartId: Cart!
     items: [CartItem!]!
@@ -51,6 +51,11 @@ export default gql`
     updatedAt: String!
   }
 
+  type Vendor {
+    restaurant: String
+    id: User
+  }
+
   type Amount {
     qty: Int
     subtotal: Float
@@ -62,8 +67,8 @@ export default gql`
     exchange_rate: Float
   }
 
-  type Delivery{
-    otp:String,
-    finish:Coords
+  type Delivery {
+    otp: String
+    finish: Coords
   }
 `

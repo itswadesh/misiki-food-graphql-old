@@ -16,7 +16,7 @@ import {
 import { objectId, createPay } from '../validators'
 import { PAY_MESSAGE } from '../config'
 import { Order, Product } from '../models'
-import { placeOrder } from '../utils'
+import { placeOrder, fields } from '../utils'
 let Razorpay = require('razorpay')
 const { RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET } = process.env
 var instance = new Razorpay({
@@ -72,7 +72,8 @@ const resolvers: IResolvers = {
     capturePay: async (
       root,
       args: { payment_id: string; oid: string },
-      { req }: { req: Request }
+      { req }: { req: Request },
+      info
     ): Promise<OrderDocument> => {
       let o = await Order.findOne({ payment_order_id: args.oid })
       if (!o) throw new UserInputError('Order not found. Please try again')

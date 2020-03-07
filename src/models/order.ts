@@ -8,7 +8,7 @@ const orderSchema = new Schema(
     orderNo: String,
     cartId: String,
     uid: { type: ObjectId, ref: 'User' },
-    vendor: { type: ObjectId, ref: 'User' },
+    vendor: { restaurant: String, id: { type: ObjectId, ref: 'User' } },
     address: {
       email: String,
       firstName: String,

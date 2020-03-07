@@ -36,7 +36,10 @@ export interface OrderDocument extends Document {
     active: boolean
     uid: UserDocument['_id']
   }
-  vendor: UserDocument['_id']
+  vendor: {
+    restaurant: string
+    id: UserDocument['_id']
+  }
   payment_order_id: string
   cartId: CartDocument['_id']
   items: [ProductDocument['_id']]

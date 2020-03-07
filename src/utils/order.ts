@@ -9,10 +9,10 @@ import {
   CartDocument,
   ProductDocument,
   Request,
-  SettingDocument,
   UserDocument,
   CartItemDocument,
-  AddressDocument
+  AddressDocument,
+  SettingsDocument
 } from '../types'
 import { objectId } from '../validators'
 import { UserInputError } from 'apollo-server-express'
@@ -45,7 +45,7 @@ export const updateStats = async (pid: Types.ObjectId) => {
 }
 
 export const placeOrder = async (req: Request, { address, comment }: any) => {
-  let setting: SettingDocument | null = await Setting.findOne().exec()
+  let setting: SettingsDocument | null = await Setting.findOne().exec()
   if (!setting) throw new UserInputError('Invalid settings')
   if (
     !req.session ||
@@ -67,37 +67,6 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
 
     if (product.stock - i.qty < 0)
       throw new UserInputError(`Not enough quantity for ${product.name}`)
-
-    // const {
-    //   pid,
-    //   name,
-    //   sku,
-    //   slug,
-    //   img,
-    //   description,
-    //   stock,
-    //   rate,
-    //   subtotal,
-    //   total,
-    //   currency,
-    //   vendor,
-    //   delivery_days
-    // } = i
-    // items.push({
-    //   pid,
-    //   name,
-    //   sku,
-    //   slug,
-    //   description,
-    //   img,
-    //   stock,
-    //   rate,
-    //   subtotal,
-    //   total,
-    //   currency,
-    //   vendor,
-    //   delivery_days
-    // })
   }
   let subtotal = await getSubTotal(items)
   let total = await getTotal(req.session.cart)
@@ -111,10 +80,6 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
   req.session.cart = cart
   saveMyCart(req.session.cart)
 
-  // let uid = null,
-  //   phone = null,
-  //   email = null
-
   let delivery = {
     otp: generateOTP(),
     start: vendor.address.coords,
@@ -123,11 +88,11 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
   const orderDetails = {
     cartId: req.session.cart.cart_id,
     uid: userId,
-    vendor,
+    vendor: { restaurant: vendor.info.restaurant, id: vendor._id },
     payment: { state: 'Pending', method: req.body.paymentMethod },
-    platform: req.body.platform,
+    platform: 'Mobile',
     orderNo: ORDER_PREFIX + Math.floor(new Date().valueOf() * Math.random()), //shortId.generate();
-    address: req.body.address,
+    address,
     items,
     amount: {
       total,
@@ -140,9 +105,9 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
   }
   const o = await Order.create(orderDetails)
   // clear(req)
-  await User.updateOne(
-    { _id: userId },
-    { $set: { address: req.body.address } }
-  ).exec() // Save address into user details
+  // await User.updateOne(
+  //   { _id: userId },
+  //   { $set: { address } }
+  // ).exec() // Save address into user details
   return o
 }
