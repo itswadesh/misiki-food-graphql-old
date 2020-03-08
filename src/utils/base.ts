@@ -51,7 +51,6 @@ export const index = async ({ model, args, info, userId }: any) => {
     // Find only records that belong to the logged in user
     where.uid = args.uid
   }
-
   let searchString = where
   if (search != 'null' && !!search)
     searchString = { ...where, q: { $regex: new RegExp(search, 'ig') } }

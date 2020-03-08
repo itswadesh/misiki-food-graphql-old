@@ -60,9 +60,10 @@ const resolvers: IResolvers = {
       return { t, t1, t2, t3, t4 }
     },
     search: (root, args, { req }: { req: Request }, info) => {
+      args.stock = { $gt: 0 }
       return index({ model: Product, args, info })
     },
-    my: (root, args, { req }: { req: Request }, info) => {
+    myProducts: (root, args, { req }: { req: Request }, info) => {
       args.vendor = req.session.userId
       return index({ model: Product, args, info })
     },

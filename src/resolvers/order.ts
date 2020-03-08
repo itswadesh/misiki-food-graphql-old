@@ -17,6 +17,82 @@ const resolvers: IResolvers = {
     orders: (root, args, ctx, info): Promise<OrderDocument[]> => {
       return Order.find({}, fields(info)).exec()
     },
+    todaysChefs: async (root, args, ctx, info): Promise<any> => {
+      const { start, end } = getStartEndDate(0);
+      let result = await Order.aggregate([
+        {
+          $match: {
+            status: "Waiting for confirmation",
+            createdAt: { $gte: start, $lte: end }
+          }
+        },
+        {
+          $group: {
+            _id: {
+              _id: "$vendor._id",
+              restaurant: "$vendor.restaurant",
+              phone: "$vendor.phone",
+              vendor_name: "$vendor.firstName",
+              qrno: "$vendor.address"
+            },
+            count: { $sum: "$amount.qty" },
+            amount: { $sum: "$amount.subtotal" }
+          }
+        },
+        { $sort: { "_id.qrno": 1 } }
+      ]);
+      return result
+    },
+    todaysStatus: async (root, args, ctx, info): Promise<any> => {
+      const { start, end } = getStartEndDate(0);
+      let q: any = {
+        // createdAt: { $gte: start, $lte: end },
+        // status: "Order Placed"
+      };
+      let all = await await Order.aggregate([
+        { $match: q },
+        {
+          $group: {
+            _id: "$status",
+            total: { $sum: "$amount.subtotal" },
+            count: { $sum: 1 },
+            items: {
+              $push: {
+                _id: "$_id",
+                orderNo: "$orderNo",
+                otp: "$delivery.otp",
+                item: "$item",
+                address: "$address",
+                phone: "$phone",
+                amount: "$amount",
+                vendor: "$vendor",
+                createdAt: "$createdAt"
+              }
+            }
+          }
+        }
+        // { $unwind: '$items' },
+        // { $project: { items: 1, address: 1, uid: 1, amount: 1, vendor: 1, createdAt: 1, 'vendor': 1 } },
+        // {
+        //   $group: {
+        //     _id: "$status",
+        //     total: { $sum: "$amount.subtotal" },
+        //     count: { $sum: 1 },
+        //     items: {
+        //       $push: {
+        //         items: "$items",
+        //         address: "$address",
+        //         uid: "$uid",
+        //         amount: "$amount",
+        //         vendor: "$vendor"
+        //       }
+        //     }
+        //   }
+        // },
+        // { $sort: { "address.address": 1 } }
+      ]);
+      return all[0]
+    },
     todaysSummary: async (root, args, { req }: { req: Request }, info) => {
       const { start, end } = getStartEndDate(0)
       const { userId } = req.session
@@ -57,11 +133,15 @@ const resolvers: IResolvers = {
       ])
       return data[0]
     },
+    pendingOrders: (root, args, { req }: { req: Request }, info) => {
+      args.status = 'Waiting for confirmation'
+      return index({ model: Order, args, info })
+    },
     myCustomers: (root, args, { req }: { req: Request }, info) => {
       const { start, end } = getStartEndDate(0)
-      args.vendor = req.session.userId
-      args.createdAt = { $gte: start, $lte: end }
-      args.uid = req.session.userId
+      args['vendor.id'] = req.session.userId
+      // args.createdAt = { $gte: start, $lte: end }
+      // args.uid = req.session.userId
       return index({ model: Order, args, info })
     },
     order: async (

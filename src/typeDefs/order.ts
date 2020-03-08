@@ -4,9 +4,18 @@ export default gql`
   extend type Query {
     orders: [Order!] @auth
     order(id: ID!): Order @auth
-    myToday: Order @auth
+    myToday: TodaysSummary @auth
     todaysSummary: TodaysSummary @auth
+    todaysStatus: todaysStatus @auth
     myCustomers(
+      page: Int
+      skip: Int
+      limit: Int
+      search: String
+      sort: String
+      q: String
+    ): orderRes @auth
+    pendingOrders(
       page: Int
       skip: Int
       limit: Int
@@ -19,6 +28,13 @@ export default gql`
   extend type Mutation {
     create(chatId: ID!, body: String!): Order @auth
     checkout(qty: String!, pid: String!): Boolean @auth
+  }
+
+  type todaysStatus{
+    _id:String
+    total:Int
+    count:Int
+    items:[Order]
   }
 
   type TodaysSummary {

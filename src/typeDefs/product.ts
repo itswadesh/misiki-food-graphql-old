@@ -23,7 +23,7 @@ export default gql`
       sort: String
       q: String
     ): SearchRes
-    my(
+    myProducts(
       page: Int
       skip: Int
       limit: Int
