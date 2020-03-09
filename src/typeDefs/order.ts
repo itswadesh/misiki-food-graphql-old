@@ -2,12 +2,30 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Query {
-    orders: [Order!] @auth
+    orders(
+      page: Int
+      skip: Int
+      limit: Int
+      search: String
+      sort: String
+      vendor: String
+      user: String
+      status: String
+    ): orderRes @auth
     order(id: ID!): Order @auth
     myToday: TodaysSummary @auth
     todaysSummary: TodaysSummary @auth
     todaysStatus: todaysStatus @auth
     myCustomers(
+      page: Int
+      skip: Int
+      limit: Int
+      search: String
+      sort: String
+      q: String
+    ): orderRes @auth
+    todaysChefs: [TC] @auth
+    ordersOfChef(
       page: Int
       skip: Int
       limit: Int
@@ -30,11 +48,25 @@ export default gql`
     checkout(qty: String!, pid: String!): Boolean @auth
   }
 
-  type todaysStatus{
-    _id:String
-    total:Int
-    count:Int
-    items:[Order]
+  type TC {
+    _id: todaysChefs
+    amount: Int
+    count: Int
+  }
+
+  type todaysChefs {
+    id: String
+    restaurant: String
+    firstName: String
+    lastName: String
+    address: Address
+  }
+
+  type todaysStatus {
+    _id: String
+    amount: Int
+    count: Int
+    items: [Order]
   }
 
   type TodaysSummary {

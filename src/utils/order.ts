@@ -20,30 +20,38 @@ import { UserInputError } from 'apollo-server-express'
 export const getData = async (start: Date, end: Date, q: any) => {
   let data = await Order.aggregate([
     {
-      $match: {
-      }
+      $match: {}
     },
     { $unwind: '$items' },
-    { $project: { items: 1, createdAt: 1, 'vendor': 1 } },
+    { $project: { items: 1, createdAt: 1, vendor: 1 } },
     {
       $group: {
         _id: {
           date: {
             $dateToString: {
-              format: "%d-%m-%Y",
-              date: "$createdAt",
-              timezone: "+0530"
+              format: '%d-%m-%Y',
+              date: '$createdAt',
+              timezone: '+0530'
             }
           },
-          id: '$items._id', img: '$items.img', slug: '$items.slug', name: '$items.name', rate: '$items.rate', time: '$items.time', type: '$items.type', ratings: '$items.ratings', reviews: '$items.reviews', restaurant: "$vendor.restaurant",
+          id: '$items._id',
+          img: '$items.img',
+          slug: '$items.slug',
+          name: '$items.name',
+          rate: '$items.rate',
+          time: '$items.time',
+          type: '$items.type',
+          ratings: '$items.ratings',
+          reviews: '$items.reviews',
+          restaurant: '$vendor.restaurant'
         },
-        count: { $sum: "$amount.qty" },
-        amount: { $sum: "$amount.subtotal" }
+        count: { $sum: '$amount.qty' },
+        amount: { $sum: '$amount.subtotal' }
       }
     },
     { $sort: { count: -1 } }
-  ]);
-  return data;
+  ])
+  return data
 }
 export const updateStats = async (pid: Types.ObjectId) => {
   await objectId.validateAsync(pid)
@@ -123,7 +131,11 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
     cartId: req.session.cart.cart_id,
     uid: userId,
     vendor: {
-      restaurant: vendor.info.restaurant,
+      restaurant: vendor.info.restaurant, // required during aggregation for delivery boy
+      phone: vendor.phone, // required during aggregation for delivery boy
+      address: vendor.address, // required during aggregation for delivery boy
+      firstName: vendor.firstName, // required during aggregation for delivery boy
+      lastName: vendor.lastName, // required during aggregation for delivery boy
       id: vendor._id
     },
     payment: { state: 'Pending', method: req.body.paymentMethod },

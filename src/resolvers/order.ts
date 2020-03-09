@@ -14,59 +14,65 @@ import { getStartEndDate } from '../utils/dates'
 
 const resolvers: IResolvers = {
   Query: {
-    orders: (root, args, ctx, info): Promise<OrderDocument[]> => {
-      return Order.find({}, fields(info)).exec()
+    orders: (root, args, { req }: { req: Request }, info) => {
+      if (args.vendor) {
+        args['vendor.id'] = args.vendor
+        delete args.vendor
+      }
+      if (args.user) args['user._id'] = args.user
+      return index({ model: Order, args, info })
     },
     todaysChefs: async (root, args, ctx, info): Promise<any> => {
-      const { start, end } = getStartEndDate(0);
+      const { start, end } = getStartEndDate(0)
       let result = await Order.aggregate([
         {
           $match: {
-            status: "Waiting for confirmation",
-            createdAt: { $gte: start, $lte: end }
+            // status: 'Waiting for confirmation',
+            // createdAt: { $gte: start, $lte: end }
           }
         },
         {
           $group: {
             _id: {
-              _id: "$vendor._id",
-              restaurant: "$vendor.restaurant",
-              phone: "$vendor.phone",
-              vendor_name: "$vendor.firstName",
-              qrno: "$vendor.address"
+              id: '$vendor.id',
+              restaurant: '$vendor.restaurant',
+              firstName: '$vendor.firstName',
+              lastName: '$vendor.lastName',
+              address: '$vendor.address',
+              phone: '$vendor.phone'
             },
-            count: { $sum: "$amount.qty" },
-            amount: { $sum: "$amount.subtotal" }
+            count: { $sum: '$amount.qty' },
+            amount: { $sum: '$amount.subtotal' }
           }
         },
-        { $sort: { "_id.qrno": 1 } }
-      ]);
+        { $sort: { '_id.address.address': 1 } }
+      ])
       return result
     },
     todaysStatus: async (root, args, ctx, info): Promise<any> => {
-      const { start, end } = getStartEndDate(0);
+      const { start, end } = getStartEndDate(0)
       let q: any = {
         // createdAt: { $gte: start, $lte: end },
         // status: "Order Placed"
-      };
+      }
       let all = await await Order.aggregate([
         { $match: q },
         {
           $group: {
-            _id: "$status",
-            total: { $sum: "$amount.subtotal" },
+            _id: '$status',
+            total: { $sum: '$amount.subtotal' },
             count: { $sum: 1 },
             items: {
               $push: {
-                _id: "$_id",
-                orderNo: "$orderNo",
-                otp: "$delivery.otp",
-                item: "$item",
-                address: "$address",
-                phone: "$phone",
-                amount: "$amount",
-                vendor: "$vendor",
-                createdAt: "$createdAt"
+                _id: '$_id',
+                orderNo: '$orderNo',
+                otp: '$delivery.otp',
+                item: '$item',
+                address: '$address',
+                phone: '$phone',
+                amount: '$amount',
+                vendor: '$vendor',
+                createdAt: '$createdAt'
               }
             }
           }
@@ -90,7 +96,7 @@ const resolvers: IResolvers = {
         //   }
         // },
         // { $sort: { "address.address": 1 } }
-      ]);
+      ])
       return all[0]
     },
     todaysSummary: async (root, args, { req }: { req: Request }, info) => {
