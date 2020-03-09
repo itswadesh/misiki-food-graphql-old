@@ -127,9 +127,18 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
     finish: address && address.coords
   }
 
+  let me: UserDocument | null = await User.findById(userId)
+  if (!me) throw new UserInputError('Invalid user')
+
   const orderDetails = {
     cartId: req.session.cart.cart_id,
-    uid: userId,
+    user: {
+      firstName: me.firstName,
+      lastName: me.lastName,
+      address: me.address,
+      phone: me.phone,
+      id: userId
+    },
     vendor: {
       restaurant: vendor.info.restaurant, // required during aggregation for delivery boy
       phone: vendor.phone, // required during aggregation for delivery boy

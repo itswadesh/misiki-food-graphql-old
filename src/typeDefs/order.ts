@@ -10,6 +10,7 @@ export default gql`
       sort: String
       vendor: String
       user: String
+      today: Boolean
       status: String
     ): orderRes @auth
     order(id: ID!): Order @auth
@@ -107,6 +108,10 @@ export default gql`
 
   type Vendor {
     restaurant: String
+    phone: String
+    firstName: String
+    lastName: String
+    address: Address
     id: User
   }
 

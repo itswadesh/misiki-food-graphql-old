@@ -20,6 +20,8 @@ const resolvers: IResolvers = {
         delete args.vendor
       }
       if (args.user) args['user._id'] = args.user
+      const { start, end } = getStartEndDate(0)
+      if (args.today) args.createdAt = { $gte: start, $lte: end }
       return index({ model: Order, args, info })
     },
     todaysChefs: async (root, args, ctx, info): Promise<any> => {
