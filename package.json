@@ -97,5 +97,9 @@
     "ts-jest": "^25.2.1",
     "ts-node-dev": "^1.0.0-pre.43",
     "typescript": "^3.8.3"
+  },
+  "resolutions": {
+    "**/**/fs-capacitor": "^5.0.0",
+    "**/graphql-upload": "^9.0.0"
   }
 }

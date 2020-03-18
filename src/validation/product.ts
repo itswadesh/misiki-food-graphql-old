@@ -14,10 +14,10 @@ export const productValidation = Joi.object().keys({
     .required()
     .max(5)
     .label('Veg/Non-Veg'),
-  rate: Joi.number()
+  price: Joi.number()
     .required()
     .min(30)
-    .label('Rate'),
+    .label('Price'),
   stock: Joi.number()
     .required()
     .min(0)

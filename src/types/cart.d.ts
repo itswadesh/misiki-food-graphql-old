@@ -6,7 +6,7 @@ export interface CartDocument extends Document {
   body: string
   uid: UserDocument['_id']
   cart_id: CartDocument['_id']
-  rate: number
+  price: number
   qty: number
   discount: CouponDocument['_id']
   subtotal: number
@@ -28,7 +28,7 @@ export interface CartItemDocument extends Document {
   description: string
   img: string
   qty: number
-  rate: number
+  price: number
   subtotal: number
   total: number
   currency: string

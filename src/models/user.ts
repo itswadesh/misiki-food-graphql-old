@@ -22,6 +22,7 @@ const userSchema = new Schema(
       default: 'user'
     },
     gender: String,
+    city: String,
     info: { type: Object, default: {} },
     avatar: String,
     provider: String,

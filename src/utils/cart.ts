@@ -79,7 +79,7 @@ export const addToCart = async (
   try {
     // Required for stock verification
     product = await Product.findById(pid)
-      .select('name slug img rate vendor')
+      .select('name slug img price vendor')
       .populate('vendor')
     if (!product) {
       items = removeFromCartSession(items, pid, vid)
@@ -90,7 +90,7 @@ export const addToCart = async (
     throw new UserInputError(e.toString())
   }
   if (!product) throw new UserInputError('Product not found')
-  const { _id, name, slug, img, rate, vendor } = product
+  const { _id, name, slug, img, price, vendor } = product
   if (!_id || !vendor || !vendor.info) throw new UserInputError('Restaurant info missing')
   if (
     req.session.cart.vendor &&
@@ -114,7 +114,7 @@ export const addToCart = async (
   } else {
     console.log('Not in cart', pid, vid)
     if (+product.qty < +qty) throw new UserInputError('Not enough stock')
-    items.push({ pid, vid, name, slug, img, rate, qty })
+    items.push({ pid, vid, name, slug, img, price, qty })
   }
   req.session.cart.vendor = vendor
   await calculateSummary(req)
@@ -146,9 +146,9 @@ export const getTotalQty = (items: Array<CartItemDocument>): number => {
 export const getSubTotal = (items: Array<CartItemDocument>): number => {
   let total = 0
   for (let item of items) {
-    let rate = item.rate
+    let price = item.price
     let qty = item.qty
-    let amount = rate * qty
+    let amount = price * qty
     total += amount
   }
   return Math.round(total)

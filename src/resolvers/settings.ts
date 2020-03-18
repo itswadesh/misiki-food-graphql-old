@@ -30,7 +30,7 @@ const resolvers: IResolvers = {
       { req }: { req: Request }
     ): Promise<SettingsDocument> => {
       const { userId } = req.session
-      const { id, name, description, type, rate, stock, img, time } = args
+      const { id, name, description, type, price, stock, img, time } = args
       let settings = await Setting.findOneAndUpdate(
         { _id: id },
         { $set: { ...args, uid: userId } }

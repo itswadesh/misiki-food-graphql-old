@@ -38,7 +38,7 @@ export const getData = async (start: Date, end: Date, q: any) => {
           img: '$items.img',
           slug: '$items.slug',
           name: '$items.name',
-          rate: '$items.rate',
+          price: '$items.price',
           time: '$items.time',
           type: '$items.type',
           ratings: '$items.ratings',

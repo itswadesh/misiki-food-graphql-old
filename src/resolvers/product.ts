@@ -105,7 +105,7 @@ const resolvers: IResolvers = {
         name: string
         description: string
         type: string
-        rate: number
+        price: number
         stock: number
         img: string
         time: string
@@ -115,7 +115,7 @@ const resolvers: IResolvers = {
       await productValidation.validateAsync(args, { abortEarly: false })
 
       const { userId } = req.session
-      const { id, name, description, type, rate, stock, img, time } = args
+      const { id, name, description, type, price, stock, img, time } = args
       let product = await Product.findOneAndUpdate(
         { _id: id },
         { $set: { ...args, uid: userId } }
@@ -126,7 +126,7 @@ const resolvers: IResolvers = {
       // product.name = name
       // product.description = description
       // product.type = type
-      // product.rate = rate
+      // product.price = price
       // product.stock = stock
       // product.img = img
       // product.vendor = userId
@@ -135,13 +135,39 @@ const resolvers: IResolvers = {
 
       return product
     },
+    saveVariant: async (
+      root,
+      args: {
+        id: string
+        name: string
+        price: number
+        stock: number
+        img: string
+      },
+      { req }: { req: Request }
+    ): Promise<ProductDocument> => {
+      await productValidation.validateAsync(args, { abortEarly: false })
+
+      const { userId } = req.session
+      const { id, name, price, stock, img } = args
+      console.log('zzzzzzzzzzzzzzzzzzzzzzzzzzz', args);
+      // let product = await Product.findOneAndUpdate(
+      //   { _id: id },
+      //   { $set: { ...args, uid: userId } }
+      // )
+      // if (!product) throw new UserInputError(`Product with id= ${id} not found`)
+
+      // await product.save() // To fire pre save hoook
+
+      // return product
+    },
     createProduct: async (
       root,
       args: {
         name: string
         description: string
         type: string
-        rate: number
+        price: number
         stock: number
         img: string
         time: string
@@ -151,12 +177,12 @@ const resolvers: IResolvers = {
       await productValidation.validateAsync(args, { abortEarly: false })
 
       const { userId } = req.session
-      const { name, description, type, rate, stock, img, time } = args
+      const { name, description, type, price, stock, img, time } = args
       const product = await Product.create({
         name,
         description,
         type,
-        rate,
+        price,
         stock,
         img,
         time,

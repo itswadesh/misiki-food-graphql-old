@@ -39,7 +39,7 @@ export default gql`
       name: String!
       description: String
       type: String
-      rate: Int
+      price: Int
       stock: Int
       img: String
       time: String
@@ -49,11 +49,18 @@ export default gql`
       name: String!
       description: String
       type: String
-      rate: Int
+      price: Int
       stock: Int
       img: String
       time: String
     ): Product @auth
+    saveVariant(
+      id: ID!
+      name: String!
+      price: Int
+      stock: Int
+      img: String
+    ): Variant @auth
   }
 
   type BestSellers {
@@ -77,7 +84,7 @@ type BS1{
     name: String
     slug:String
     img: String
-    rate: String
+    price:Float
     restaurant: String
     time: String
     type: String
@@ -103,7 +110,7 @@ type BS1{
     mrp: Float
     discount: Float
     shipping: Float
-    size: String
+    name: String
     color: String
     trackInventry: String!
     stock: Float
@@ -128,6 +135,7 @@ type BS1{
     sku: String
     group: String
     img: String
+    variants:[Variant]
     enableZips: Boolean
     zips: [String!]
     category: Category
@@ -136,7 +144,7 @@ type BS1{
     status: String
     type: String
     stock: Int
-    rate: Int
+    price: Int
     time: String
     daily: Boolean
     features: [String]

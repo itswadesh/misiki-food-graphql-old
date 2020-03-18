@@ -6,7 +6,7 @@ export interface VariantDocument extends Document {
   mrp: number
   discount: number
   shipping: number
-  size: string
+  name: string
   color: string
   trackInventory: boolean
   stock: number

@@ -4,6 +4,15 @@ import { generateSlug } from '../utils'
 
 const { ObjectId } = Schema.Types
 
+let variantsSchema = new Schema({
+  img: [String], imgUrls: [String], price: { type: Number, default: 0, es_indexed: true }, mrp: { type: Number, default: 0, es_indexed: true }, offer: { type: Number, default: 0 }, shipping: { type: Number, default: 0 },
+  weight: String, name: { type: String, es_indexed: true }, color: String, trackInventory: { type: Boolean, default: false }, stock: { type: Number, default: 100000 }, unit: { type: String, default: 'None' }, sku: String,
+  barcode: String, sameImages: Boolean, active: { type: Boolean, default: true }, enableUnitPrice: { type: Boolean, default: false },
+  saleFromDate: { type: Date, default: Date.now },
+  saleToDate: { type: Date, default: () => Date.now() + 1 * 365 * 24 * 60 * 60 * 1000 },
+  sort: Number
+});
+
 let productSchema = new Schema(
   {
     name: String,
@@ -12,6 +21,7 @@ let productSchema = new Schema(
     group: String,
     img: String,
     enableZips: Boolean,
+    variants: { type: [variantsSchema] },
     zips: [String],
     category: { type: ObjectId, ref: 'Category' },
     parentCategory: { type: ObjectId, ref: 'Category' },
@@ -20,7 +30,7 @@ let productSchema = new Schema(
     status: String,
     type: String,
     stock: Number,
-    rate: Number,
+    price: Number,
     time: String,
     daily: Boolean,
     features: [{ key: String, val: String }],

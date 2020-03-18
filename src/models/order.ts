@@ -67,7 +67,7 @@ const orderSchema = new Schema(
         description: String,
         img: String,
         qty: Number,
-        rate: Number,
+        price: Number,
         subtotal: Number,
         total: Number,
         currency: String,

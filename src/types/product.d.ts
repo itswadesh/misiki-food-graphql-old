@@ -21,7 +21,7 @@ export interface ProductDocument extends Document {
   status: string
   type: string
   stock: number
-  rate: number
+  price: number
   time: string
   daily: boolean
   features: string

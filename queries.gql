@@ -37,7 +37,7 @@ mutation createProduct {
   createProduct(
     name: "The Big Bang Theory"
     type: "V"
-    rate: 100
+    price: 100
     qty: 10
     img: null
     time: null
@@ -46,7 +46,7 @@ mutation createProduct {
     name
     slug
     type
-    rate
+    price
     qty
     img
     time
@@ -59,7 +59,7 @@ query Products {
     slug
     name
     type
-    rate
+    price
     qty
     img
     time
@@ -72,7 +72,7 @@ query Product {
     slug
     name
     type
-    rate
+    price
     qty
     img
     time
