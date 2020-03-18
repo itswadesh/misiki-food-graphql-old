@@ -6,7 +6,7 @@ import {
   withFilter
 } from 'apollo-server-express'
 import { Request, MessageDocument, UserDocument, CartDocument } from '../types'
-import { createCart, objectId } from '../validators'
+import { validate, objectId, cartSchema } from '../validation'
 import { Chat, Cart } from '../models'
 import { fields, hasSubfields } from '../utils'
 import { removeFromCartSession, addToCart } from '../utils/cart'
@@ -55,7 +55,7 @@ const resolvers: IResolvers = {
       },
       { req }: { req: Request }
     ): Promise<CartDocument> => {
-      await createCart.validateAsync(args, { abortEarly: false })
+      await validate(cartSchema, args)
       const { pid, vid, qty, replace } = args
       // const cart = await Cart.create({ pid, vid, qty})
       // await cart.save()

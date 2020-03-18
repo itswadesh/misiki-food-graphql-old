@@ -14,7 +14,7 @@ import {
   AddressDocument,
   SettingsDocument
 } from '../types'
-import { objectId } from '../validators'
+import { objectId } from '../validation'
 import { UserInputError } from 'apollo-server-express'
 
 export const getData = async (start: Date, end: Date, q: any) => {

@@ -1,6 +1,6 @@
 import { IResolvers } from 'apollo-server-express'
 import { Request, CouponDocument } from '../types'
-import { createCoupon, objectId } from '../validators'
+import { createCoupon, objectId } from '../validation'
 import { Coupon } from '../models'
 import { fields, calculateSummary } from '../utils'
 

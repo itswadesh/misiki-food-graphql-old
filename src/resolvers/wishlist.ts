@@ -11,9 +11,10 @@ import {
   UserDocument,
   WishlistDocument
 } from '../types'
-import { createWishlist, objectId } from '../validators'
+import { validate, objectId } from '../validation'
 import { Chat, Wishlist } from '../models'
 import { fields, hasSubfields } from '../utils'
+import { wishlistSchema } from '../validation/wishlist'
 
 const resolvers: IResolvers = {
   Query: {
@@ -45,7 +46,7 @@ const resolvers: IResolvers = {
       },
       { req }: { req: Request }
     ): Promise<WishlistDocument> => {
-      await createWishlist.validateAsync(args, { abortEarly: false })
+      await wishlistSchema.validateAsync(args, { abortEarly: false })
       const { userId } = req.session
       const wishlist = await Wishlist.create({ ...args, uid: userId })
 

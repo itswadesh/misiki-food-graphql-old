@@ -6,7 +6,7 @@ import {
   withFilter
 } from 'apollo-server-express'
 import { Request, AddressDocument, UserDocument } from '../types'
-import { addAddress, objectId } from '../validators'
+import { validate, addressSchema, objectId } from '../validation'
 import { Chat, Message, Address } from '../models'
 import { fields, hasSubfields } from '../utils'
 import pubsub from '../pubsub'
@@ -61,7 +61,7 @@ const resolvers: IResolvers = {
       },
       { req }: { req: Request }
     ): Promise<AddressDocument> => {
-      await addAddress.validateAsync(args, { abortEarly: false })
+      await validate(addressSchema, args)
       const { userId } = req.session
       const address = await Address.create({ ...args, uid: userId })
       await address.save()
@@ -86,7 +86,7 @@ const resolvers: IResolvers = {
       },
       { req }: { req: Request }
     ): Promise<AddressDocument | null> => {
-      await addAddress.validateAsync(args, { abortEarly: false })
+      await validate(addressSchema, args)
       const { userId } = req.session
       args.uid = userId
       const address = await Address.findOneAndUpdate({ _id: args.id }, args, {

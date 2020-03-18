@@ -81,7 +81,6 @@ export const addToCart = async (
     product = await Product.findById(pid)
       .select('name slug img rate vendor')
       .populate('vendor')
-    vid = 0
     if (!product) {
       items = removeFromCartSession(items, pid, vid)
       throw new UserInputError('Product not found')
@@ -101,9 +100,11 @@ export const addToCart = async (
     throw new UserInputError(
       `Your cart contain dishes from ${req.session.cart.vendor.info.restaurant}. Do you wish to clear cart and add dishes from ${vendor.info.restaurant}?`
     )
-  const record = items.find((p: CartItemDocument) => p.pid === pid)
+  const record = items.find(
+    (p: CartItemDocument) => p.pid === pid && p.vid === vid
+  );
   if (record) {
-    console.log('Already in cart', pid)
+    console.log('Already in cart', pid, vid)
     // If the product is already there in cart increase qty
     record.qty = +record.qty + +qty
     if (+record.qty < 1) {
@@ -111,9 +112,9 @@ export const addToCart = async (
       items = removeFromCartSession(items, pid, vid)
     }
   } else {
-    console.log('Not in cart', pid)
+    console.log('Not in cart', pid, vid)
     if (+product.qty < +qty) throw new UserInputError('Not enough stock')
-    items.push({ pid, name, slug, img, rate, qty })
+    items.push({ pid, vid, name, slug, img, rate, qty })
   }
   req.session.cart.vendor = vendor
   await calculateSummary(req)

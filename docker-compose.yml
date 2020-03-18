@@ -1,65 +1,9 @@
 version: '3'
 
 services:
-  api:
-    build: packages/api
-    image: chat-api
-    container_name: chat-api
-    restart: unless-stopped
-    expose:
-      - '3000'
-    environment:
-      - DB_USERNAME
-      - DB_PASSWORD
-      - DB_HOST=db
-      - DB_NAME=$MONGO_INITDB_DATABASE
-      - SESS_SECRET
-      - REDIS_HOST=cache
-      - REDIS_PASSWORD
-    depends_on:
-      - db
-      - cache
-
-  web:
-    build: packages/web
-    image: chat-web
-    container_name: chat-web
-    expose:
-      - '80'
-    depends_on:
-      - api
-
-  db:
-    image: mongo
-    container_name: chat-db
-    user: $UID
-    expose:
-      - '27017'
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME
-      - MONGO_INITDB_ROOT_PASSWORD
-      - MONGO_INITDB_DATABASE
-      - DB_USERNAME
-      - DB_PASSWORD
-    volumes:
-      - ./mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
-      - ./data:/data/db
-
   cache:
     image: redis:alpine
-    container_name: chat-cache
-    expose:
-      - '6379'
-    environment:
-      - REDIS_PASSWORD
-    command: ['--requirepass "$REDIS_PASSWORD"']
-
-  proxy:
-    image: nginx:alpine
-    container_name: chat-proxy
-    volumes:
-      - ./proxy.conf:/etc/nginx/conf.d/default.conf
+    container_name: cache
     ports:
-      - 8080:80
-    depends_on:
-      - web
+      - '6379:6379'
+    command: ['--requirepass "secret"']

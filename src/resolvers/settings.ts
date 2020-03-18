@@ -6,7 +6,7 @@ import {
   objectId,
   productValidation,
   ifImage
-} from '../validators'
+} from '../validation'
 import { Setting } from '../models'
 import { fields, hasSubfields } from '../utils'
 import pubsub from '../pubsub'

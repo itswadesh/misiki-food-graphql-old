@@ -11,9 +11,10 @@ import {
   UserDocument,
   ReviewDocument
 } from '../types'
-import { createReview, objectId } from '../validators'
+import { validate, objectId } from '../validation'
 import { Chat, Review } from '../models'
 import { fields, hasSubfields } from '../utils'
+import { reviewSchema } from '../validation/review'
 
 const resolvers: IResolvers = {
   Query: {
@@ -45,7 +46,7 @@ const resolvers: IResolvers = {
       },
       { req }: { req: Request }
     ): Promise<ReviewDocument> => {
-      await createReview.validateAsync(args, { abortEarly: false })
+      await validate(reviewSchema, args)
       const { userId } = req.session
       const review = await Review.create({ ...args, uid: userId })
 

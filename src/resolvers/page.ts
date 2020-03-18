@@ -6,9 +6,10 @@ import {
   withFilter
 } from 'apollo-server-express'
 import { Request, MessageDocument, UserDocument, PageDocument } from '../types'
-import { createPage, objectId } from '../validators'
+import { validate, objectId } from '../validation'
 import { Chat, Page } from '../models'
 import { fields, hasSubfields } from '../utils'
+import { pageSchema } from '../validation/page'
 
 const resolvers: IResolvers = {
   Query: {
@@ -40,7 +41,7 @@ const resolvers: IResolvers = {
       },
       { req }: { req: Request }
     ): Promise<PageDocument> => {
-      await createPage.validateAsync(args, { abortEarly: false })
+      await validate(pageSchema, args)
       const { userId } = req.session
       const page = await Page.create({ ...args, uid: userId })
 

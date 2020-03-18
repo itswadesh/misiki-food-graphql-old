@@ -1,10 +1,8 @@
 import address from './address'
 import cart from './cart'
 import category from './category'
-import chat from './chat'
 import coupon from './coupon'
 import media from './media'
-import message from './message'
 import order from './order'
 import page from './page'
 import pay from './pay'
@@ -16,8 +14,6 @@ import wishlist from './wishlist'
 import settings from './settings'
 
 export default [
-  chat,
-  message,
   user,
   address,
   cart,

@@ -7,7 +7,7 @@ import {
   InfoDocument,
   AddressDocument
 } from '../types'
-import { signUp, signIn, objectId, signInOtp } from '../validators'
+import { signUp, signIn, objectId, signInOtp } from '../validation'
 import { attemptSignIn, verifyOtp, signOut } from '../auth'
 import { User } from '../models'
 import { fields, generateOTP } from '../utils'

@@ -1,0 +1,1 @@
+db.products.updateMany({}, { $set: { popularity: 0 } })

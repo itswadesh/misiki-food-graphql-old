@@ -1,0 +1,73 @@
+
+DELETE electronics
+PUT electronics
+PUT electronics/electronic/_mapping?include_type_name=true
+{
+  "properties": {
+    "color": {
+			"type": "nested",
+			"properties": {
+				"name": {
+					"type": "text",
+					"fields": {
+						"raw": {
+							"type": "keyword",
+							"index": true
+						}
+					}
+				},
+				"val": {
+					"type": "text",
+					"fields": {
+						"raw": {
+							"type": "keyword",
+							"index": true
+						}
+					}
+				}
+			}
+		},
+    "features": {
+      "type": "nested",
+      "properties": {
+        "key": {
+          "type": "text",
+          "fields": {
+            "raw": {
+              "type": "keyword",
+              "index": true
+            }
+          }
+        },
+        "val": {
+          "type": "text",
+          "fields": {
+            "raw": {
+              "type": "keyword",
+              "index": true
+            }
+          }
+        }
+      }
+    },
+    "variants": {
+      "properties": {
+        "mrp": {
+          "type": "long"
+        },
+        "price": {
+          "type": "long"
+        },
+        "size": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        }
+      }
+    }
+  }
+}

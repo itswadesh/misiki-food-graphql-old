@@ -13,11 +13,11 @@ import {
   ChatDocument
 } from '../types'
 import {
-  sendMessage,
+  validate,
   objectId,
   productValidation,
   ifImage
-} from '../validators'
+} from '../validation'
 import { Chat, Message, Product } from '../models'
 import { fields, hasSubfields, getData } from '../utils'
 import pubsub from '../pubsub'

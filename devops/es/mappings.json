@@ -1,0 +1,274 @@
+GET /products/_mapping
+
+GET /products/_search
+{
+    "sort": {
+        "createdAt": {
+            "order": "asc"
+        }
+    },
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "terms": {
+                        "categories.name.raw": [
+                            "Backpacks"
+                        ]
+                    }
+                },
+                {
+                    "terms": {
+                        "variants.size.keyword": [
+                            "XL"
+                        ]
+                    }
+                },
+                {
+                    "terms": {
+                        "brandName.keyword": [
+                            "Urban Hub"
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+}
+
+DELETE products
+PUT products
+PUT products/product/_mapping?include_type_name=true
+{
+    "properties": {
+        "color": {
+            "type": "nested",
+            "properties": {
+                "name": {
+                    "type": "text",
+                    "fields": {
+                        "raw": {
+                            "type": "keyword",
+                            "index": true
+                        }
+                    }
+                },
+                "val": {
+                    "type": "text",
+                    "fields": {
+                        "raw": {
+                            "type": "keyword",
+                            "index": true
+                        }
+                    }
+                }
+            }
+        },
+        "categories": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "text",
+                    "fields": {
+                        "raw": {
+                            "type": "keyword",
+                            "index": true
+                        }
+                    }
+                },
+                "slug": {
+                    "type": "text"
+                }
+            }
+        },
+        "variants": {
+            "type": "object",
+            "properties": {
+                "price": {
+                    "type": "float"
+                }
+            }
+        },
+        "features": {
+            "type": "nested",
+            "properties": {
+                "key": {
+                    "type": "text",
+                    "fields": {
+                        "raw": {
+                            "type": "keyword",
+                            "index": true
+                        }
+                    }
+                },
+                "val": {
+                    "type": "text",
+                    "fields": {
+                        "raw": {
+                            "type": "keyword",
+                            "index": true
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+DELETE groceries
+PUT groceries
+PUT groceries/grocery/_mapping?include_type_name=true
+{
+    "properties": {
+        "name": {
+            "type": "text"
+        },
+        "variants": {
+            "type": "object",
+            "properties": {
+                "price": {
+                    "type": "float"
+                }
+            }
+        },
+        "features": {
+            "type": "nested",
+            "properties": {
+                "key": {
+                    "type": "text",
+                    "fields": {
+                        "raw": {
+                            "type": "keyword",
+                            "index": true
+                        }
+                    }
+                },
+                "val": {
+                    "type": "text",
+                    "fields": {
+                        "raw": {
+                            "type": "keyword",
+                            "index": true
+                        }
+                    }
+                },
+                "price": {
+                    "type": "float"
+                }
+            }
+        }
+    }
+}
+
+
+GET /products/_search
+{
+    "query": {
+        "bool": {
+            "must": {
+                "match": {
+                    "name": "red"
+                }
+            },
+            "filter": {
+                "terms": {
+                    "categories.name": [
+                        "Accessories",
+                        "Activewear",
+                        "Baby Girl",
+                        "Baby Boy",
+                        "Backpacks"
+                    ]
+                }
+            }
+        }
+    },
+    "aggs": {
+        "price_range": {
+            "stats": {
+                "field": "variants.price"
+            }
+        },
+        "features": {
+            "nested": {
+                "path": "features"
+            },
+            "aggs": {
+                "name": {
+                    "terms": {
+                        "field": "features.key.raw"
+                    },
+                    "aggs": {
+                        "val": {
+                            "terms": {
+                                "field": "features.val.raw",
+                                "order": {
+                                    "_key": "asc"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "sizes": {
+            "terms": {
+                "field": "variants.size.keyword",
+                "order": {
+                    "_key": "asc"
+                }
+            }
+        },
+        "categories": {
+            "terms": {
+                "field": "categories.name.keyword",
+                "order": {
+                    "_key": "asc"
+                }
+            }
+        },
+        "brands": {
+            "terms": {
+                "field": "brandName.keyword",
+                "order": {
+                    "_key": "asc"
+                }
+            }
+        }
+    }
+}
+
+
+GET /groceries/_search
+{
+    "size": 0,
+    "aggs": {
+        "price_range": {
+            "stats": {
+                "field": "variants.price"
+            }
+        },
+        "features": {
+            "nested": {
+                "path": "features"
+            },
+            "aggs": {
+                "name": {
+                    "terms": {
+                        "field": "features.key.raw"
+                    },
+                    "aggs": {
+                        "val": {
+                            "terms": {
+                                "field": "features.val.raw",
+                                "order": {
+                                    "_key": "asc"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

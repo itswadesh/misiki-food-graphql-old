@@ -5,9 +5,9 @@ import {
   ForbiddenError,
   withFilter
 } from 'apollo-server-express'
-import { Request, MessageDocument, UserDocument, MediaDocument } from '../types'
-import { createMedia, objectId } from '../validators'
-import { Chat, Media } from '../models'
+import { Request, UserDocument, MediaDocument } from '../types'
+import { validate, mediaSchema, objectId } from '../validation'
+import { Media } from '../models'
 import { fields, hasSubfields } from '../utils'
 import pubsub from '../pubsub'
 import {
@@ -61,7 +61,7 @@ const resolvers: IResolvers = {
       },
       { req }: { req: Request }
     ): Promise<MediaDocument> => {
-      await createMedia.validateAsync(args, { abortEarly: false })
+      await validate(mediaSchema, args)
       const { userId } = req.session
       const media = await Media.create({ ...args, uid: userId })
 

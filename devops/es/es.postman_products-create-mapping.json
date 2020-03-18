@@ -1,0 +1,79 @@
+// DELETE http: //165.22.222.60:9200/products
+DELETE products
+PUT products
+PUT products/product/_mapping?include_type_name=true
+{
+	"properties": {
+		"color": {
+			"type": "nested",
+			"properties": {
+				"name": {
+					"type": "text",
+					"fields": {
+						"raw": {
+							"type": "keyword",
+							"index": true
+						}
+					}
+				},
+				"val": {
+					"type": "text",
+					"fields": {
+						"raw": {
+							"type": "keyword",
+							"index": true
+						}
+					}
+				}
+			}
+		},
+		"categories": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "text",
+					"fields": {
+						"raw": {
+							"type": "keyword",
+							"index": true
+						}
+					}
+				},
+				"slug": {
+					"type": "text"
+				}
+			}
+		},
+		"variants": {
+			"type": "object",
+			"properties": {
+				"price": {
+					"type": "float"
+				}
+			}
+		},
+		"features": {
+			"type": "nested",
+			"properties": {
+				"key": {
+					"type": "text",
+					"fields": {
+						"raw": {
+							"type": "keyword",
+							"index": true
+						}
+					}
+				},
+				"val": {
+					"type": "text",
+					"fields": {
+						"raw": {
+							"type": "keyword",
+							"index": true
+						}
+					}
+				}
+			}
+		}
+	}
+}

@@ -11,7 +11,7 @@ import {
   UserDocument,
   CategoryDocument
 } from '../types'
-import { createCategory, objectId } from '../validators'
+import { validate, objectId, categorySchema } from '../validation'
 import { Chat, Category } from '../models'
 import { fields, hasSubfields } from '../utils'
 
@@ -45,7 +45,7 @@ const resolvers: IResolvers = {
       },
       { req }: { req: Request }
     ): Promise<CategoryDocument> => {
-      await createCategory.validateAsync(args, { abortEarly: false })
+      await validate(categorySchema, args)
       const { userId } = req.session
       const category = await Category.create({ ...args, uid: userId })
 

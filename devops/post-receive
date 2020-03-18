@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# Take backup of .env file which need to be uploaded after git repo created
+# sudo git init --bare /opt/api.git
+# sudo git clone /opt/api.git /var/www/api
+# sudo git clone /opt/api.git /var/www/api2
+# sudo chmod -R 700 /opt/api.git
+# sudo chmod -R 700 /var/www/api
+# cd /opt/api.git/hooks
+# Add post-receive hook at /opt/api.git/hooks
+# sudo chmod ug+x ./post-receive
+# ./post-receive # To check if Post Receive working
+# dos2unix /opt/api.git/hooks/post-receive # Windows adds some special characters which blocks from running
+# sudo id -u ubuntu # In case the push is rejected get this id and use bellow (e.g. 1000)
+# sudo chown -Rc 1000 api.git # In case the push is rejected
+
+echo 'post-receive: Triggered.'
+echo 'post-receive: git check out…'
+sudo git --git-dir=/opt/api.git --work-tree=/var/www/api checkout master -f
+sudo git --git-dir=/opt/api.git --work-tree=/var/www/api2 checkout master -f
+
+echo 'post-receive: api yarn install…'
+cd /var/www/api && sudo yarn && \
+echo 'api sleeping → waiting.' && \
+sudo pm2 stop 'api' && sudo pm2 start 'api' && \
+echo 'api deployed → done...'
+
+echo 'post-receive: api2 yarn install…'
+cd /var/www/api2 && sudo yarn && \
+echo 'api2 sleeping → waiting.' && \
+sudo pm2 stop 'api2' && sudo pm2 start 'api2' && \
+echo 'api2 deployed → done...'
+
+# Local Laptop
+# -----------------
+# mkdir C:\Program Files\Git\.ssh\
+# Open Puttygen -> Conversions -> Import .pem key -> Export OpenSSH key and save it to C:\Users\Admin\.ssh\id_rsa
+# chmod 400 ~/Documents/tesoro.pem
+# ssh -i D:/ssh/tesoro.pem ubuntu@3.0.52.29
+# ssh-add -K ~/.ssh/tesoro.pem
+# git remote add live ssh://ubuntu@3.0.52.29/opt/tapi.git
+# git push live master -f

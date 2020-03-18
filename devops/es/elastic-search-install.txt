@@ -1,0 +1,21 @@
+echo "deb http://ppa.launchpad.net/linuxuprising/java/ubuntu bionic main" | tee /etc/apt/sources.list.d/linuxuprising-java.list
+apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 73C3DB2A
+apt-get update
+apt-get install oracle-java12-installer
+
+
+sudo apt install openjdk-11-jdk
+sudo update-alternatives --config java
+nano /etc/environment
+source /etc/environment
+echo $JAVA_HOME
+wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
+echo "deb https://artifacts.elastic.co/packages/7.x/apt stable main" | sudo tee -a /etc/apt/sources.list.d/elastic-7.x.list
+sudo apt update -y
+apt install elasticsearch -y
+apt autoremove -y
+nano /etc/elasticsearch/elasticsearch.yml (network.host: 127.0.0.1" and "http.host: 0.0.0.0)
+sudo service elasticsearch start
+sudo service elasticsearch status
+curl -XGET "http://localhost:9200/_cluster/health?pretty=true"
+curl "localhost:9200/_nodes/settings?pretty=true"

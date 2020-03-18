@@ -6,15 +6,15 @@ import { createWriteStream, unlink, ReadStream, PathLike } from 'fs'
 import { UPLOAD_DIR, STATIC_PATH } from '../config'
 import mkdirp from 'mkdirp'
 import shortid from 'shortid'
-import { ifImage } from '../validators'
+import { validate, ifImage } from '../validation'
 mkdirp.sync(STATIC_PATH + UPLOAD_DIR)
 
-export const imgUrl = (img, single) => {
+export const imgUrl = (img: any, single: Boolean) => {
   let url = '/images'
   if (!img) return
   else if (single) return url + img
   else if (img.constructor === Array)
-    return img.map(i => {
+    return img.map((i: any) => {
       return {
         small: url + i.small,
         medium: url + i.medium,
@@ -36,7 +36,7 @@ export const store1ToFileSystem = async (args: {
   const folder = args.folder || 'img'
   mkdirp.sync(STATIC_PATH + UPLOAD_DIR + '/' + folder)
   let { createReadStream, filename, mimetype, encoding } = await args.file
-  await ifImage.validateAsync({ filename, mimetype, encoding })
+  await validate(ifImage, { filename, mimetype, encoding })
   const stream = createReadStream()
   const id = shortid.generate()
   filename = `${UPLOAD_DIR}${folder}/${id}-${filename}`
@@ -89,7 +89,7 @@ const fileWriteRequest = async (stream: any, path: PathLike) => {
     })
 }
 export const generateImg = async (
-  imgUrls: String[],
+  imgUrls: any[],
   subdirectory: String,
   datewise: Boolean
 ) => {
@@ -141,7 +141,7 @@ export const generateImg = async (
   }
   return imageCollection
 }
-const download = async (url, dest) => {
+const download = async (url: String, dest: String) => {
   if (url.indexOf('?') > 0) url = url.substring(0, url.indexOf('?')) // Remove anything after ?
   if (dest.indexOf('?') > 0) dest = dest.substring(0, dest.indexOf('?')) // Remove anything after ?
   try {
@@ -169,7 +169,7 @@ export const deleteFile = async (path: String) => {
     return null
   }
 }
-export const deleteAllImages = async images => {
+export const deleteAllImages = async (images: String[]) => {
   try {
     if (!images) return
     let deleted = []
@@ -187,7 +187,7 @@ export const deleteAllImages = async images => {
     throw e
   }
 }
-const readFile = async url => {
+const readFile = async (url: string) => {
   var pattern = /^((http|https|ftp):\/\/)/
   let isUrl = pattern.test(url)
   try {
@@ -196,7 +196,7 @@ const readFile = async url => {
       stream = await request({ url, encoding: null })
     } else {
       stream = await fsx.createReadStream(path.resolve(url))
-      stream.on('error', function(err) {})
+      stream.on('error', function(err: Error) {})
     }
     return stream
   } catch (e) {
@@ -205,7 +205,7 @@ const readFile = async url => {
   }
 }
 
-export const checkIfImage = async photos => {
+export const checkIfImage = async (photos: any[]) => {
   let p = await photos.map(photo => {
     if (
       !photo ||
@@ -221,7 +221,7 @@ export const checkIfImage = async photos => {
   return p
 }
 
-export const createFolder = async path => {
+export const createFolder = async (path: string) => {
   try {
     if (!fsx.existsSync(path)) fsx.ensureDirSync(path)
   } catch (e) {

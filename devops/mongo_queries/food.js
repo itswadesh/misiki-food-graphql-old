@@ -1,0 +1,8 @@
+db.foods.find({}).select('name slug daily active stock')
+db.foods.update({ vendor_phone: '0000000000', daily: false }, { $set: { daily: true } }, { multi: true })
+db.foods.update({ daily: { $exists: false } }, { $set: { daily: false } }, { multi: true })
+db.foods.update({ stock: 0 }, { $set: { active: false } }, { multi: true })
+db.users.find({ role: 'chef' }).select('firstName lastName restaurant address.qrno email')
+db.foods.find({ stock: { $gt: 0 } })
+  .select('createdAt updatedAt name restaurant daily vendor_name')
+  .sort('-createdAt')

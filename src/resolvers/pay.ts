@@ -13,7 +13,7 @@ import {
   ProductDocument,
   OrderDocument
 } from '../types'
-import { objectId, createPay } from '../validators'
+import { objectId, createPay } from '../validation'
 import { PAY_MESSAGE } from '../config'
 import { Order, Product } from '../models'
 import { placeOrder, fields } from '../utils'

@@ -6,7 +6,7 @@ import {
   withFilter
 } from 'apollo-server-express'
 import { Request, MessageDocument, UserDocument, BrandDocument } from '../types'
-import { createBrand, objectId } from '../validators'
+import { validate, brandSchema, objectId } from '../validation'
 import { Chat, Brand } from '../models'
 import { fields, hasSubfields } from '../utils'
 
@@ -40,7 +40,7 @@ const resolvers: IResolvers = {
       },
       { req }: { req: Request }
     ): Promise<BrandDocument> => {
-      await createBrand.validateAsync(args, { abortEarly: false })
+      await validate(brandSchema, args)
       const { userId } = req.session
       const brand = await Brand.create({ ...args, uid: userId })
 

@@ -1,23 +1,28 @@
-import express from 'express'
+import express, { RequestHandler, NextFunction } from 'express'
 import session from 'express-session'
+import passport from 'passport'
 import { ApolloServer } from 'apollo-server-express'
 import typeDefs from './typeDefs'
 import resolvers from './resolvers'
 import schemaDirectives from './directives'
-import { SESS_OPTIONS, APOLLO_OPTIONS, STATIC_PATH } from './config'
+import { SESSION_OPTIONS, APOLLO_OPTIONS, STATIC_PATH } from './config'
 import { Request, Response } from './types'
 import { ensureSignedIn } from './auth'
+import oAuthRoutes from './oauth'
 
-const createApp = (store?: session.Store) => {
+export const createApp = (store?: session.Store) => {
   const app = express()
 
-  const sessionHandler = session({
-    store,
-    ...SESS_OPTIONS
-  })
+  const sessionHandler = session({ ...SESSION_OPTIONS, store })
 
+  // Setup Passport
   app.use(sessionHandler)
-  app.use(express.static(STATIC_PATH));
+  app.use(passport.initialize())
+  app.use(passport.session())
+
+  oAuthRoutes(app)
+
+  app.use(express.static(STATIC_PATH))
   const server = new ApolloServer({
     ...APOLLO_OPTIONS,
     typeDefs,
@@ -45,5 +50,3 @@ const createApp = (store?: session.Store) => {
 
   return { app, server }
 }
-
-export default createApp

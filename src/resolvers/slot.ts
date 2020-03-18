@@ -6,9 +6,10 @@ import {
   withFilter
 } from 'apollo-server-express'
 import { Request, MessageDocument, UserDocument, SlotDocument } from '../types'
-import { createSlot, objectId } from '../validators'
+import { validate, objectId } from '../validation'
 import { Chat, Slot } from '../models'
 import { fields, hasSubfields } from '../utils'
+import { slotSchema } from '../validation/slot'
 
 const resolvers: IResolvers = {
   Query: {
@@ -40,7 +41,7 @@ const resolvers: IResolvers = {
       },
       { req }: { req: Request }
     ): Promise<SlotDocument> => {
-      await createSlot.validateAsync(args, { abortEarly: false })
+      await slotSchema.validateAsync(args, { abortEarly: false })
       const { userId } = req.session
       const slot = await Slot.create({ ...args, uid: userId })
 

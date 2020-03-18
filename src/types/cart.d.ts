@@ -1,5 +1,6 @@
 import { Document } from 'mongoose'
 import { UserDocument, CouponDocument, ProductDocument } from './'
+import { VariantDocument } from './variant'
 
 export interface CartDocument extends Document {
   body: string
@@ -20,6 +21,7 @@ export interface CartDocument extends Document {
 
 export interface CartItemDocument extends Document {
   pid: ProductDocument['_id']
+  vid: VariantDocument['_id']
   name: string
   sku: string
   slug: string
