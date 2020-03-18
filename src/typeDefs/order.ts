@@ -85,7 +85,7 @@ export default gql`
 
   type Order {
     id: ID!
-    uid: User!
+    user: User!
     otp: String
     orderNo: String
     amount: Amount

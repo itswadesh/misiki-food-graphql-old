@@ -23,7 +23,7 @@ export const getData = async (start: Date, end: Date, q: any) => {
       $match: {}
     },
     { $unwind: '$items' },
-    { $project: { items: 1, createdAt: 1, vendor: 1 } },
+    { $project: { items: 1, createdAt: 1, vendor: 1, updatedAt: 1 } },
     {
       $group: {
         _id: {
@@ -39,6 +39,7 @@ export const getData = async (start: Date, end: Date, q: any) => {
           slug: '$items.slug',
           name: '$items.name',
           price: '$items.price',
+          updatedAt: { $max: "$updatedAt" },
           time: '$items.time',
           type: '$items.type',
           ratings: '$items.ratings',
@@ -94,9 +95,9 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
   let { userId, cart } = req.session
   let { items } = cart
   if (!items || items.length < 1)
-    throw new UserInputError('Cart is empty.').select('address').exec()
+    throw new UserInputError('Cart is empty.')
   if (!cart.vendor) throw new UserInputError('Vendor not found')
-  let vendor: UserDocument | null = await User.findById(cart.vendor._id)
+  let vendor: UserDocument | null = await User.findById(cart.vendor._id).select('address info').exec()
   if (!vendor) throw new UserInputError('Vendor not found')
   if (!vendor.info || !vendor.info.restaurant)
     throw new UserInputError('Restaurant info missing')

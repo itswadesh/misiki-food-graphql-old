@@ -85,6 +85,7 @@ type BS1{
     slug:String
     img: String
     price:Float
+    updatedAt:String
     restaurant: String
     time: String
     type: String

@@ -14,7 +14,7 @@ const addressSchema = new Schema(
     country: String,
     state: String,
     coords: { lat: Number, lng: Number },
-    zip: String,
+    zip: Number,
     phone: String,
     active: { type: Boolean, default: true },
     uid: { type: ObjectId, ref: 'User' }

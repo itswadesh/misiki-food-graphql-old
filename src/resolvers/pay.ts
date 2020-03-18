@@ -13,7 +13,7 @@ import {
   ProductDocument,
   OrderDocument
 } from '../types'
-import { objectId, createPay } from '../validation'
+import { objectId } from '../validation'
 import { PAY_MESSAGE } from '../config'
 import { Order, Product } from '../models'
 import { placeOrder, fields } from '../utils'
@@ -38,8 +38,8 @@ const resolvers: IResolvers = {
       args: { address: any },
       { req }
     ): Promise<PayDocument> => {
-      // await createPay.validateAsync(args, { abortEarly: false })
       const { userId, cart } = req.session
+      if (!userId) throw new UserInputError("User not found")
       if (!cart) {
         throw new UserInputError('Cart was not found')
       }
@@ -52,22 +52,25 @@ const resolvers: IResolvers = {
       }
       // throw new UserInputError("Please specify your address");
       const newOrder: any = await placeOrder(req, { address: args.address })
-      const payment = await instance.orders.create({
-        amount: Math.round(total * 100),
-        receipt: cart_id.toString(),
-        notes: {
-          phone,
-          purpose: PAY_MESSAGE
-        }
-      })
-      await Order.updateOne(
-        { _id: newOrder._id },
-        { $set: { payment, payment_order_id: payment.id } }
-      )
-
-      // await payment.save()
-
-      return payment
+      try {
+        const payment = await instance.orders.create({
+          amount: Math.round(total * 100),
+          receipt: cart_id.toString(),
+          notes: {
+            phone,
+            purpose: PAY_MESSAGE
+          }
+        })
+        await Order.updateOne(
+          { _id: newOrder._id },
+          { $set: { payment, payment_order_id: payment.id } }
+        )
+        // await payment.save()
+        return payment
+      } catch (e) {
+        console.log('Pay err...', e);
+        throw new UserInputError(e)
+      }
     },
     capturePay: async (
       root,

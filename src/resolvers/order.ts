@@ -6,7 +6,7 @@ import {
   withFilter
 } from 'apollo-server-express'
 import { Request, MessageDocument, UserDocument, OrderDocument } from '../types'
-import { createOrder, objectId } from '../validation'
+import { validate, objectId } from '../validation'
 import { Chat, Order } from '../models'
 import { fields, hasSubfields } from '../utils'
 import { index } from '../utils/base'
@@ -109,7 +109,7 @@ const resolvers: IResolvers = {
           $match: {
             'vendor.id': Types.ObjectId(userId),
             status: 'Waiting for confirmation',
-            createdAt: { $gte: start, $lte: end }
+            // createdAt: { $gte: start, $lte: end }
           }
         },
         {
@@ -124,17 +124,18 @@ const resolvers: IResolvers = {
     },
     myToday: async (root, args, { req }: { req: Request }, info) => {
       const { start, end } = getStartEndDate(0)
+      const { userId } = req.session
       let data = await Order.aggregate([
         {
           $match: {
-            createdAt: { $gte: start, $lte: end },
-            vendor: req.session.userId
+            // createdAt: { $gte: start, $lte: end },
+            'vendor.id': Types.ObjectId(userId)
           }
         },
         {
           $group: {
             _id: null,
-            total: { $sum: '$amount' },
+            amount: { $sum: '$amount.subtotal' },
             count: { $sum: 1 }
           }
         }
