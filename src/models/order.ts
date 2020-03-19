@@ -14,14 +14,6 @@ const orderSchema = new Schema(
       phone: String,
       id: { type: ObjectId, ref: 'User' },
     },
-    vendor: {
-      restaurant: String,
-      address: Object,
-      phone: String,
-      firstName: String,
-      lastName: String,
-      id: { type: ObjectId, ref: 'User' }
-    },
     address: {
       email: String,
       firstName: String,
@@ -46,10 +38,6 @@ const orderSchema = new Schema(
         payment_order_id: String
       }
     },
-    delivery: {
-      type: Object,
-      default: { received: 0, weight: 0, status: 'Pending' }
-    },
     amount: {
       qty: Number,
       subtotal: Number,
@@ -63,10 +51,7 @@ const orderSchema = new Schema(
     },
     items: [
       {
-        pid: {
-          type: ObjectId,
-          ref: 'Product'
-        },
+        pid: { type: ObjectId, ref: 'Product' },
         name: String,
         sku: String,
         slug: String,
@@ -78,13 +63,17 @@ const orderSchema = new Schema(
         total: Number,
         currency: String,
         vendor: {
-          type: ObjectId,
-          ref: 'User'
+          restaurant: String,
+          address: Object,
+          phone: String,
+          firstName: String,
+          lastName: String,
+          id: { type: ObjectId, ref: 'User' },
         },
-        delivery_days: Number
+        delivery: { type: Object, default: { days: 1, received: 0, weight: 0, status: 'Pending' } },
+        status: { type: String, default: 'Waiting for confirmation' },
       }
     ],
-    status: { type: String, default: 'Waiting for confirmation' },
     comment: String,
     cancellationReason: String,
     cancellationComment: String,

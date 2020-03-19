@@ -8,8 +8,8 @@ export default gql`
   }
 
   extend type Mutation {
-    getOtp(phone: String!): String @guest
-    verifyOtp(phone: String!, otp: String!): User @guest
+    getOtp(phone: String!): String
+    verifyOtp(phone: String!, otp: String!): User
 
     signUp(
       firstName: String

@@ -35,7 +35,7 @@ export const createApp = (store?: session.Store) => {
         const req = await new Promise(resolve => {
           sessionHandler(request as Request, {} as Response, () => {
             // Directives are ignored in WS; need to auth explicitly
-            ensureSignedIn(request as Request)
+            // ensureSignedIn(request as Request)
 
             resolve(request)
           })

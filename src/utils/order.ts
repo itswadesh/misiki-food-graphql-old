@@ -96,11 +96,6 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
   let { items } = cart
   if (!items || items.length < 1)
     throw new UserInputError('Cart is empty.')
-  if (!cart.vendor) throw new UserInputError('Vendor not found')
-  let vendor: UserDocument | null = await User.findById(cart.vendor._id).select('address info').exec()
-  if (!vendor) throw new UserInputError('Vendor not found')
-  if (!vendor.info || !vendor.info.restaurant)
-    throw new UserInputError('Restaurant info missing')
 
   for (let i of items) {
     // If item not found in cart remove it
@@ -109,6 +104,30 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
 
     if (product.stock - i.qty < 0)
       throw new UserInputError(`Not enough quantity for ${product.name}`)
+
+    if (!product.vendor) throw new UserInputError('Vendor not found')
+
+    let v: UserDocument | null = await User.findById(product.vendor).select('email phone address firstName lastName address info').exec()
+    if (!v) throw new UserInputError('Vendor not found')
+    if (!v.info || !v.info.restaurant)
+      throw new UserInputError('Restaurant info missing')
+    const vendor: any = {
+      restaurant: v.info.restaurant, // required during aggregation for delivery boy
+      email: v.email, // required during aggregation for delivery boy
+      phone: v.phone, // required during aggregation for delivery boy
+      address: v.address, // required during aggregation for delivery boy
+      firstName: v.firstName, // required during aggregation for delivery boy
+      lastName: v.lastName, // required during aggregation for delivery boy
+      id: v._id
+    }
+    let delivery = {
+      otp: generateOTP(),
+      days: 1,
+      start: vendor.address && vendor.address.coords,
+      finish: address && address.coords
+    }
+    i.delivery = delivery
+    i.vendor = vendor
   }
   let subtotal = await getSubTotal(items)
   let total = await getTotal(req.session.cart)
@@ -122,12 +141,6 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
   req.session.cart = cart
   saveMyCart(req.session.cart)
 
-  let delivery = {
-    otp: generateOTP(),
-    start: vendor.address && vendor.address.coords,
-    finish: address && address.coords
-  }
-
   let me: UserDocument | null = await User.findById(userId)
   if (!me) throw new UserInputError('Invalid user')
 
@@ -139,14 +152,6 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
       address: me.address,
       phone: me.phone,
       id: userId
-    },
-    vendor: {
-      restaurant: vendor.info.restaurant, // required during aggregation for delivery boy
-      phone: vendor.phone, // required during aggregation for delivery boy
-      address: vendor.address, // required during aggregation for delivery boy
-      firstName: vendor.firstName, // required during aggregation for delivery boy
-      lastName: vendor.lastName, // required during aggregation for delivery boy
-      id: vendor._id
     },
     payment: { state: 'Pending', method: req.body.paymentMethod },
     platform: 'Mobile',
@@ -160,7 +165,6 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
       qty,
       tax: 0
     },
-    delivery
   }
   const o = await Order.create(orderDetails)
   // clear(req)

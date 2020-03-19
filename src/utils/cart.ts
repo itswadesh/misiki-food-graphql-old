@@ -78,9 +78,7 @@ export const addToCart = async (
   }
   try {
     // Required for stock verification
-    product = await Product.findById(pid)
-      .select('name slug img price vendor')
-      .populate('vendor')
+    product = await Product.findById(pid).select('name slug img price vendor')
     vid = 0
     if (!product) {
       items = removeFromCartSession(items, pid, vid)
@@ -91,16 +89,16 @@ export const addToCart = async (
     throw new UserInputError(e.toString())
   }
   if (!product) throw new UserInputError('Product not found')
-  const { _id, name, slug, img, price, vendor } = product
-  if (!_id || !vendor || !vendor.info) throw new UserInputError('Restaurant info missing')
-  if (
-    req.session.cart.vendor &&
-    req.session.cart.vendor._id != vendor._id &&
-    items.length > 0
-  )
-    throw new UserInputError(
-      `Your cart contain dishes from ${req.session.cart.vendor.info.restaurant}. Do you wish to clear cart and add dishes from ${vendor.info.restaurant}?`
-    )
+  const { name, slug, img, price } = product
+  // if (!_id || !vendor || !vendor.info) throw new UserInputError('Restaurant info missing')
+  // if (
+  //   req.session.cart.vendor &&
+  //   req.session.cart.vendor._id != vendor._id &&
+  //   items.length > 0
+  // )
+  //   throw new UserInputError(
+  //     `Your cart contain dishes from ${req.session.cart.vendor.info.restaurant}. Do you wish to clear cart and add dishes from ${vendor.info.restaurant}?`
+  //   )
   const record = items.find((p: CartItemDocument) => p.pid === pid)
   if (record) {
     console.log('Already in cart', pid)
@@ -115,7 +113,7 @@ export const addToCart = async (
     if (+product.qty < +qty) throw new UserInputError('Not enough stock')
     items.push({ pid, name, slug, img, price, qty })
   }
-  req.session.cart.vendor = vendor
+  // req.session.cart.vendor = vendor
   await calculateSummary(req)
 
   return req.session.cart

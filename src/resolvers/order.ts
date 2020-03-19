@@ -6,7 +6,7 @@ import {
   withFilter
 } from 'apollo-server-express'
 import { Request, MessageDocument, UserDocument, OrderDocument } from '../types'
-import { validate, objectId } from '../validation'
+import { validate, objectId, orderSchema } from '../validation'
 import { Chat, Order } from '../models'
 import { fields, hasSubfields } from '../utils'
 import { index } from '../utils/base'
@@ -183,7 +183,7 @@ const resolvers: IResolvers = {
       args: { address: string; comment: string },
       { req }: { req: Request }
     ): Promise<OrderDocument> => {
-      await createOrder.validateAsync(args, { abortEarly: false })
+      await validate(orderSchema, args)
       const { userId } = req.session
       const order = await Order.create(req, { ...args, uid: userId })
 

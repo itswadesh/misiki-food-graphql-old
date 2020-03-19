@@ -1,6 +1,5 @@
 import { AuthenticationError, ForbiddenError } from 'apollo-server-express'
 import { User } from './models'
-import { SESS_NAME } from './config'
 import { Request, Response, UserDocument } from './types'
 
 // export const isAuthenticated = (parent, args, { me }) =>
