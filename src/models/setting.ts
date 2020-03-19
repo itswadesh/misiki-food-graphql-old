@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose'
-import { SettingDocument } from '../types'
+import { SettingsDocument } from '../types'
 
 const { ObjectId } = Schema.Types
 
@@ -150,4 +150,4 @@ const settingSchema = new Schema(
   }
 )
 
-export default mongoose.model<SettingDocument>('Setting', settingSchema)
+export default mongoose.model<SettingsDocument>('Setting', settingSchema)

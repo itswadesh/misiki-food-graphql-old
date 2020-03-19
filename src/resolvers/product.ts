@@ -135,32 +135,32 @@ const resolvers: IResolvers = {
 
       return product
     },
-    saveVariant: async (
-      root,
-      args: {
-        id: string
-        name: string
-        price: number
-        stock: number
-        img: string
-      },
-      { req }: { req: Request }
-    ): Promise<ProductDocument> => {
-      await productValidation.validateAsync(args, { abortEarly: false })
+    // saveVariant: async (
+    //   root,
+    //   args: {
+    //     id: string
+    //     name: string
+    //     price: number
+    //     stock: number
+    //     img: string
+    //   },
+    //   { req }: { req: Request }
+    // ): Promise<ProductDocument> => {
+    //   await productValidation.validateAsync(args, { abortEarly: false })
 
-      const { userId } = req.session
-      const { id, name, price, stock, img } = args
-      console.log('zzzzzzzzzzzzzzzzzzzzzzzzzzz', args);
-      // let product = await Product.findOneAndUpdate(
-      //   { _id: id },
-      //   { $set: { ...args, uid: userId } }
-      // )
-      // if (!product) throw new UserInputError(`Product with id= ${id} not found`)
+    //   const { userId } = req.session
+    //   const { id, name, price, stock, img } = args
+    //   console.log('zzzzzzzzzzzzzzzzzzzzzzzzzzz', args);
+    //   // let product = await Product.findOneAndUpdate(
+    //   //   { _id: id },
+    //   //   { $set: { ...args, uid: userId } }
+    //   // )
+    //   // if (!product) throw new UserInputError(`Product with id= ${id} not found`)
 
-      // await product.save() // To fire pre save hoook
+    //   // await product.save() // To fire pre save hoook
 
-      // return product
-    },
+    //   // return product
+    // },
     createProduct: async (
       root,
       args: {

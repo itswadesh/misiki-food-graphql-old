@@ -1,6 +1,6 @@
 import { Types } from 'mongoose'
 import { clear, getSubTotal, getTotalQty, saveMyCart, getTotal } from './cart'
-import { calculateOffers } from './promotions'
+// import { calculateOffers } from './promotions'
 import { generateOTP } from './'
 import { Review, Order, Product, Setting, User } from '../models'
 import { ORDER_PREFIX } from './../config'

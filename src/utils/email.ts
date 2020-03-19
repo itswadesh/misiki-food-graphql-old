@@ -1,4 +1,5 @@
-import Settings from '../settings/model';
+import { Setting } from "../models";
+
 const Puppeteer = require('puppeteer')
 const Handlebars = require('handlebars')
 const fs = require('fs');
@@ -16,13 +17,13 @@ const options = { auth: { api_key: SENDGRID_API_KEY } }
 var mailer = nodemailer.createTransport(sg(options));
 mailer.use('compile', hbs(hbsOptions));
 
-export const email = async ({ to, cc = null, bcc = null, subject, template, context = {}, attachments = [] }) => {
+export const email = async ({ to, cc = null, bcc = null, subject, template, context = {}, attachments = [] }: any) => {
     if (!SENDGRID_API_KEY) {
         return 'Sendgrid API key not set at .env'
     }
     let settings
     try {
-        settings = await Settings.findOne()
+        settings = await Setting.findOne()
     } catch (e) {
         throw new Error(e)
     }
@@ -40,18 +41,14 @@ export const email = async ({ to, cc = null, bcc = null, subject, template, cont
         return false
     }
 }
-export const emailWithPdf = async ({ to, subject, emailTemplate, context, attachmentTemplate, pdfExportPath, attachmentFileName }) => {
+export const emailWithPdf = async ({ to, subject, emailTemplate, context, attachmentTemplate, pdfExportPath, attachmentFileName }: any) => {
     try {
-        let settings
-        try {
-            settings = await Settings.findOne()
-        } catch (e) {
-            throw new Error(e)
-        }
-        const html = await this.html({ context, attachmentTemplate })
+        let settings = await Setting.findOne()
+        if (!settings) return
+        const html1 = await html({ context, attachmentTemplate })
         const browser = await Puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] })
         const page = await browser.newPage()
-        await page.setContent(html)
+        await page.setContent(html1)
         await page.pdf({ path: pdfExportPath })
         await browser.close()
         const emailObj: any = {
@@ -62,7 +59,7 @@ export const emailWithPdf = async ({ to, subject, emailTemplate, context, attach
             }]
         }
         try {
-            await this.email(emailObj)
+            await email(emailObj)
         }
         catch (e) {
             console.log('Email error...', e);
@@ -71,7 +68,7 @@ export const emailWithPdf = async ({ to, subject, emailTemplate, context, attach
         console.log('eeeeeeeeeeeeeeeee', e);
     }
 }
-const html = async ({ context, attachmentTemplate }) => {
+const html = async ({ context, attachmentTemplate }: any) => {
     try {
         const content = await ReadFile(attachmentTemplate, 'utf8')
         Handlebars.registerHelper("date", helpers.date);

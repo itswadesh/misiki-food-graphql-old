@@ -1,13 +1,13 @@
-exports.subtract = function (ex1, ex2) {
+exports.subtract = function (ex1: number, ex2: number) {
   return ex1 - ex2;
 };
-exports.multiply = function (ex1, ex2) {
+exports.multiply = function (ex1: number, ex2: number) {
   return ex1 * ex2;
 };
-exports.json = function (msg) {
+exports.json = function (msg: any) {
   return JSON.stringify(msg)
 };
-exports.date = function (date) {
+exports.date = function (date: Date) {
   var monthNames = [
     "January", "February", "March",
     "April", "May", "June", "July",

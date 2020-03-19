@@ -53,14 +53,14 @@ export default gql`
       stock: Int
       img: String
       time: String
-    ): Product @auth
-    saveVariant(
-      id: ID!
-      name: String!
-      price: Int
-      stock: Int
-      img: String
-    ): Variant @auth
+  ): Product @auth
+    # saveVariant(
+    #   id: ID!
+    #   name: String!
+    #   price: Int
+    #   stock: Int
+    #   img: String
+    # ): Variant @auth
   }
 
   type BestSellers {

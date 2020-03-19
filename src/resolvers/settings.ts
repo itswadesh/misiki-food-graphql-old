@@ -2,7 +2,6 @@ import { Types } from 'mongoose'
 import { IResolvers, UserInputError } from 'apollo-server-express'
 import { Request, SettingsDocument } from '../types'
 import {
-  sendMessage,
   objectId,
   productValidation,
   ifImage

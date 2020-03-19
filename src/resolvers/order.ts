@@ -9,8 +9,9 @@ import { Request, MessageDocument, UserDocument, OrderDocument } from '../types'
 import { validate, objectId, orderSchema } from '../validation'
 import { Chat, Order } from '../models'
 import { fields, hasSubfields } from '../utils'
-import { index } from '../utils/base'
+import { index, indexSub } from '../utils/base'
 import { getStartEndDate } from '../utils/dates'
+import { ObjectId } from 'mongodb'
 
 const resolvers: IResolvers = {
   Query: {
@@ -146,12 +147,16 @@ const resolvers: IResolvers = {
       args.status = 'Waiting for confirmation'
       return index({ model: Order, args, info })
     },
-    myCustomers: (root, args, { req }: { req: Request }, info) => {
+    myCustomers: async (root, args, { req }: { req: Request }, info) => {
       const { start, end } = getStartEndDate(0)
-      args['vendor.id'] = req.session.userId
+      let { userId } = req.session
+      userId = Types.ObjectId(userId)
+      args['items.vendor.id'] = userId
       // args.createdAt = { $gte: start, $lte: end }
-      // args.uid = req.session.userId
-      return index({ model: Order, args, info })
+      // args.uid = userId
+      return indexSub({ model: Order, args, info, userId })
+      // console.dir(x.data[0]);
+      // return x
     },
     order: async (
       root,

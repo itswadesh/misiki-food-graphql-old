@@ -1,6 +1,6 @@
 import { IResolvers } from 'apollo-server-express'
 import { Request, CouponDocument } from '../types'
-import { createCoupon, objectId } from '../validation'
+import { validate, objectId, couponSchema } from '../validation'
 import { Coupon } from '../models'
 import { fields, calculateSummary } from '../utils'
 
@@ -58,7 +58,7 @@ const resolvers: IResolvers = {
       },
       { req }: { req: Request }
     ): Promise<CouponDocument> => {
-      await createCoupon.validateAsync(args, { abortEarly: false })
+      await validate(couponSchema, args)
       const { userId } = req.session
       const coupon = await Coupon.create({ ...args, uid: userId })
       await coupon.save()

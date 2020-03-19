@@ -24,7 +24,7 @@ export default gql`
       search: String
       sort: String
       q: String
-    ): orderRes @auth
+    ): myCustomerRes @auth
     todaysChefs: [TC] @auth
     ordersOfChef(
       page: Int
@@ -74,6 +74,18 @@ export default gql`
     _id: String
     count: Float
     amount: Float
+  }
+
+  type myCustomerRes {
+    data: [myCustomer]
+    count: Int
+    pageSize: Int
+    page: Int
+  }
+
+  type myCustomer{
+    _id:Order
+    items:[CartItem]
   }
 
   type orderRes {
