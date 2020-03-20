@@ -122,17 +122,20 @@ export const indexSub = async ({ model, args, info, userId }: any) => {
     searchString = { ...where, q: { $regex: new RegExp(search, 'ig') } }
   let data: any = await model.aggregate([
     { $match: searchString },
-    // { $project: { orderNo: 1, items: 1, address: 1 } },
     { $unwind: '$items' },
     { $match: { 'items.vendor.id': userId } },
+    // { $project: { orderNo: 1, createdAt: 1, updatedAt:1, items: 1, address: 1, s: { $sum: "$items.price" } } },
     {
       $group: {
-        _id: { orderNo: '$orderNo', createdAt: '$createdAt', updatedAt: '$updatedAt', reviewed: '$reviewed', address: '$address', payment: '$payment', amount: '$amount', user: '$user' },
-        items: { $addToSet: "$items" }
+        _id: {
+          orderNo: '$orderNo', createdAt: '$createdAt', updatedAt: '$updatedAt', reviewed: '$reviewed', address: '$address', payment: '$payment', amount: '$amount', user: '$user'
+        },
+        items: { $addToSet: "$items" },
+        total: { $sum: "$items.price" }
       }
-    }
+    },
+
   ])
-  console.log('xxxxxxxxxxxxxxxxx', data);
   let count: any = await model.countDocuments(searchString)
   return { data, count, pageSize, page }
 }

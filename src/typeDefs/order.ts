@@ -74,6 +74,7 @@ export default gql`
     _id: String
     count: Float
     amount: Float
+    createdAt:String
   }
 
   type myCustomerRes {

@@ -8,16 +8,14 @@ import {
 import { Request, MessageDocument, UserDocument, OrderDocument } from '../types'
 import { validate, objectId, orderSchema } from '../validation'
 import { Chat, Order } from '../models'
-import { fields, hasSubfields } from '../utils'
-import { index, indexSub } from '../utils/base'
-import { getStartEndDate } from '../utils/dates'
+import { fields, hasSubfields, index, indexSub, getStartEndDate } from '../utils'
 import { ObjectId } from 'mongodb'
 
 const resolvers: IResolvers = {
   Query: {
     orders: (root, args, { req }: { req: Request }, info) => {
       if (args.vendor) {
-        args['vendor.id'] = args.vendor
+        args['items.vendor.id'] = args.vendor
         delete args.vendor
       }
       if (args.user) args['user._id'] = args.user
@@ -37,7 +35,7 @@ const resolvers: IResolvers = {
         {
           $group: {
             _id: {
-              id: '$vendor.id',
+              id: '$items.vendor.id',
               restaurant: '$vendor.restaurant',
               firstName: '$vendor.firstName',
               lastName: '$vendor.lastName',
@@ -108,7 +106,7 @@ const resolvers: IResolvers = {
       let result = await Order.aggregate([
         {
           $match: {
-            'vendor.id': Types.ObjectId(userId),
+            'items.vendor.id': Types.ObjectId(userId),
             status: 'Waiting for confirmation',
             // createdAt: { $gte: start, $lte: end }
           }
@@ -130,14 +128,16 @@ const resolvers: IResolvers = {
         {
           $match: {
             // createdAt: { $gte: start, $lte: end },
-            'vendor.id': Types.ObjectId(userId)
           }
         },
+        { $unwind: '$items' },
+        { $match: { 'items.vendor.id': Types.ObjectId(userId) } },
         {
           $group: {
             _id: null,
-            amount: { $sum: '$amount.subtotal' },
-            count: { $sum: 1 }
+            amount: { $sum: '$items.price' },
+            count: { $sum: 1 },
+            createdAt: { $max: '$createdAt' },
           }
         }
       ])
@@ -155,8 +155,6 @@ const resolvers: IResolvers = {
       // args.createdAt = { $gte: start, $lte: end }
       // args.uid = userId
       return indexSub({ model: Order, args, info, userId })
-      // console.dir(x.data[0]);
-      // return x
     },
     order: async (
       root,
