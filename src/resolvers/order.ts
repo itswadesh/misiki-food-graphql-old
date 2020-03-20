@@ -128,7 +128,6 @@ const resolvers: IResolvers = {
             }
           }, { $sort: { 'items.address.qrno': 1 } }
         ])
-      console.log('zzzzzzzzzzzzzzzzzzzzzzzzzzz', all[0].items);
       return { pending: pending[0] || {}, out: od[0] || {}, delivered: delivered[0] || {}, cancelled: cancelled[0] || {}, all: all[0] || {} }
       // let all = await await Order.aggregate([
       //   { $match: q },
@@ -209,6 +208,11 @@ const resolvers: IResolvers = {
     pendingOrders: (root, args, { req }: { req: Request }, info) => {
       args.status = 'Waiting for confirmation'
       return index({ model: Order, args, info })
+    },
+    deliveryOrders: (root, args, { req }: { req: Request }, info) => {
+      let userId = Types.ObjectId(args.id)
+      args['items.status'] = args.status
+      return indexSub({ model: Order, args, info, userId })
     },
     myCustomers: async (root, args, { req }: { req: Request }, info) => {
       const { start, end } = getStartEndDate(0)

@@ -17,6 +17,15 @@ export default gql`
     myToday: TodaysSummary @auth
     todaysSummary: TodaysSummary @auth
     delivery: delivery @auth
+    deliveryOrders(
+      page: Int
+      skip: Int
+      limit: Int
+      search: String
+      sort: String
+      q: String
+      status: String
+    ): myCustomerRes @auth
     myOrders(
       page: Int
       skip: Int
