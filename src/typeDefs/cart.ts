@@ -39,6 +39,8 @@ export default gql`
     img: String
     slug: String
     price: Float
+    status: String
+    vendor: User
     qty: Int
   }
 

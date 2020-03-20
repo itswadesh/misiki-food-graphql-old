@@ -16,7 +16,16 @@ export default gql`
     order(id: ID!): Order @auth
     myToday: TodaysSummary @auth
     todaysSummary: TodaysSummary @auth
-    todaysStatus: todaysStatus @auth
+    delivery: delivery @auth
+    myOrders(
+      page: Int
+      skip: Int
+      limit: Int
+      search: String
+      sort: String
+      q: String
+      id: ID
+    ): myCustomerRes @auth
     myCustomers(
       page: Int
       skip: Int
@@ -47,6 +56,7 @@ export default gql`
   extend type Mutation {
     create(chatId: ID!, body: String!): Order @auth
     checkout(qty: String!, pid: String!): Boolean @auth
+    updateOrder(id: ID!, pid: ID!, status:String): Order @auth
   }
 
   type TC {
@@ -63,11 +73,19 @@ export default gql`
     address: Address
   }
 
-  type todaysStatus {
-    _id: String
-    amount: Int
-    count: Int
-    items: [Order]
+  type delivery {
+    pending: DeliveryGroup
+    out: DeliveryGroup
+    cancelled: DeliveryGroup
+    delivered: DeliveryGroup
+    all: DeliveryGroup
+  }
+
+  type DeliveryGroup{
+      _id:String
+      total: Float
+      count: Int
+      items: [Order]
   }
 
   type TodaysSummary {
@@ -98,15 +116,15 @@ export default gql`
 
   type Order {
     id: ID!
-    user: User!
+    user: User
     otp: String
     orderNo: String
     amount: Amount
-    address: Address!
+    address: Address
     vendor: Vendor
     payment_order_id: String
     cartId: Cart!
-    items: [CartItem!]!
+    items: [CartItem!]
     status: String
     delivery: Delivery
     comment: String
@@ -115,8 +133,8 @@ export default gql`
     returnComment: String
     payment: Pay
     reviewed: Boolean
-    createdAt: String!
-    updatedAt: String!
+    createdAt: String
+    updatedAt: String
   }
 
   type Vendor {
@@ -124,7 +142,7 @@ export default gql`
     phone: String
     firstName: String
     lastName: String
-    address: Address
+    address: String
     id: User
   }
 
