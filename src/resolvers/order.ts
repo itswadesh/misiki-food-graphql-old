@@ -251,7 +251,17 @@ const resolvers: IResolvers = {
       const { userId } = req.session
       return Order.findOneAndUpdate({ _id: args.id, 'items.pid': args.pid },
         { $set: { "items.$.status": args.status } })
-
+    },
+    collectPayment: async (
+      root,
+      args: { id: string; cod_paid: number },
+      { req }: { req: Request }
+    ): Promise<Boolean> => {
+      const { userId } = req.session
+      const o = await Order.updateOne({ _id: args.id },
+        { $set: { "cod_paid": args.cod_paid } })
+      console.log('xxxxxxxxxxxxxxxxx', o);
+      return o.nModified
     },
     checkout: async (
       root,

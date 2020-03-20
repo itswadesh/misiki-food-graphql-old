@@ -80,7 +80,8 @@ const orderSchema = new Schema(
     returnComment: String,
     reviewed: { type: Boolean, default: false },
     active: { type: Boolean, default: true },
-    payment_order_id: String
+    payment_order_id: String,
+    cod_paid: Number
   },
   { versionKey: false, timestamps: true }
 )

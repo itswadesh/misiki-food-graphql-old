@@ -66,6 +66,7 @@ export default gql`
     create(chatId: ID!, body: String!): Order @auth
     checkout(qty: String!, pid: String!): Boolean @auth
     updateOrder(id: ID!, pid: ID!, status:String): Order @auth
+    collectPayment(id: ID!, cod_paid:Int): Boolean @auth
   }
 
   type TC {
@@ -144,6 +145,7 @@ export default gql`
     reviewed: Boolean
     createdAt: String
     updatedAt: String
+    cod_paid: Int
   }
 
   type Vendor {
