@@ -28,15 +28,16 @@ const resolvers: IResolvers = {
       await calculateSummary(req, args.code)
       return req.session.cart
     },
-    updateCoupon: async (
+    saveCoupon: async (
       root,
       args,
       { req }: { req: Request }
-    ): Promise<CouponDocument> => {
+    ): Promise<CouponDocument | null> => {
       const { userId } = req.session
-      const coupon = await Coupon.updateOne(
+      const coupon = await Coupon.findOneAndUpdate(
         { _id: args.id },
-        { ...args, uid: userId }
+        { ...args, uid: userId },
+        { new: true, upsert: true }
       )
       return coupon
     },

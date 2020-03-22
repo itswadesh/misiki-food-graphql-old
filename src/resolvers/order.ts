@@ -260,7 +260,6 @@ const resolvers: IResolvers = {
       const { userId } = req.session
       const o = await Order.updateOne({ _id: args.id },
         { $set: { "cod_paid": args.cod_paid } })
-      console.log('xxxxxxxxxxxxxxxxx', o);
       return o.nModified
     },
     checkout: async (
