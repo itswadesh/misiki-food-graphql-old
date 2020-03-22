@@ -2,8 +2,8 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Query {
-    coupons: [Coupon!]
-    coupon(id: ID!): Coupon
+    coupons: couponRes @auth
+    coupon(id: ID!): Coupon @auth
   }
 
   extend type Mutation {
@@ -57,5 +57,12 @@ export default gql`
     active: Boolean
     createdAt: String!
     updatedAt: String!
+  }
+
+  type couponRes {
+    data: [Coupon]
+    count: Int
+    pageSize: Int
+    page: Int
   }
 `

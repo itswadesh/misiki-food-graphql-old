@@ -131,11 +131,9 @@ export default gql`
     orderNo: String
     amount: Amount
     address: Address
-    vendor: Vendor
     payment_order_id: String
     cartId: Cart!
     items: [CartItem!]
-    status: String
     delivery: Delivery
     comment: String
     cancellationReason: String

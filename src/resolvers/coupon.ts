@@ -2,12 +2,12 @@ import { IResolvers } from 'apollo-server-express'
 import { Request, CouponDocument } from '../types'
 import { validate, objectId, couponSchema } from '../validation'
 import { Coupon } from '../models'
-import { fields, calculateSummary } from '../utils'
+import { fields, calculateSummary, index } from '../utils'
 
 const resolvers: IResolvers = {
   Query: {
-    coupons: (root, args, ctx, info): Promise<CouponDocument[]> => {
-      return Coupon.find({}, fields(info)).exec()
+    coupons: (root, args, { req }: { req: Request }, info) => {
+      return index({ model: Coupon, args, info })
     },
     coupon: async (
       root,

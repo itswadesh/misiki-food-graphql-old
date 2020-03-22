@@ -40,7 +40,7 @@ export default gql`
     slug: String
     price: Float
     status: String
-    vendor: User
+    vendor: Vendor
     qty: Int
   }
 
