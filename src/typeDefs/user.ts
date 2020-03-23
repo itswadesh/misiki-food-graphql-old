@@ -11,11 +11,13 @@ export default gql`
     getOtp(phone: String!): String
     verifyOtp(phone: String!, otp: String!): User
 
-    signUp(
+    register(
       firstName: String
       lastName: String
       email: String
       password: String!
+      passwordConfirmation: String!
+      referrer: String
     ): User @guest
 
     updateProfile(
@@ -38,7 +40,7 @@ export default gql`
       metaKeywords: String
     ): User @auth
 
-    signIn(email: String!, password: String!): User @guest
+    login(email: String!, password: String!): User @guest
     signOut: Boolean @auth
   }
 

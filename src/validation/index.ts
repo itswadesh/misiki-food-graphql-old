@@ -1,6 +1,6 @@
 export * from './address'
 export * from './order'
-export * from './pay'
+export * from './payment'
 export * from './brand'
 export * from './category'
 export * from './product'

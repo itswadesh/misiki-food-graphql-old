@@ -10,7 +10,7 @@ import product from './product'
 import brand from './brand'
 import order from './order'
 import page from './page'
-import pay from './pay'
+import payment from './payment'
 import root from './root'
 import user from './user'
 import review from './review'
@@ -33,7 +33,7 @@ export default [
   product,
   order,
   page,
-  pay,
+  payment,
   review,
   slot,
   wishlist,

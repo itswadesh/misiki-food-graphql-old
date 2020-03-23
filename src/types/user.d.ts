@@ -19,8 +19,9 @@ export interface UserDocument extends Document {
   google: any
   github: any
   active: boolean
-  verified: boolean
   address: AddressDocument
+  verified: boolean
+  verifiedAt: Date
   meta: string
   metaTitle: string
   metaDescription: string

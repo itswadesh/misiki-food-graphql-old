@@ -1,7 +1,7 @@
 import { Joi } from './joi'
 
 const phone = Joi.string()
-  .min(8)
+  .min(3)
   .max(13)
   .trim()
   .lowercase()
@@ -40,9 +40,9 @@ const lastName = Joi.string()
 const referrer = Joi.allow('').label('Referrer')
 
 const password = Joi.string()
-  .min(8)
+  .min(1)
   .max(100)
-  .regex(/^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?\d).*$/)
+  // .regex(/^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?\d).*$/)
   .message(
     'must have at least one lowercase letter, one uppercase letter, and one digit.'
   )

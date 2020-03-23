@@ -1,25 +1,18 @@
-import { AuthenticationError, ForbiddenError } from 'apollo-server-express'
+import {
+  AuthenticationError,
+  ForbiddenError,
+  UserInputError
+} from 'apollo-server-express'
 import { User } from './models'
-import { Request, Response, UserDocument } from './types'
+import { Request, Response } from 'express'
+import { UserDocument } from './types'
+import passport from 'passport'
+import { Strategy as FacebookStrategy } from 'passport-facebook'
 
-// export const isAuthenticated = (parent, args, { me }) =>
-//   me ? skip : new ForbiddenError('Not authenticated as user.')
-
-// export const isAdmin = combineResolvers(
-//   isAuthenticated,
-//   (parent, args, { me: { role } }) =>
-//     role === 'ADMIN' ? skip : new ForbiddenError('Not authorized as admin.')
-// )
-
-// export const isMessageOwner = async (parent, { id }, { models, me }) => {
-//   const message = await models.Message.findById(id)
-
-//   if (message.userId != me.id) {
-//     throw new ForbiddenError('Not authenticated as owner.')
-//   }
-
-//   return skip
-// }
+export const logIn = (req: Request, userId: string) => {
+  req.session!.userId = userId
+  req.session!.createdAt = Date.now()
+}
 
 export const verifyOtp = async (
   { phone, otp }: { phone: string; otp: string },
@@ -32,7 +25,6 @@ export const verifyOtp = async (
 
   return user
 }
-
 export const attemptSignIn = async (
   { email, password }: { email: string; password: string },
   fields: string
@@ -48,29 +40,66 @@ export const attemptSignIn = async (
   return user
 }
 
-const signedIn = (req: Request): boolean => req.session.userId
+export const localLogin = async (
+  req: Request,
+  { email, password }: { email: string; password: string },
+  fields: string
+): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    return passport.authenticate('local', (err, user) => {
+      if (err) reject(err)
+
+      req.login(user, err => {
+        if (err) reject(err)
+        resolve(user)
+      })
+    })({ body: { email, password } })
+  })
+}
+
+export const isLoggedIn = (req: Request): boolean => !!req.session!.userId
 
 export const ensureSignedIn = (req: Request): void => {
-  if (!signedIn(req)) {
+  if (!isLoggedIn(req)) {
     throw new AuthenticationError('You must be signed in.')
   }
 }
 
 export const ensureSignedOut = (req: Request): void => {
-  if (signedIn(req)) {
+  if (isLoggedIn(req)) {
     throw new AuthenticationError('You are already signed in.')
   }
 }
 
 export const signOut = (req: Request, res: Response): Promise<boolean> =>
   new Promise((resolve, reject) => {
-    req.session.userId = null
+    req.session!.userId = null
     resolve(true)
-    // req.session.destroy(err => {
+    // req.session!.destroy((err: Error) => {
     //   if (err) reject(err)
 
-    //   res.clearCookie(SESS_NAME)
+    //   res.clearCookie(SESSION_NAME)
 
-    //   resolve(true)
+    //   resolve()
     // })
   })
+
+export const markAsVerified = async (user: UserDocument) => {
+  user.verifiedAt = new Date()
+  await user.save()
+}
+
+export const resetPassword = async (user: UserDocument, password: string) => {
+  user.password = password
+  await user.save()
+}
+
+passport.serializeUser((user: UserDocument, done) => {
+  done(null, user.id)
+})
+
+passport.deserializeUser((id, done) => {
+  User.findById(id, (err: Error, user: UserDocument) => done(err, user)) // gets called on each req :-/
+})
+
+export default passport

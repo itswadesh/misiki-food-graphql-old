@@ -7,8 +7,8 @@ import {
   InfoDocument,
   AddressDocument
 } from '../types'
-import { signUp, signIn, objectId, signInOtp } from '../validation'
-import { attemptSignIn, verifyOtp, signOut } from '../auth'
+import { signUp, signIn, objectId, signInOtp, validate, registerSchema, loginSchema } from '../validation'
+import { logIn, verifyOtp, signOut } from '../auth'
 import { User } from '../models'
 import { fields, generateOTP } from '../utils'
 
@@ -99,37 +99,62 @@ const resolvers: IResolvers = {
       }
       return otp
     },
-    signUp: async (
+    register: async (
       root,
       args: {
         email: string
         firstName: string
         lastName: string
         password: string
+        referrer: string
       },
       { req }: { req: Request }
     ): Promise<UserDocument> => {
-      await signUp.validateAsync(args, { abortEarly: false })
+      await validate(registerSchema, args)
 
-      const user = await User.create(args)
+      const { email, firstName, lastName, password, referrer } = args
 
-      req.session.userId = user.id
+      const found = await User.exists({ email })
+
+      if (found) {
+        throw new UserInputError('Email already registed with us')
+      }
+
+      const user = await User.create({
+        email,
+        firstName,
+        lastName,
+        password,
+        referrer
+      })
+
+      logIn(req, user.id)
 
       return user
     },
-    signIn: async (
+    login: async (
       root,
       args: { email: string; password: string },
       { req }: { req: Request },
       info
     ): Promise<UserDocument> => {
-      await signIn.validateAsync(args, { abortEarly: false })
+      try {
+        await validate(loginSchema, args)
 
-      const user = await attemptSignIn(args, fields(info))
+        const { email, password } = args
 
-      req.session.userId = user.id
+        const user = await User.findOne({ email })
 
-      return user
+        if (!user || !(await user.matchesPassword(password))) {
+          throw new UserInputError('Incorrect email or password')
+        }
+
+        logIn(req, user.id)
+
+        return user
+      } catch (e) {
+        throw e
+      }
     },
     signOut: (
       root,

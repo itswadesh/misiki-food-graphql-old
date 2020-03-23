@@ -2,7 +2,7 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Query {
-    coupons: couponRes @auth
+    coupons(page: Int, search: String, limit:Int, sort:String): couponRes @auth
     coupon(id: ID!): Coupon @auth
   }
 

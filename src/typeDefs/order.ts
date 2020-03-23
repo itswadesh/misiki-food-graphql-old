@@ -139,7 +139,7 @@ export default gql`
     cancellationReason: String
     cancellationComment: String
     returnComment: String
-    payment: Pay
+    payment: Payment
     reviewed: Boolean
     createdAt: String
     updatedAt: String

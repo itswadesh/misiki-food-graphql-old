@@ -30,9 +30,9 @@ const lastName = Joi.string()
   .required()
 
 const password = Joi.string()
-  .min(8)
+  .min(1)
   .max(BCRYPT_MAX_BYTES, 'utf8')
-  .regex(/^(?=.*?[\p{Lu}])(?=.*?[\p{Ll}])(?=.*?\d).*$/u)
+  // .regex(/^(?=.*?[\p{Lu}])(?=.*?[\p{Ll}])(?=.*?\d).*$/u)
   .message(
     '"{#label}" must contain one uppercase letter, one lowercase letter, and one digit'
   )

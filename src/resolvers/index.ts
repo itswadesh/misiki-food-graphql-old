@@ -5,7 +5,7 @@ import coupon from './coupon'
 import media from './media'
 import order from './order'
 import page from './page'
-import pay from './pay'
+import payment from './payment'
 import product from './product'
 import review from './review'
 import slot from './slot'
@@ -23,7 +23,7 @@ export default [
   product,
   order,
   page,
-  pay,
+  payment,
   review,
   slot,
   settings,

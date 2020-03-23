@@ -9,14 +9,14 @@ import {
   Request,
   MessageDocument,
   UserDocument,
-  PayDocument,
+  PaymentDocument,
   ProductDocument,
   OrderDocument
 } from '../types'
 import { objectId } from '../validation'
 import { PAY_MESSAGE } from '../config'
-import { Order, Product } from '../models'
-import { placeOrder, fields } from '../utils'
+import { Order, Product, Payment } from '../models'
+import { placeOrder, fields, index } from '../utils'
 let Razorpay = require('razorpay')
 const { RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET } = process.env
 var instance = new Razorpay({
@@ -26,7 +26,19 @@ var instance = new Razorpay({
 
 const resolvers: IResolvers = {
   Query: {
-    pays: async (root, args, ctx, info): Promise<PayDocument[]> => {
+    payments: (root, args, { req }: { req: Request }, info) => {
+      return index({ model: Payment, args, info })
+    },
+    payment: async (
+      root,
+      args: { id: string },
+      ctx,
+      info
+    ): Promise<PaymentDocument | null> => {
+      await objectId.validateAsync(args)
+      return Payment.findById(args.id, fields(info))
+    },
+    razorpays: async (root, args, ctx, info): Promise<PaymentDocument[]> => {
       const payments = await instance.payments.all()
       payments.data = payments.items
       return payments
@@ -37,7 +49,7 @@ const resolvers: IResolvers = {
       root,
       args: { address: any },
       { req }
-    ): Promise<PayDocument> => {
+    ): Promise<PaymentDocument> => {
       const { userId, cart } = req.session
       if (!userId) throw new UserInputError("User not found")
       if (!cart) {
@@ -65,6 +77,10 @@ const resolvers: IResolvers = {
           { _id: newOrder._id },
           { $set: { payment, payment_order_id: payment.id } }
         )
+        payment.invoice_id = newOrder._id
+        payment.payment_order_id = payment.id
+        await Payment.create(payment)
+
         // await payment.save()
         return payment
       } catch (e) {
@@ -86,6 +102,8 @@ const resolvers: IResolvers = {
         { payment_order_id: payment.order_id },
         { $set: { payment } }
       )
+      await Payment.updateOne({ payment_order_id: payment.order_id }, { $set: payment })
+
       for (let i of o.items) {
         let p: ProductDocument | null = await Product.findById(i)
         if (p) {
