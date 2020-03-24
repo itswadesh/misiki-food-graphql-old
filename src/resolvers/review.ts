@@ -32,28 +32,19 @@ const resolvers: IResolvers = {
     }
   },
   Mutation: {
-    createReview: async (
+    saveReview: async (
       root,
-      args: {
-        originalFilename: string
-        src: string
-        path: string
-        size: string
-        type: string
-        name: string
-        use: string
-        active: boolean
-      },
+      args,
       { req }: { req: Request }
-    ): Promise<ReviewDocument> => {
-      await validate(reviewSchema, args)
+    ): Promise<ReviewDocument | null> => {
       const { userId } = req.session
-      const review = await Review.create({ ...args, uid: userId })
-
-      await review.save()
-
+      const review = await Review.findOneAndUpdate(
+        { _id: args.id },
+        { ...args, uid: userId },
+        { new: true, upsert: true }
+      )
       return review
-    }
+    },
   }
 }
 

@@ -2,12 +2,19 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Query {
-    slots: [Slot!]
-    slot(id: ID!): Slot
+    slots(page: Int, skip: Int, limit: Int, search: String, sort: String): SlotRes
+    slot(id: ID!): Slot @auth
   }
 
   extend type Mutation {
-    createSlot(chatId: ID!, body: String!): Slot @auth
+    saveSlot(id: ID!,  name: String,  val: String,  slug: String,  info: String,  active: Boolean): Slot @auth  
+  }
+
+  type SlotRes{
+    data: [Slot]
+    count: Int
+    pageSize: Int
+    page: Int
   }
 
   type Slot {

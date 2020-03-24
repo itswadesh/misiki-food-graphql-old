@@ -6,7 +6,8 @@ export default gql`
     settingsAdmin: Setting
   }
   extend type Mutation {
-    updateSettings(
+    saveSettings(
+      id:ID!
       websiteName: String
       closeMessage: String
       title: String
@@ -58,6 +59,10 @@ export default gql`
   }
 
   input SmsIp {
+    provider:String
+    FAST2SMS_API_KEY:String
+    TWILIO_API_KEY:String
+    Fast2SMS_OTP_TEMPLATE_ID:Int
     enabled: Boolean
   }
 
@@ -103,6 +108,7 @@ export default gql`
   }
 
   type Setting {
+    id:String
     websiteName: String
     closeMessage: String
     title: String

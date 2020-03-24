@@ -23,13 +23,13 @@ const resolvers: IResolvers = {
   },
 
   Mutation: {
-    updateSettings: async (
+    saveSettings: async (
       root,
       args,
       { req }: { req: Request }
     ): Promise<SettingsDocument> => {
       const { userId } = req.session
-      const { id, name, description, type, price, stock, img, time } = args
+      const { id } = args
       let settings = await Setting.findOneAndUpdate(
         { _id: id },
         { $set: { ...args, uid: userId } }

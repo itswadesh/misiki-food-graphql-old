@@ -8,13 +8,13 @@ import {
 import { Request, MessageDocument, UserDocument, SlotDocument } from '../types'
 import { validate, objectId } from '../validation'
 import { Chat, Slot } from '../models'
-import { fields, hasSubfields } from '../utils'
+import { fields, hasSubfields, index } from '../utils'
 import { slotSchema } from '../validation/slot'
 
 const resolvers: IResolvers = {
   Query: {
-    slots: (root, args, ctx, info): Promise<SlotDocument[]> => {
-      return Slot.find({}, fields(info)).exec()
+    slots: (root, args, { req }: { req: Request }, info) => {
+      return index({ model: Slot, args, info })
     },
     slot: async (
       root,
@@ -24,31 +24,22 @@ const resolvers: IResolvers = {
     ): Promise<SlotDocument | null> => {
       await objectId.validateAsync(args)
       return Slot.findById(args.id, fields(info))
-    }
+    },
   },
   Mutation: {
-    createSlot: async (
+    saveSlot: async (
       root,
-      args: {
-        originalFilename: string
-        src: string
-        path: string
-        size: string
-        type: string
-        name: string
-        use: string
-        active: boolean
-      },
+      args,
       { req }: { req: Request }
-    ): Promise<SlotDocument> => {
-      await slotSchema.validateAsync(args, { abortEarly: false })
+    ): Promise<SlotDocument | null> => {
       const { userId } = req.session
-      const slot = await Slot.create({ ...args, uid: userId })
-
-      await slot.save()
-
+      const slot = await Slot.findOneAndUpdate(
+        { _id: args.id },
+        { ...args, uid: userId },
+        { new: true, upsert: true }
+      )
       return slot
-    }
+    },
   }
 }
 
