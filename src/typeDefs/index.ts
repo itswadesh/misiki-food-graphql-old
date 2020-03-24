@@ -17,6 +17,7 @@ import review from './review'
 import slot from './slot'
 import wishlist from './wishlist'
 import settings from './settings'
+import banner from './banner'
 
 export default [
   root,
@@ -37,5 +38,6 @@ export default [
   review,
   slot,
   wishlist,
-  settings
+  settings,
+  banner
 ]

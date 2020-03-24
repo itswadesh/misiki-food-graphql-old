@@ -39,6 +39,7 @@ const resolvers: IResolvers = {
         { ...args, uid: userId },
         { new: true, upsert: true }
       )
+      await coupon.save() // To fire pre save hoook
       return coupon
     },
     createCoupon: async (

@@ -11,6 +11,7 @@ export interface UserDocument extends Document {
   matchesPassword: (password: string) => Promise<boolean>
   role: string
   gender: string
+  city: string
   info: InfoDocument
   avatar: string
   provider: string
@@ -26,6 +27,7 @@ export interface UserDocument extends Document {
   metaTitle: string
   metaDescription: string
   metaKeywords: string
+  q: string
 }
 
 export interface UserModel extends Model<UserDocument> {

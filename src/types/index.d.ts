@@ -1,10 +1,7 @@
 export * from './chat'
-
 export * from './express'
-
 export * from './message'
 export * from './feature'
-
 export * from './user'
 export * from './address'
 export * from './cart'
@@ -22,3 +19,4 @@ export * from './slot'
 export * from './wishlist'
 export * from './settings'
 export * from './promotion'
+export * from './banner'

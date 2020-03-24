@@ -13,4 +13,6 @@ export interface CouponDocument extends Document {
   from: string
   to: string
   active: boolean
+  q: string
+  color: string
 }

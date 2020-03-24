@@ -17,4 +17,5 @@ export interface BrandDocument extends Document {
   sizechart: string
   position: number
   active: boolean
+  q: string
 }

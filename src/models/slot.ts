@@ -18,4 +18,11 @@ const slotSchema = new Schema(
   }
 )
 
+slotSchema.pre('save', async function (this: SlotDocument) {
+  this.q = this.name ? this.name.toLowerCase() + " " : "";
+  this.q += this.val ? this.val.toLowerCase() + " " : "";
+  this.q += this.active ? this.active + " " : "";
+  this.q = this.q.trim()
+})
+
 export default mongoose.model<SlotDocument>('Slot', slotSchema)

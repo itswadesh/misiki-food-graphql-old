@@ -14,4 +14,10 @@ const reviewSchema = new Schema(
   { versionKey: false, timestamps: true }
 )
 
+reviewSchema.pre('save', async function (this: ReviewDocument) {
+  this.q = this.message ? this.message.toLowerCase() + " " : "";
+  this.q += this.active ? this.active + " " : "";
+  this.q = this.q.trim()
+})
+
 export default mongoose.model<ReviewDocument>('Review', reviewSchema)

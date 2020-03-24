@@ -62,4 +62,16 @@ userSchema.methods.matchesPassword = function (
 
 const User = model<UserDocument, UserModel>('User', userSchema)
 
+userSchema.pre('save', async function (this: UserDocument) {
+  this.q = this.firstName ? this.firstName.toLowerCase() + " " : "";
+  this.q += this.lastName ? this.lastName.toLowerCase() + " " : "";
+  this.q += this.phone ? this.phone + " " : "";
+  this.q += this.email ? this.email.toLowerCase() + " " : "";
+  this.q += this.role ? this.role.toLowerCase() + " " : "";
+  this.q += this.gender ? this.gender.toLowerCase() + " " : "";
+  this.q += this.city ? this.city.toLowerCase() + " " : "";
+  this.q += this.active ? this.active + " " : "";
+  this.q = this.q.trim()
+})
+
 export default User

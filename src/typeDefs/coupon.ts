@@ -3,13 +3,13 @@ import { gql } from 'apollo-server-express'
 export default gql`
   extend type Query {
     coupons(page: Int, search: String, limit:Int, sort:String): couponRes @auth
-    coupon(id: ID!): Coupon @auth
+    coupon(id: String!): Coupon @auth
   }
 
   extend type Mutation {
     applyCoupon(code: String!): Cart @auth
     saveCoupon(
-      id: ID!
+      id: String
       code: String!
       value: Float!
       type: String

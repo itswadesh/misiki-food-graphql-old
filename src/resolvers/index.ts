@@ -12,6 +12,7 @@ import slot from './slot'
 import user from './user'
 import wishlist from './wishlist'
 import settings from './settings'
+import banner from './banner'
 
 export default [
   user,
@@ -27,5 +28,6 @@ export default [
   review,
   slot,
   settings,
-  wishlist
+  wishlist,
+  banner
 ]

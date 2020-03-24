@@ -1,7 +1,5 @@
 export { default as Chat } from './chat'
-
 export { default as User } from './user'
-
 export { default as Brand } from './brand'
 export { default as Message } from './message'
 export { default as Product } from './product'
@@ -20,3 +18,4 @@ export { default as Slot } from './slot'
 export { default as Wishlist } from './wishlist'
 export { default as Setting } from './setting'
 export { default as Promotion } from './promotion'
+export { default as Banner } from './banner'

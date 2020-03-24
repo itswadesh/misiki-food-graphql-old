@@ -38,6 +38,7 @@ const resolvers: IResolvers = {
         { ...args, uid: userId },
         { new: true, upsert: true }
       )
+      await slot.save() // To fire pre save hoook
       return slot
     },
   }

@@ -43,6 +43,7 @@ const resolvers: IResolvers = {
         { ...args, uid: userId },
         { new: true, upsert: true }
       )
+      await review.save() // To fire pre save hoook
       return review
     },
   }
