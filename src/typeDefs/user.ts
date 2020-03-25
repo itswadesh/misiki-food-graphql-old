@@ -26,7 +26,8 @@ export default gql`
       state: String
       phone: String
       zip: Int
-      type: String
+      role: String
+      verified: Boolean
       active: Boolean
     ): User @auth
     register(

@@ -68,6 +68,8 @@ const resolvers: IResolvers = {
         firstName: string
         lastName: string
         avatar: string
+        role: string
+        verified: boolean
         info: InfoDocument
         address: AddressDocument
       },
@@ -88,6 +90,8 @@ const resolvers: IResolvers = {
         firstName: string
         lastName: string
         avatar: string
+        role: string
+        verified: boolean
         info: InfoDocument
         address: AddressDocument
       },
