@@ -19,7 +19,7 @@ const sg = require('nodemailer-sendgrid-transport')
 //   }
 // }
 
-export const MAIL_FROM = `noreply@earthonomy.com`
+export const MAIL_FROM = `noreply@misiki.in`
 
 export const { SENDGRID_API_KEY } = process.env
 const options = { auth: { api_key: SENDGRID_API_KEY } }

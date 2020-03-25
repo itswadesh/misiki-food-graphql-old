@@ -29,6 +29,15 @@ const lastName = Joi.string()
   .trim()
   .required()
 
+const oldPassword = Joi.string()
+  .min(1)
+  .max(BCRYPT_MAX_BYTES, 'utf8')
+  // .regex(/^(?=.*?[\p{Lu}])(?=.*?[\p{Ll}])(?=.*?\d).*$/u)
+  .message(
+    '"{#label}" must contain one uppercase letter, one lowercase letter, and one digit'
+  )
+  .required()
+
 const password = Joi.string()
   .min(1)
   .max(BCRYPT_MAX_BYTES, 'utf8')
@@ -73,6 +82,12 @@ export const resendEmailSchema = Joi.object({
 
 export const forgotPasswordSchema = Joi.object({
   email
+})
+
+export const changePasswordSchema = Joi.object({
+  oldPassword,
+  password,
+  passwordConfirmation
 })
 
 export const resetPasswordSchema = Joi.object({

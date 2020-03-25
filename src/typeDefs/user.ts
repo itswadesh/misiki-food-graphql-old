@@ -3,14 +3,32 @@ import { gql } from 'apollo-server-express'
 export default gql`
   extend type Query {
     me: User @auth
-    user(id: ID!): User @auth
-    users: [User!]! @auth
+    users(page: Int, search: String, limit:Int, sort:String): userRes @auth
+    user(id: String!): User @auth
   }
 
   extend type Mutation {
     getOtp(phone: String!): String
     verifyOtp(phone: String!, otp: String!): User
-
+    changePassword(
+      oldPassword: String!
+      password: String!
+      passwordConfirmation: String!
+    ): Boolean
+    saveUser(
+      id: String!
+      firstName: String
+      lastName: String
+      avatar: String
+      banner: String
+      gender: String
+      city: String
+      state: String
+      phone: String
+      zip: Int
+      type: String
+      active: Boolean
+    ): User @auth
     register(
       firstName: String
       lastName: String
@@ -70,6 +88,13 @@ export default gql`
     public: Boolean
     restaurant: String
     kitchenPhotos: [String]
+  }
+  
+  type userRes {
+    data: [User]
+    count: Int
+    pageSize: Int
+    page: Int
   }
 
   type User {

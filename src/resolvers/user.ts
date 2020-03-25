@@ -1,4 +1,4 @@
-import { IResolvers, UserInputError } from 'apollo-server-express'
+import { IResolvers, UserInputError, AuthenticationError } from 'apollo-server-express'
 import {
   Request,
   Response,
@@ -7,10 +7,11 @@ import {
   InfoDocument,
   AddressDocument
 } from '../types'
-import { signUp, signIn, objectId, signInOtp, validate, registerSchema, loginSchema } from '../validation'
-import { logIn, verifyOtp, signOut } from '../auth'
+import { signUp, signIn, objectId, signInOtp, validate, registerSchema, loginSchema, changePasswordSchema } from '../validation'
+import { logIn, verifyOtp, signOut, changePassword } from '../auth'
 import { User } from '../models'
-import { fields, generateOTP } from '../utils'
+import { fields, generateOTP, index } from '../utils'
+import { email } from '../utils/email'
 
 const resolvers: IResolvers = {
   Query: {
@@ -22,9 +23,8 @@ const resolvers: IResolvers = {
     ): Promise<UserDocument | null> => {
       return User.findById(req.session.userId, fields(info)).exec()
     },
-    users: (root, args, ctx, info): Promise<UserDocument[]> => {
-      // TODO: pagination
-      return User.find({}, fields(info)).exec()
+    users: (root, args, { req }: { req: Request }, info) => {
+      return index({ model: User, args, info })
     },
     user: async (
       root,
@@ -33,15 +33,38 @@ const resolvers: IResolvers = {
       info
     ): Promise<UserDocument | null> => {
       await objectId.validateAsync(args)
-
       return User.findById(args.id, fields(info))
     }
   },
   Mutation: {
+    changePassword: async (
+      root,
+      args,
+      { req }: { req: Request },
+      info
+    ): Promise<Boolean> => {
+      await validate(changePasswordSchema, args)
+      const { oldPassword, password } = args
+      const { userId } = req.session
+      const user = await User.findById(userId)
+      if (!user)
+        throw new UserInputError('User not registered') //Invalid old password provided
+      if (!(await user.matchesPassword(oldPassword)))
+        throw new AuthenticationError('Incorrect old password. Please try again.')
+      user.password = password
+      user.save()
+      // email({
+      //   to: user.email,
+      //   subject: ' Password Changed',
+      //   template: 'user/change-password',
+      //   context: user
+      // })
+      return true
+    },
     updateProfile: async (
       root,
       args: {
-        uid: string
+        id: string
         firstName: string
         lastName: string
         avatar: string
@@ -52,24 +75,30 @@ const resolvers: IResolvers = {
       info
     ): Promise<UserDocument | null> => {
       const { userId } = req.session
-      // let user: UserDocument | null = await User.findById(userId)
-      // if (!user) throw new UserInputError(`User not found`)
-      // console.log('zzzzzzzzzzzzzzzzzzzzzzzzzzz', args)
-      // user.firstName = args.firstName
-      // user.lastName = args.lastName
-      // user.avatar = args.avatar
-      // user.address = args.address
-      // user.info = args.info
-      args.uid = userId
       const user = await User.findOneAndUpdate(
         { _id: userId },
-        { $set: args },
-        {
-          new: true
-        }
+        { $set: args }
       )
-      // user = args
-      // user.save()
+      return user
+    },
+    saveUser: async (
+      root,
+      args: {
+        id: string
+        firstName: string
+        lastName: string
+        avatar: string
+        info: InfoDocument
+        address: AddressDocument
+      },
+      { req }: { req: Request },
+      info
+    ): Promise<UserDocument | null> => {
+      const { userId } = req.session
+      const user = await User.findOneAndUpdate(
+        { _id: args.id },
+        { $set: args }
+      )
       return user
     },
     verifyOtp: async (
