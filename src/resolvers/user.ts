@@ -79,7 +79,8 @@ const resolvers: IResolvers = {
       const { userId } = req.session
       const user = await User.findOneAndUpdate(
         { _id: userId },
-        { $set: args }
+        { $set: args },
+        { new: true }
       )
       return user
     },

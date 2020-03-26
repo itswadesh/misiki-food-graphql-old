@@ -124,6 +124,7 @@ export const indexSub = async ({ model, args, info, userId }: any) => {
     { $unwind: '$items' },
     { $match: args },
     // { $project: { orderNo: 1, createdAt: 1, updatedAt:1, items: 1, address: 1, s: { $sum: "$items.price" } } },
+
     {
       $group: {
         _id: {
@@ -132,7 +133,8 @@ export const indexSub = async ({ model, args, info, userId }: any) => {
         items: { $addToSet: "$items" },
         total: { $sum: "$items.price" }
       }
-    }
+    },
+    { $sort: { "_id": 1 } }
   ])
   let count: any = await model.countDocuments(searchString)
   return { data, count, pageSize, page }
