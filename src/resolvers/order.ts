@@ -28,7 +28,7 @@ const resolvers: IResolvers = {
       let result = await Order.aggregate([
         {
           $match: {
-            // status: 'Waiting for confirmation',
+            'items.status': 'Prepared',
             // createdAt: { $gte: start, $lte: end }
           }
         },
@@ -110,7 +110,7 @@ const resolvers: IResolvers = {
               _id: '$items.status',
               total: { $sum: '$items.price' },
               count: { $sum: 1 },
-              items: { $addToSet: { _id: '$_id', name: '$name', address: '$address', phone: '$phone', amount: '$amount', vendor: '$vendor' } }
+              items: { $addToSet: { _id: '$_id', address: '$address', phone: '$phone', amount: '$amount', vendor: '$vendor' } }
             }
           }, { $sort: { 'items.address.qrno': 1 } }
         ])
@@ -124,7 +124,7 @@ const resolvers: IResolvers = {
               _id: '$items.status',
               total: { $sum: '$items.price' },
               count: { $sum: 1 },
-              items: { $addToSet: { _id: '$_id', user: '$user', address: '$address', vendor: '$items.vendor', amount: '$amount', items: '$items' } }
+              items: { $addToSet: { _id: '$_id', user: '$user', address: '$address', items: '$items', amount: '$amount' } }
             }
           }, { $sort: { 'items.address.qrno': 1 } }
         ])

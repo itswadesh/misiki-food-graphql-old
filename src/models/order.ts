@@ -41,7 +41,7 @@ const orderSchema = new Schema(
     amount: {
       qty: Number,
       subtotal: Number,
-      tax: Number,
+      tax: { cgst: Number, sgst: Number, igst: Number },
       discount: Number,
       shipping: Number,
       total: Number,
@@ -49,6 +49,7 @@ const orderSchema = new Schema(
       exchange_rate: Number,
       offer: Object
     },
+    coupon: Object,
     items: [
       {
         pid: { type: ObjectId, ref: 'Product' },

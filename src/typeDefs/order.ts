@@ -151,14 +151,14 @@ export default gql`
     phone: String
     firstName: String
     lastName: String
-    address: String
+    address: Address
     id: User
   }
 
   type Amount {
     qty: Int
     subtotal: Float
-    tax: Float
+    tax: Tax
     discount: Float
     shipping: Float
     total: Float

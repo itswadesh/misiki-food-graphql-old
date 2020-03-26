@@ -132,6 +132,8 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
   let subtotal = await getSubTotal(items)
   let total = await getTotal(req.session.cart)
   let shipping = cart.shipping.charge
+  let discount = cart.discount.amount
+  let tax = cart.tax
   let qty = getTotalQty(items)
   cart.items = items
   cart.subtotal = subtotal
@@ -161,10 +163,12 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
     amount: {
       total,
       subtotal,
+      discount,
       shipping,
       qty,
-      tax: 0
+      tax
     },
+    coupon: cart.discount
   }
   const o = await Order.create(orderDetails)
   // clear(req)
