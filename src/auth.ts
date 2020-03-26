@@ -93,7 +93,6 @@ export const changePassword = async (userId: string, oldPassword: string, passwo
   const user = await User.findById(userId)
   if (!user)
     throw new UserInputError('User not registered') //Invalid old password provided
-  console.log('xxxxxxxxxxxxxxxxx', oldPassword, password);
   if (!(await user.matchesPassword(oldPassword)))
     throw new AuthenticationError('Incorrect old password. Please try again.')
   user.password = password
