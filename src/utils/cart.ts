@@ -114,7 +114,8 @@ export const addToCart = async (
     items.push({ pid, name, slug, img, price, qty })
   }
   // req.session.cart.vendor = vendor
-  await calculateSummary(req)
+  const code = req.session.cart.discount && req.session.cart.discount.code
+  await calculateSummary(req, code)
 
   return req.session.cart
 }
@@ -153,26 +154,26 @@ export const getSubTotal = (items: Array<CartItemDocument>): number => {
 
 export const getTotal = async (cart: CartDocument) => {
   let subtotal = (cart.subtotal = await getSubTotal(cart.items))
-  let offer = cart.discount || {}
+  let discount = cart.discount || {}
   let code = cart.discount.code
   try {
     const coupon = await Coupon.findOne({ code, active: true }).select(
-      'code color type text terms value minimumCartValue maxAmount from to'
+      'code color type text terms value minimumCartValue amount maxAmount from to'
     )
     if (coupon && coupon && coupon.value) {
-      offer = coupon
-      offer.amount = await applyDiscount(
+      discount = coupon
+      discount.amount = await applyDiscount(
         subtotal,
-        offer.value,
-        offer.minimumCartValue,
-        offer.maxAmount,
-        offer.type
+        discount.value,
+        discount.minimumCartValue,
+        discount.maxAmount,
+        discount.type
       )
     } else {
-      offer = { amount: 0 }
+      discount = { amount: 0 }
     }
   } catch (e) {
-    offer = { amount: 0 }
+    discount = { amount: 0 }
   }
   let shipping, tax
   let setting: SettingsDocument | null = await Setting.findOne()
@@ -182,8 +183,8 @@ export const getTotal = async (cart: CartDocument) => {
   shipping = cart.shipping = setting.shipping
   tax = setting.tax
   if (!shipping || !shipping.charge) shipping.charge = 0
-  cart.discount = offer
-  let total = +subtotal - +offer.amount + +shipping.charge
+  cart.discount = discount
+  let total = +subtotal - +discount.amount + +shipping.charge
   cart.tax = {
     cgst: (total * +tax.cgst) / 100,
     sgst: (total * +tax.sgst) / 100,
@@ -213,29 +214,27 @@ export const calculateSummary = async (req: Request, code?: string) => {
   const { session } = req
   const { cart, userId, id } = session
   if (!cart) throw new UserInputError('Cart is empty')
-  let { items, offer } = cart
+  let { items, discount } = cart
   cart.qty = getTotalQty(items)
   let subtotal = (cart.subtotal = await getSubTotal(items))
   try {
     const coupon = await Coupon.findOne({ code, active: true })
-      .select(
-        'code color type text terms value minimumCartValue maxAmount from to'
-      )
+      .select('code color type text terms value minimumCartValue amount maxAmount from to')
       .exec()
     if (coupon && coupon.value) {
-      offer = coupon
-      offer.amount = await applyDiscount(
+      discount = coupon
+      discount.amount = await applyDiscount(
         subtotal,
-        offer.value,
-        offer.minimumCartValue,
-        offer.maxAmount,
-        offer.type
+        discount.value,
+        discount.minimumCartValue,
+        discount.maxAmount,
+        discount.type
       )
     } else {
-      offer = { amount: 0 }
+      discount = { amount: 0 }
     }
   } catch (e) {
-    offer = { amount: 0 }
+    discount = { amount: 0 }
   }
   let shipping, tax
   let setting = (await Setting.findOne({})
@@ -243,8 +242,8 @@ export const calculateSummary = async (req: Request, code?: string) => {
     .exec()) || { shipping: { charge: 0 }, tax: { cgst: 0, sgst: 0, igst: 0 } }
   shipping = cart.shipping = setting.shipping
   if (!shipping || !shipping.charge) shipping.charge = 0
-  cart.discount = offer
-  let total = +subtotal - +offer.amount + +shipping.charge
+  cart.discount = discount
+  let total = +subtotal - +discount.amount + +shipping.charge
   tax = setting.tax
   cart.tax = {
     cgst: (total * +tax.cgst) / 100,

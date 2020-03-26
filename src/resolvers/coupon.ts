@@ -28,6 +28,14 @@ const resolvers: IResolvers = {
       await calculateSummary(req, args.code)
       return req.session.cart
     },
+    removeCoupon: async (
+      root,
+      args,
+      { req }: { req: Request }
+    ): Promise<any> => {
+      await calculateSummary(req)
+      return req.session.cart
+    },
     saveCoupon: async (
       root,
       args,
