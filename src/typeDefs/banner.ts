@@ -2,8 +2,8 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Query {
-    banners(page: Int, search: String, limit:Int, sort:String, type:String, active:Boolean): bannerRes @auth
-    banner(id: String!): Banner @auth
+    banners(page: Int, search: String, limit:Int, sort:String, type:String, active:Boolean): bannerRes
+    banner(id: String!): Banner
   }
 
   extend type Mutation {

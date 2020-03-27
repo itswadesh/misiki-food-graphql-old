@@ -10,7 +10,7 @@ import {
 import { signUp, signIn, objectId, signInOtp, validate, registerSchema, loginSchema, changePasswordSchema } from '../validation'
 import { logIn, verifyOtp, signOut, changePassword } from '../auth'
 import { User } from '../models'
-import { fields, generateOTP, index } from '../utils'
+import { fields, generateOTP, index, requestOTP } from '../utils'
 import { email } from '../utils/email'
 
 const resolvers: IResolvers = {
@@ -131,6 +131,7 @@ const resolvers: IResolvers = {
         user.password = otp.toString()
         await user.save()
       }
+      requestOTP(args.phone, otp);
       return otp
     },
     register: async (

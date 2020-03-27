@@ -3,7 +3,6 @@ import { IResolvers, UserInputError } from 'apollo-server-express'
 import { Request, SettingsDocument } from '../types'
 import {
   objectId,
-  productValidation,
   ifImage
 } from '../validation'
 import { Setting } from '../models'

@@ -30,7 +30,7 @@ const MESSAGE_SENT = 'MESSAGE_SENT'
 const resolvers: IResolvers = {
   Query: {
     products: (root, args, { req }: { req: Request }, info) => {
-      return indexSub({ model: Product, args, info })
+      return index({ model: Product, args, info }) //indexSub breaks admin->food
     },
     popular: (root, args, { req }: { req: Request }, info) => {
       args.sort = 'stats.popularity'
