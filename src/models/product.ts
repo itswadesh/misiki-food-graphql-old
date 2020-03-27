@@ -72,10 +72,10 @@ productSchema.pre('save', async function (this: ProductDocument) {
     this.slug = await generateSlug(this.name)
   }
   this.q = this.sku ? this.sku + " " : "";
-  this.q = this.name ? this.name.toLocaleLowerCase() + " " : "";
-  this.q += this.description ? this.description.toLocaleLowerCase() + " " : "";
-  this.q += this.category ? this.category.toLocaleLowerCase() + " " : "";
-  this.q += this.status ? this.status.toLocaleLowerCase() + " " : "";
+  this.q = this.name ? this.name.toLowerCase() + " " : "";
+  this.q += this.description ? this.description.toLowerCase() + " " : "";
+  // this.q += this.category ? this.category.toLowerCase() + " " : "";
+  this.q += this.status ? this.status.toLowerCase() + " " : "";
   this.q += " ";
   this.q = this.q.trim()
 })

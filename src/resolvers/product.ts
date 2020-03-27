@@ -15,7 +15,7 @@ import {
 import {
   validate,
   objectId,
-  productValidation,
+  productSchema,
   ifImage
 } from '../validation'
 import { Chat, Message, Product } from '../models'
@@ -23,14 +23,14 @@ import { fields, hasSubfields, getData } from '../utils'
 import pubsub from '../pubsub'
 
 import { deleteFile } from '../utils/image'
-import { index } from '../utils/base'
+import { index, indexSub } from '../utils/base'
 import { getStartEndDate3 } from '../utils/dates'
 
 const MESSAGE_SENT = 'MESSAGE_SENT'
 const resolvers: IResolvers = {
   Query: {
     products: (root, args, { req }: { req: Request }, info) => {
-      return index({ model: Product, args, info })
+      return indexSub({ model: Product, args, info })
     },
     popular: (root, args, { req }: { req: Request }, info) => {
       args.sort = 'stats.popularity'
@@ -82,7 +82,7 @@ const resolvers: IResolvers = {
       info
     ): Promise<ProductDocument | null> => {
       await objectId.validateAsync(args)
-      return Product.findById(args.id, fields(info))
+      return Product.findById(args.id, fields(info)).populate('category')
     }
   },
 
@@ -109,19 +109,19 @@ const resolvers: IResolvers = {
         stock: number
         img: string
         time: string
+        category: string
       },
       { req }: { req: Request }
     ): Promise<ProductDocument> => {
-      await productValidation.validateAsync(args, { abortEarly: false })
-
+      await validate(productSchema, args)
       const { userId } = req.session
       const { id, name, description, type, price, stock, img, time } = args
       let product = await Product.findOneAndUpdate(
         { _id: id },
-        { $set: { ...args, uid: userId } }
+        { $set: { ...args, vendor: userId } },
+        { new: true }
       ) // If pre hook to be executed for product.save()
       if (!product) throw new UserInputError(`Product with id= ${id} not found`)
-
       // let product: ProductDocument | null = await Product.findById(id) // TODO: Check if null values replace the existing
       // product.name = name
       // product.description = description
@@ -132,8 +132,7 @@ const resolvers: IResolvers = {
       // product.vendor = userId
 
       await product.save() // To fire pre save hoook
-
-      return product
+      return product.populate('category').execPopulate()
     },
     // saveVariant: async (
     //   root,
@@ -171,13 +170,14 @@ const resolvers: IResolvers = {
         stock: number
         img: string
         time: string
+        category: string
       },
       { req }: { req: Request }
     ): Promise<ProductDocument> => {
-      await productValidation.validateAsync(args, { abortEarly: false })
+      await validate(productSchema, args)
 
       const { userId } = req.session
-      const { name, description, type, price, stock, img, time } = args
+      const { name, description, type, price, stock, img, time, category } = args
       const product = await Product.create({
         name,
         description,
@@ -186,7 +186,8 @@ const resolvers: IResolvers = {
         stock,
         img,
         time,
-        vendor: userId
+        vendor: userId,
+        category
       })
 
       await product.save()

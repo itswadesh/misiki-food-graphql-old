@@ -49,6 +49,7 @@ export default gql`
       stock: Int
       img: String
       time: String
+      category: String
     ): Product @auth
     updateProduct(
       id: ID!
@@ -59,6 +60,7 @@ export default gql`
       stock: Int
       img: String
       time: String
+      category: String
   ): Product @auth
     # saveVariant(
     #   id: ID!
@@ -91,6 +93,7 @@ type BS1{
     slug:String
     img: String
     price:Float
+    category:Category
     updatedAt:String
     restaurant: String
     time: String

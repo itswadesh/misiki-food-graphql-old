@@ -1,7 +1,6 @@
 import { Joi } from './joi'
-import { MinKey } from 'mongodb'
 
-export const productValidation = Joi.object().keys({
+export const productSchema = Joi.object().keys({
   id: Joi.objectId()
     .allow('')
     .label('Dish ID'),
@@ -23,5 +22,7 @@ export const productValidation = Joi.object().keys({
     .min(0)
     .label('Quantity'),
   img: Joi.allow(''),
-  time: Joi.allow('')
+  time: Joi.allow(''),
+  category: Joi.allow('')
 })
+

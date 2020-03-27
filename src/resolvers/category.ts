@@ -7,18 +7,16 @@ import {
 } from 'apollo-server-express'
 import {
   Request,
-  MessageDocument,
-  UserDocument,
   CategoryDocument
 } from '../types'
 import { validate, objectId, categorySchema } from '../validation'
 import { Chat, Category } from '../models'
-import { fields, hasSubfields } from '../utils'
+import { fields, hasSubfields, index } from '../utils'
 
 const resolvers: IResolvers = {
   Query: {
-    categories: (root, args, ctx, info): Promise<CategoryDocument[]> => {
-      return Category.find({}, fields(info)).exec()
+    categories: (root, args, { req }: { req: Request }, info) => {
+      return index({ model: Category, args, info })
     },
     category: async (
       root,
@@ -31,28 +29,24 @@ const resolvers: IResolvers = {
     }
   },
   Mutation: {
-    createCategory: async (
+    saveCategory: async (
       root,
-      args: {
-        originalFilename: string
-        src: string
-        path: string
-        size: string
-        type: string
-        name: string
-        use: string
-        active: boolean
-      },
+      args,
       { req }: { req: Request }
-    ): Promise<CategoryDocument> => {
-      await validate(categorySchema, args)
+    ): Promise<CategoryDocument | null> => {
       const { userId } = req.session
-      const category = await Category.create({ ...args, uid: userId })
-
-      await category.save()
-
-      return category
-    }
+      if (args.id == 'new')
+        return await Category.create(args)
+      else {
+        const category = await Category.findOneAndUpdate(
+          { _id: args.id },
+          { ...args, user: userId },
+          { new: true, upsert: true }
+        )
+        await category.save() // To fire pre save hoook
+        return category
+      }
+    },
   }
 }
 

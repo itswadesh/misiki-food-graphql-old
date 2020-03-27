@@ -2,12 +2,12 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Query {
-    categories: [Category!]
-    category(id: ID!): Category
+    categories(page: Int, search: String, limit:Int, sort:String): categoryRes
+    category(id: String): Category
   }
 
   extend type Mutation {
-    createCategory(chatId: ID!, body: String!): Category @auth
+    saveCategory(id: String, name: String!, slug: String, img: String, megamenu: Boolean, featured: Boolean, active: Boolean): Category @admin
   }
 
   type Category {
@@ -31,11 +31,18 @@ export default gql`
     featured: Boolean
     shopbycategory: Boolean
     children: [Category]
-    uid: User
+    user: User
     count: Int
     sizechart: String
     active: Boolean
     createdAt: String!
     updatedAt: String!
+  }
+  
+  type categoryRes {
+    data: [Category]
+    count: Int
+    pageSize: Int
+    page: Int
   }
 `

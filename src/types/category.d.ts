@@ -19,9 +19,11 @@ export interface CategoryDocument extends Document {
   metaKeywords: string
   img: string
   featured: boolean
+  active: boolean
   shopbycategory: boolean
   children: CategoryDocument['_id']
   uid: UserDocument['_id']
   count: number
   sizechart: string
+  q: string
 }
