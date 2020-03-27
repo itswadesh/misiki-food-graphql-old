@@ -9,6 +9,7 @@ import { SESSION_OPTIONS, APOLLO_OPTIONS, STATIC_PATH } from './config'
 import { Request, Response } from './types'
 import { ensureSignedIn } from './auth'
 import oAuthRoutes from './oauth'
+import exportRoutes from './export'
 
 export const createApp = (store?: session.Store) => {
   const app = express()
@@ -21,6 +22,7 @@ export const createApp = (store?: session.Store) => {
   app.use(passport.session())
 
   oAuthRoutes(app)
+  exportRoutes(app)
 
   app.use(express.static(STATIC_PATH))
   const server = new ApolloServer({

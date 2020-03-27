@@ -33,7 +33,6 @@ const categorySchema = new Schema(
     user: { type: ObjectId, ref: 'User' },
     count: Number,
     sizechart: String,
-    updated: { type: Date, default: Date.now },
     active: { type: Boolean, default: true },
     q: String
   },

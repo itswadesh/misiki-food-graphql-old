@@ -1,4 +1,5 @@
 import { Setting } from '../models'
+import fetch from 'node-fetch'
 export const sms = async (params: any) => {
   try {
     let settings = await Setting.findOne({}).exec()

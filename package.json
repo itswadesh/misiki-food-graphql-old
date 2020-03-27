@@ -1,5 +1,5 @@
 {
-  "name": "@earthonomy/api",
+  "name": "@misiki/api",
   "version": "1.0.0",
   "private": true,
   "main": "dist/index.js",
@@ -41,9 +41,11 @@
     "handlebars": "^4.7.3",
     "image-downloader": "^3.5.0",
     "ioredis": "^4.14.1",
+    "json2csv": "^5.0.0",
     "mkdirp": "^1.0.3",
     "moment": "^2.24.0",
     "mongoose": "^5.9.4",
+    "node-fetch": "^2.6.0",
     "nodemailer": "^6.4.5",
     "nodemailer-express-handlebars": "^3.1.0",
     "nodemailer-sendgrid-transport": "^0.2.0",
