@@ -10,7 +10,7 @@ import {
   CategoryDocument
 } from '../types'
 import { validate, objectId, categorySchema } from '../validation'
-import { Chat, Category } from '../models'
+import { Chat, Category, Slug } from '../models'
 import { fields, hasSubfields, index } from '../utils'
 
 const resolvers: IResolvers = {
@@ -20,15 +20,32 @@ const resolvers: IResolvers = {
     },
     category: async (
       root,
-      args: { id: string },
+      args: { id: string, slug: string },
       ctx,
       info
     ): Promise<CategoryDocument | null> => {
-      await objectId.validateAsync(args)
-      return Category.findById(args.id, fields(info))
+      if (args.id) {
+        await objectId.validateAsync(args.id)
+        return Category.findById(args.id, fields(info))
+      } else {
+        return Category.findOne({ slug: args.slug }, fields(info))
+      }
     }
   },
   Mutation: {
+    deleteCategory: async (
+      root,
+      args,
+      { req }: { req: Request }
+    ): Promise<Boolean> => {
+      const category: any = await Category.findByIdAndDelete(args.id)
+      if (category) {
+        await Slug.deleteOne({ slug: category.slug })
+        return true
+      } else {
+        return false
+      }
+    },
     saveCategory: async (
       root,
       args,

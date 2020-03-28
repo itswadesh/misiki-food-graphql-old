@@ -18,7 +18,7 @@ import {
   productSchema,
   ifImage
 } from '../validation'
-import { Chat, Message, Product } from '../models'
+import { Chat, Message, Product, User } from '../models'
 import { fields, hasSubfields, getData } from '../utils'
 import pubsub from '../pubsub'
 
@@ -92,11 +92,19 @@ const resolvers: IResolvers = {
       args,
       { req }: { req: Request }
     ): Promise<Boolean> => {
+      const { userId } = req.session
       const product = await Product.findById(args.id)
-      if (!product) return true
-      await deleteFile(product.img)
-      let p = await Product.deleteOne({ _id: args.id })
-      return p.ok == 1
+      if (!product) throw new UserInputError('Item not found')
+      const user = await User.findById(userId)
+      if (!user) throw new UserInputError('Please login again to continue')
+      if (!user.verified) throw new UserInputError('You must be verified by admin to delete item')
+      if (user.role == 'admin' || product.vendor == userId) {
+        await deleteFile(product.img)
+        let p = await Product.deleteOne({ _id: args.id })
+        return p.ok == 1
+      } else {
+        throw new UserInputError('Item does not belong to you')
+      }
     },
     updateProduct: async (
       root,
@@ -114,25 +122,27 @@ const resolvers: IResolvers = {
       { req }: { req: Request }
     ): Promise<ProductDocument> => {
       await validate(productSchema, args)
-      const { userId } = req.session
       const { id, name, description, type, price, stock, img, time } = args
-      let product = await Product.findOneAndUpdate(
-        { _id: id },
-        { $set: { ...args, vendor: userId } },
-        { new: true }
-      ) // If pre hook to be executed for product.save()
+      const { userId } = req.session
+      const product = await Product.findById(args.id)
       if (!product) throw new UserInputError(`Product with id= ${id} not found`)
-      // let product: ProductDocument | null = await Product.findById(id) // TODO: Check if null values replace the existing
-      // product.name = name
-      // product.description = description
-      // product.type = type
-      // product.price = price
-      // product.stock = stock
-      // product.img = img
-      // product.vendor = userId
+      const user = await User.findById(userId)
+      if (!user) throw new UserInputError('Please login again to continue')
+      if (!user.verified) throw new UserInputError('You must be verified by admin to update item')
 
-      await product.save() // To fire pre save hoook
-      return product.populate('category').execPopulate()
+      if (user.role == 'admin' || product.vendor == userId) {
+        let product = await Product.findOneAndUpdate(
+          { _id: id },
+          { $set: { ...args, vendor: userId } },
+          { new: true }
+        ) // If pre hook to be executed for product.save()
+        if (!product)
+          if (!product) throw new UserInputError(`Error updating item id= ${id}`)
+        await product.save() // To fire pre save hoook
+        return product.populate('category').execPopulate()
+      } else {
+        throw new UserInputError('Item does not belong to you')
+      }
     },
     // saveVariant: async (
     //   root,
@@ -178,6 +188,10 @@ const resolvers: IResolvers = {
 
       const { userId } = req.session
       const { name, description, type, price, stock, img, time, category } = args
+
+      const user = await User.findById(userId)
+      if (!user || !user.verified) throw new UserInputError('You must be verified by admin to create item')
+
       const product = await Product.create({
         name,
         description,
@@ -191,8 +205,7 @@ const resolvers: IResolvers = {
       })
 
       await product.save()
-
-      return product
+      return product.populate('category').execPopulate()
     }
   },
 

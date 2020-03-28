@@ -1,4 +1,4 @@
-import { Setting, Product } from '../models'
+import { Setting, Product, Category, User } from '../models'
 import { toJson } from './json'
 import { fields } from './'
 import { searchFields } from './graphql'
@@ -27,6 +27,16 @@ export const index = async ({ model, args, info, userId }: any) => {
     )
       delete where[k]
     if (where[k] == 'blank') where[k] = null
+  }
+  if (where.category) {
+    const c = await Category.findOne({ slug: where.category })
+    if (c)
+      where.category = c._id
+  }
+  if (where.vendor) {
+    const c = await User.findOne({ role: 'vendor', slug: where.vendor })
+    if (c)
+      where.vendor = c._id
   }
   where = toJson(where) || {}
   let role = 'user'

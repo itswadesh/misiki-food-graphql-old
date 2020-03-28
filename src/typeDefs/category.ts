@@ -3,11 +3,12 @@ import { gql } from 'apollo-server-express'
 export default gql`
   extend type Query {
     categories(page: Int, search: String, limit:Int, sort:String): categoryRes
-    category(id: String): Category
+    category(id: String, slug: String ): Category
   }
 
   extend type Mutation {
     saveCategory(id: String, name: String!, slug: String, img: String, megamenu: Boolean, featured: Boolean, active: Boolean): Category @admin
+    deleteCategory(id: ID!): Boolean @admin
   }
 
   type Category {

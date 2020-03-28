@@ -1,23 +1,24 @@
-import { Setting } from '../models'
+import { Slug } from '../models'
 
 export const generateSlug = async (str: string) => {
   if (!str)
     return ""
-  let rawSlug = str
-    .toString()
-    .toLowerCase()
-    .replace(/\s+/g, '-') // Replace spaces with -
-    .replace(/[^\w\-]+/g, '') // Remove all non-word chars
-    .replace(/\-\-+/g, '-') // Replace multiple - with single -
-    .replace(/^-+/, '') // Trim - from start of text
-    .replace(/-+$/, '')
+  let rawSlug = str.toString().toLowerCase()
+    .replace(/\s+/g, '-')        // Replace spaces with -
+    .replace(/[^\w\-]+/g, '')   // Remove all non-word chars
+    .replace(/\-\-+/g, '-')      // Replace multiple - with single -
+    .replace(/^-+/, '')          // Trim - from start of text
+    .replace(/-+$/, '');
   try {
     let newSlug = rawSlug
-    let foundSlug
+    let foundSlug: String
     do {
-      foundSlug = await Setting.findOne({ slug: newSlug })
-      if (foundSlug) newSlug = newSlug + '-en'
-    } while (foundSlug)
+      foundSlug = await Slug.findOne({ slug: newSlug })
+      if (foundSlug)
+        newSlug = newSlug + '-en'
+    }
+    while (foundSlug)
+    await Slug.create({ slug: newSlug })
     return newSlug
   } catch (e) {
     return rawSlug

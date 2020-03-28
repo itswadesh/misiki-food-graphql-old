@@ -9,6 +9,8 @@ export default gql`
       limit: Int
       search: String
       sort: String
+      vendor: String
+      category: String
     ): SearchRes
     product(id: ID!): Product
     popular(
