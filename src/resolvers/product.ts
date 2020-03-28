@@ -18,7 +18,7 @@ import {
   productSchema,
   ifImage
 } from '../validation'
-import { Chat, Message, Product, User } from '../models'
+import { Chat, Message, Product, User, Slug } from '../models'
 import { fields, hasSubfields, getData } from '../utils'
 import pubsub from '../pubsub'
 
@@ -99,9 +99,14 @@ const resolvers: IResolvers = {
       if (!user) throw new UserInputError('Please login again to continue')
       if (!user.verified) throw new UserInputError('You must be verified by admin to delete item')
       if (user.role == 'admin' || product.vendor == userId) {
-        await deleteFile(product.img)
-        let p = await Product.deleteOne({ _id: args.id })
-        return p.ok == 1
+        let p = await Product.findByIdAndDelete({ _id: args.id })
+        if (p) {
+          await deleteFile(product.img)
+          await Slug.deleteOne({ slug: p.slug })
+          return true
+        } else {
+          return false
+        }
       } else {
         throw new UserInputError('Item does not belong to you')
       }
