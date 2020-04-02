@@ -63,5 +63,7 @@ paymentSchema.pre('save', async function (this: PaymentDocument) {
   this.q += this.created_at ? this.created_at + " " : "";
   this.q = this.q.trim()
 })
-
+paymentSchema.index({
+  '$**': 'text'
+});
 export default mongoose.model<PaymentDocument>('Payment', paymentSchema)

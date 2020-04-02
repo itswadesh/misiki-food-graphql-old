@@ -17,10 +17,7 @@ const userSchema = new Schema(
       ]
     },
     password: String,
-    role: {
-      type: String,
-      default: 'user'
-    },
+    role: { type: String, default: 'user' },
     gender: String,
     city: String,
     info: { type: Object, default: {} },
@@ -73,5 +70,7 @@ userSchema.pre('save', async function (this: UserDocument) {
   this.q += this.active ? this.active + " " : "";
   this.q = this.q.trim()
 })
-
+userSchema.index({
+  '$**': 'text'
+});
 export default User

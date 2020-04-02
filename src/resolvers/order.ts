@@ -14,6 +14,11 @@ import { ObjectId } from 'mongodb'
 const resolvers: IResolvers = {
   Query: {
     orders: (root, args, { req }: { req: Request }, info) => {
+      const { userId } = req.session
+      args['user.id'] = userId
+      return index({ model: Order, args, info })
+    },
+    allOrders: (root, args, { req }: { req: Request }, info) => {
       if (args.vendor) {
         args['items.vendor.id'] = args.vendor
         delete args.vendor
@@ -221,6 +226,15 @@ const resolvers: IResolvers = {
       args['items.vendor.id'] = userId
       // args.createdAt = { $gte: start, $lte: end }
       // args.uid = userId
+      return indexSub({ model: Order, args, info, userId })
+    },
+    ordersForPickup: async (root, args, { req }: { req: Request }, info) => {
+      const { start, end } = getStartEndDate(0)
+      let userId = Types.ObjectId(args.id)
+      delete args.id
+      args['items.vendor.id'] = userId
+      args['items.status'] = 'Prepared'
+      // args.createdAt = { $gte: start, $lte: end }
       return indexSub({ model: Order, args, info, userId })
     },
     myOrders: async (root, args, { req }: { req: Request }, info) => {

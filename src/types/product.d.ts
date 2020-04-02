@@ -29,27 +29,21 @@ export interface ProductDocument extends Document {
   vendor: UserDocument['_id']
   active: boolean
   delivery_days: number
-  meta: {
-    info: string
-    title: string
-    description: string
-    keywords: string
-  }
-  badge: {
-    recommended: boolean
-    hot: boolean
-    sale: boolean
-    new: boolean
-    featured: boolean
-    approved: boolean
-  }
-  stats: {
-    position: number
-    popularity: number
-    sales: number
-    ratings: number
-    reviews: number
-  }
+  info: string
+  title: string
+  metaDescription: string
+  keywords: string
+  recommended: boolean
+  hot: boolean
+  sale: boolean
+  new: boolean
+  featured: boolean
+  approved: boolean
+  position: number
+  popularity: number
+  sales: number
+  ratings: number
+  reviews: number
   related: [ProductDocument['_id']],
   q: string
 }

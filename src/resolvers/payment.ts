@@ -16,7 +16,7 @@ import {
 import { objectId } from '../validation'
 import { PAY_MESSAGE } from '../config'
 import { Order, Product, Payment } from '../models'
-import { placeOrder, fields, index } from '../utils'
+import { placeOrder, fields, index, clearCart } from '../utils'
 let Razorpay = require('razorpay')
 const { RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET } = process.env
 var instance = new Razorpay({
@@ -111,14 +111,14 @@ const resolvers: IResolvers = {
             { _id: i._id },
             {
               $set: {
-                popularity: +p.stats.popularity + 10,
+                popularity: +p.popularity + 10,
                 stock: +p.stock - +i.qty
               }
             }
           ) // Reduce stock for that
         }
       }
-      req.session.cart = {}
+      clearCart(req)
       return o
     }
   }

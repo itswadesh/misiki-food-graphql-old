@@ -25,14 +25,17 @@ import pubsub from '../pubsub'
 import { deleteFile } from '../utils/image'
 import { index, indexSub } from '../utils/base'
 import { getStartEndDate3 } from '../utils/dates'
+import product from '../typeDefs/product'
 
 const MESSAGE_SENT = 'MESSAGE_SENT'
 const resolvers: IResolvers = {
   Query: {
     products: (root, args, { req }: { req: Request }, info) => {
-      return index({ model: Product, args, info }) //indexSub breaks admin->food
+      args.populate = 'category'
+      return index({ model: Product, args, info })
     },
     popular: (root, args, { req }: { req: Request }, info) => {
+      args.stock = { $gt: 0 }
       args.sort = 'stats.popularity'
       args.limit = 10
       return index({ model: Product, args, info })
@@ -46,6 +49,7 @@ const resolvers: IResolvers = {
         q.type = req.query.type;
       }
       if (req.query.search) q.q = { $regex: new RegExp(req.query.search, "ig") };
+      q.stock = { $gt: 0 }
 
       const { start, end } = getStartEndDate3(0);
       let t = await getData(start, end, q);
@@ -65,6 +69,7 @@ const resolvers: IResolvers = {
     },
     myProducts: (root, args, { req }: { req: Request }, info) => {
       args.vendor = req.session.userId
+      // args.populate = 'vendor'
       return index({ model: Product, args, info })
     },
     productSlug: async (
@@ -82,7 +87,7 @@ const resolvers: IResolvers = {
       info
     ): Promise<ProductDocument | null> => {
       await objectId.validateAsync(args)
-      return Product.findById(args.id, fields(info)).populate('category')
+      return Product.findById(args.id, fields(info)).populate('categories').populate('category')
     }
   },
 
@@ -111,7 +116,7 @@ const resolvers: IResolvers = {
         throw new UserInputError('Item does not belong to you')
       }
     },
-    updateProduct: async (
+    saveProduct: async (
       root,
       args: {
         id: string
@@ -123,31 +128,35 @@ const resolvers: IResolvers = {
         img: string
         time: string
         category: string
+        vendor: UserDocument
       },
       { req }: { req: Request }
     ): Promise<ProductDocument> => {
-      await validate(productSchema, args)
+      // await validate(productSchema, args) // During image removal, only img attribute is passed
       const { id, name, description, type, price, stock, img, time } = args
       const { userId } = req.session
-      const product = await Product.findById(args.id)
-      if (!product) throw new UserInputError(`Product with id= ${id} not found`)
       const user = await User.findById(userId)
       if (!user) throw new UserInputError('Please login again to continue')
-      if (!user.verified) throw new UserInputError('You must be verified by admin to update item')
-
-      if (user.role == 'admin' || product.vendor == userId) {
-        let product = await Product.findOneAndUpdate(
+      if (user.role != 'admin' && !user.verified) throw new UserInputError('You must be verified by admin to update item')
+      const forUpdate = user.role == 'admin' ? args : { ...args, vendor: userId }
+      let newProduct
+      if (args.id) {
+        const product = await Product.findById(args.id)
+        if (!product) throw new UserInputError(`Product with id= ${id} not found`)
+        if (user.role !== 'admin' && product.vendor != userId) // Always use != instead of !== so that type checking is skipped
+          throw new Error('This item does not belong to you')
+        newProduct = await Product.findOneAndUpdate(
           { _id: id },
-          { $set: { ...args, vendor: userId } },
+          { $set: forUpdate },
           { new: true }
         ) // If pre hook to be executed for product.save()
-        if (!product)
-          if (!product) throw new UserInputError(`Error updating item id= ${id}`)
-        await product.save() // To fire pre save hoook
-        return product.populate('category').execPopulate()
       } else {
-        throw new UserInputError('Item does not belong to you')
+        newProduct = await Product.create(forUpdate)
       }
+      if (!newProduct) throw new UserInputError(`Error updating item id= ${id}`)
+      await newProduct.save() // To fire pre save hoook
+      return newProduct.populate('category').execPopulate()
+
     },
     // saveVariant: async (
     //   root,

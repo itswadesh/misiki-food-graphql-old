@@ -33,5 +33,7 @@ brandSchema.pre('save', async function (this: BrandDocument) {
   this.q += this.banner ? this.banner.toLowerCase() + " " : "";
   this.q = this.q.trim()
 })
-
+brandSchema.index({
+  '$**': 'text'
+});
 export default mongoose.model<BrandDocument>('Brand', brandSchema)

@@ -25,7 +25,7 @@ const resolvers: IResolvers = {
       info
     ): Promise<CategoryDocument | null> => {
       if (args.id) {
-        await objectId.validateAsync(args.id)
+        await objectId.validateAsync(args)
         return Category.findById(args.id, fields(info))
       } else {
         return Category.findOne({ slug: args.slug }, fields(info))

@@ -68,4 +68,7 @@ categorySchema.pre('save', async function (this: CategoryDocument) {
 //   objectIDs.forEach(_id => (ids[_id.toString()] = _id))
 //   return Object['values'](ids)
 // }
+categorySchema.index({
+  '$**': 'text'
+});
 export default mongoose.model<CategoryDocument>('Category', categorySchema)

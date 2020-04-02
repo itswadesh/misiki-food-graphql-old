@@ -33,13 +33,17 @@ const resolvers: IResolvers = {
       { req }: { req: Request }
     ): Promise<SlotDocument | null> => {
       const { userId } = req.session
-      const slot = await Slot.findOneAndUpdate(
-        { _id: args.id },
-        { ...args, uid: userId },
-        { new: true, upsert: true }
-      )
-      await slot.save() // To fire pre save hoook
-      return slot
+      if (args.id == 'new')
+        return await Slot.create(args)
+      else {
+        const slot = await Slot.findOneAndUpdate(
+          { _id: args.id },
+          { ...args, uid: userId },
+          { new: true, upsert: true }
+        )
+        await slot.save() // To fire pre save hoook
+        return slot
+      }
     },
   }
 }

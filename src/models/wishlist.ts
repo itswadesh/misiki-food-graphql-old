@@ -31,5 +31,7 @@ const wishlistSchema = new Schema(
   },
   { versionKey: false, timestamps: true }
 )
-
+wishlistSchema.index({
+  '$**': 'text'
+});
 export default mongoose.model<WishlistDocument>('Wishlist', wishlistSchema)

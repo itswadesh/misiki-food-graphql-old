@@ -9,7 +9,7 @@ import { Request, MessageDocument, UserDocument, CartDocument } from '../types'
 import { validate, objectId, cartSchema } from '../validation'
 import { Chat, Cart } from '../models'
 import { fields, hasSubfields } from '../utils'
-import { removeFromCartSession, addToCart } from '../utils/cart'
+import { clearCart, addToCart } from '../utils/cart'
 
 const resolvers: IResolvers = {
   Query: {
@@ -60,6 +60,14 @@ const resolvers: IResolvers = {
       // const cart = await Cart.create({ pid, vid, qty})
       // await cart.save()
       return addToCart(req, { pid, vid, qty, replace })
+    },
+    clearCart: async (
+      root,
+      _,
+      { req }: { req: Request }
+    ): Promise<Boolean> => {
+      clearCart(req)
+      return true
     }
   }
 }

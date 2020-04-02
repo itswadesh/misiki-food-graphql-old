@@ -2,6 +2,17 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Query {
+    allOrders(
+      page: Int
+      skip: Int
+      limit: Int
+      search: String
+      sort: String
+      vendor: String
+      user: String
+      today: Boolean
+      status: String
+    ): orderRes @auth
     orders(
       page: Int
       skip: Int
@@ -26,7 +37,7 @@ export default gql`
       q: String
       status: String
     ): myCustomerRes @auth
-    myOrders(
+    ordersForPickup(
       page: Int
       skip: Int
       limit: Int
@@ -34,6 +45,13 @@ export default gql`
       sort: String
       q: String
       id: ID
+    ): myCustomerRes @auth
+    myOrders(
+      page: Int
+      skip: Int
+      limit: Int
+      search: String
+      sort: String
     ): myCustomerRes @auth
     myCustomers(
       page: Int

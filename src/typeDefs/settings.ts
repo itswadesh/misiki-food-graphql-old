@@ -38,8 +38,8 @@ export default gql`
       orderStatuses: [String]
       paymentStatuses: [String]
       sms: SmsIp
-      banners: BannersIp
-    ): Setting @auth
+      email: EmailIp
+    ): Setting @admin
   }
 
   input TaxIp {
@@ -54,6 +54,24 @@ export default gql`
     igst: Float
   }
 
+  type Email {
+    enabled: Boolean
+    from: String
+    to: [String]
+    cc: [String]
+    bcc: [String]
+    printers: [String]
+  }
+
+  input EmailIp {
+    enabled: Boolean
+    from: String
+    to: [String]
+    cc: [String]
+    bcc: [String]
+    printers: [String]
+  }
+
   type Sms {
     enabled: Boolean
   }
@@ -64,47 +82,6 @@ export default gql`
     TWILIO_API_KEY:String
     Fast2SMS_OTP_TEMPLATE_ID:Int
     enabled: Boolean
-  }
-
-  input BannersIp {
-    slider: [HeroIp]
-    offers: [HeroIp]
-    deals: [HeroIp]
-    hero: HeroIp
-    hero1: HeroIp
-    hero2: HeroIp
-    hero3: HeroIp
-    hero4: HeroIp
-    hero5: HeroIp
-    background: HeroIp
-  }
-  type Banners {
-    slider: [Hero]
-    offers: [Hero]
-    deals: [Hero]
-    hero: Hero
-    hero1: Hero
-    hero2: Hero
-    hero3: Hero
-    hero4: Hero
-    hero5: Hero
-    background: Hero
-  }
-
-  type Hero {
-    img: String
-    h1: String
-    h2: String
-    h3: String
-    link: String
-  }
-
-  input HeroIp {
-    img: String
-    h1: String
-    h2: String
-    h3: String
-    link: String
   }
 
   type Setting {
@@ -139,6 +116,6 @@ export default gql`
     orderStatuses: [String]
     paymentStatuses: [String]
     sms: Sms
-    banners: Banners
+    email: Email
   }
 `

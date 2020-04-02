@@ -3,11 +3,11 @@ import { gql } from 'apollo-server-express'
 export default gql`
   extend type Query {
     slots(page: Int, skip: Int, limit: Int, search: String, sort: String): SlotRes
-    slot(id: ID!): Slot @auth
+    slot(id: String!): Slot @auth
   }
 
   extend type Mutation {
-    saveSlot(id: ID!,  name: String,  val: String,  slug: String,  info: String,  active: Boolean): Slot @auth  
+    saveSlot(id: String!,  name: String,  val: String,  slug: String,  info: String,  active: Boolean): Slot @auth  
   }
 
   type SlotRes{

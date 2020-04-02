@@ -1,10 +1,7 @@
 import { Types } from 'mongoose'
 import { IResolvers, UserInputError } from 'apollo-server-express'
 import { Request, SettingsDocument } from '../types'
-import {
-  objectId,
-  ifImage
-} from '../validation'
+import { objectId, ifImage } from '../validation'
 import { Setting } from '../models'
 import { fields, hasSubfields } from '../utils'
 import pubsub from '../pubsub'
@@ -29,9 +26,10 @@ const resolvers: IResolvers = {
     ): Promise<SettingsDocument> => {
       const { userId } = req.session
       const { id } = args
-      let settings = await Setting.findOneAndUpdate(
-        { _id: id },
-        { $set: { ...args, uid: userId } }
+      let settings = await Setting.findByIdAndUpdate(
+        id,
+        { $set: { ...args, uid: userId } },
+        { new: true }
       ) // If pre hook to be executed for product.save()
       if (!settings)
         throw new UserInputError(`Settings with id= ${id} not found`)

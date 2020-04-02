@@ -90,24 +90,6 @@ const settingSchema = new Schema(
         { val: 'DEAD_ON_ARRIVAL', name: 'Item was dead on arrival' }
       ]
     },
-    banners: {
-      slider: [],
-      offers: [],
-      deals: [],
-      hero: { img: String, h1: String, h2: String, h3: String, link: String },
-      hero1: { img: String, h1: String, h2: String, h3: String, link: String },
-      hero2: { img: String, h1: String, h2: String, h3: String, link: String },
-      hero3: { img: String, h1: String, h2: String, h3: String, link: String },
-      hero4: { img: String, h1: String, h2: String, h3: String, link: String },
-      hero5: { img: String, h1: String, h2: String, h3: String, link: String },
-      background: {
-        img: String,
-        h1: String,
-        h2: String,
-        h3: String,
-        link: String
-      }
-    },
     sms: {
       enabled: Boolean,
       provider: { type: String, default: 'twilio' },
@@ -141,8 +123,7 @@ const settingSchema = new Schema(
       INSTAMOJO_SANDBOX_MODE: { type: Boolean, default: true },
       INSTAMOJO_API_KEY: String,
       INSTAMOJO_AUTH_TOKEN: String
-    },
-    q: String
+    }
   },
   {
     versionKey: false,

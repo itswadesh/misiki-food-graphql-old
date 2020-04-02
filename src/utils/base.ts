@@ -62,7 +62,7 @@ export const index = async ({ model, args, info, userId }: any) => {
   }
   let searchString = where
   if (search != 'null' && !!search)
-    searchString = { ...where, q: { $regex: new RegExp(search, 'ig') } }
+    searchString = { ...where, $text: { $search: search } }
   try {
     let data: any = await model
       .find(searchString, searchFields(info))
@@ -134,7 +134,6 @@ export const indexSub = async ({ model, args, info, userId }: any) => {
     { $unwind: '$items' },
     { $match: args },
     // { $project: { orderNo: 1, createdAt: 1, updatedAt:1, items: 1, address: 1, s: { $sum: "$items.price" } } },
-
     {
       $group: {
         _id: {
@@ -144,7 +143,7 @@ export const indexSub = async ({ model, args, info, userId }: any) => {
         total: { $sum: "$items.price" }
       }
     },
-    { $sort: { "_id": 1 } }
+    { $sort: { "_id": -1 } }
   ])
   let count: any = await model.countDocuments(searchString)
   return { data, count, pageSize, page }

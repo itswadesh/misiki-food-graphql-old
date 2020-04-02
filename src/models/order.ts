@@ -60,6 +60,7 @@ const orderSchema = new Schema(
         img: String,
         qty: Number,
         price: Number,
+        time: String,
         subtotal: Number,
         total: Number,
         currency: String,
@@ -86,5 +87,7 @@ const orderSchema = new Schema(
   },
   { versionKey: false, timestamps: true }
 )
-
+orderSchema.index({
+  '$**': 'text'
+});
 export default mongoose.model<OrderDocument>('Order', orderSchema)

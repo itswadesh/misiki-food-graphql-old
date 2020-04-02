@@ -12,7 +12,7 @@ export default gql`
 
   extend type Mutation {
     addToCart(pid: ID!, qty: Int!, replace: Boolean): Cart
-    removeFromCart(cartId: ID!): Cart @auth
+    clearCart: Boolean
   }
 
   type Cart {
@@ -42,6 +42,7 @@ export default gql`
     status: String
     vendor: Vendor
     qty: Int
+    time:String
   }
 
   type Shipping {

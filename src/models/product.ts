@@ -37,27 +37,20 @@ let productSchema = new Schema(
     keyFeatures: [String],
     vendor: { type: ObjectId, ref: 'User' },
     active: { type: Boolean, default: true },
-    meta: {
-      info: String,
-      title: String,
-      description: String,
-      keywords: String
-    },
-    badge: {
-      recommended: Boolean,
-      hot: Boolean,
-      sale: Boolean,
-      new: Boolean,
-      featured: Boolean,
-      approved: Boolean
-    },
-    stats: {
-      position: Number,
-      popularity: Number,
-      sales: Number,
-      ratings: Number,
-      reviews: Number
-    },
+    approved: { type: Boolean, default: false },
+    title: String,
+    metaDescription: String,
+    keywords: String,
+    recommended: { type: Boolean, default: false },
+    hot: { type: Boolean, default: false },
+    sale: { type: Boolean, default: false },
+    new: { type: Boolean, default: false },
+    featured: { type: Boolean, default: false },
+    position: { type: Number, default: 0 },
+    popularity: { type: Number, default: 0 },
+    sales: { type: Number, default: 0 },
+    ratings: { type: Number, default: 0 },
+    reviews: { type: Number, default: 0 },
     related: { type: ObjectId, ref: 'Product' },
     q: String
   },
@@ -79,5 +72,7 @@ productSchema.pre('save', async function (this: ProductDocument) {
   this.q += " ";
   this.q = this.q.trim()
 })
-
+productSchema.index({
+  '$**': 'text'
+});
 export default mongoose.model<ProductDocument>('Product', productSchema)

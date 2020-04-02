@@ -27,5 +27,7 @@ let featureSchema = new mongoose.Schema(
     timestamps: true
   }
 )
-
+featureSchema.index({
+  '$**': 'text'
+});
 export default mongoose.model<FeatureDocument>('Feature', featureSchema)

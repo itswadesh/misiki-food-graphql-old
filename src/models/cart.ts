@@ -10,7 +10,8 @@ const itemSchema = new Schema({
   img: String,
   slug: String,
   price: Number,
-  qty: Number
+  qty: Number,
+  time: String
 })
 
 const cartSchema = new Schema(

@@ -1,5 +1,5 @@
 import { Types } from 'mongoose'
-import { clear, getSubTotal, getTotalQty, saveMyCart, getTotal } from './cart'
+import { getSubTotal, getTotalQty, saveMyCart, getTotal } from './cart'
 // import { calculateOffers } from './promotions'
 import { generateOTP } from './'
 import { Review, Order, Product, Setting, User } from '../models'
@@ -20,7 +20,11 @@ import { UserInputError } from 'apollo-server-express'
 export const getData = async (start: Date, end: Date, q: any) => {
   let data = await Order.aggregate([
     {
-      $match: {}
+      $match: {
+        ...q,
+        status: { $nin: ["Cancelled"] },
+        createdAt: { $gte: start, $lte: end }
+      }
     },
     { $unwind: '$items' },
     { $project: { items: 1, createdAt: 1, vendor: 1, updatedAt: 1 } },

@@ -88,24 +88,6 @@ export interface SettingsDocument extends Document {
       { val: 'DEAD_ON_ARRIVAL'; name: 'Item was dead on arrival' }
     ]
   }
-  banners: {
-    slider: []
-    offers: []
-    deals: []
-    hero: { img: string; h1: string; h2: string; h3: string; link: string }
-    hero1: { img: string; h1: string; h2: string; h3: string; link: string }
-    hero2: { img: string; h1: string; h2: string; h3: string; link: string }
-    hero3: { img: string; h1: string; h2: string; h3: string; link: string }
-    hero4: { img: string; h1: string; h2: string; h3: string; link: string }
-    hero5: { img: string; h1: string; h2: string; h3: string; link: string }
-    background: {
-      img: string
-      h1: string
-      h2: string
-      h3: string
-      link: string
-    }
-  }
   sms: {
     enabled: boolean
     provider: { type: string; default: 'twilio' }

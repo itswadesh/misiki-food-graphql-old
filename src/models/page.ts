@@ -19,5 +19,7 @@ const pageSchema = new Schema(
   },
   { versionKey: false, timestamps: true }
 )
-
+pageSchema.index({
+  '$**': 'text'
+});
 export default mongoose.model<PageDocument>('Page', pageSchema)

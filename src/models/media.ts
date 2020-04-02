@@ -24,5 +24,7 @@ const mediaSchema = new Schema(
     timestamps: true
   }
 )
-
+mediaSchema.index({
+  '$**': 'text'
+});
 export default mongoose.model<MediaDocument>('Media', mediaSchema)

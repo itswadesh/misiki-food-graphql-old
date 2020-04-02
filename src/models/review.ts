@@ -19,5 +19,7 @@ reviewSchema.pre('save', async function (this: ReviewDocument) {
   this.q += this.active ? this.active + " " : "";
   this.q = this.q.trim()
 })
-
+reviewSchema.index({
+  '$**': 'text'
+});
 export default mongoose.model<ReviewDocument>('Review', reviewSchema)

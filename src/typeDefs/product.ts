@@ -11,6 +11,16 @@ export default gql`
       sort: String
       vendor: String
       category: String
+      active: String
+    ): SearchRes
+    myProducts(
+      page: Int
+      skip: Int
+      limit: Int
+      search: String
+      sort: String
+      category: String
+      active: String
     ): SearchRes
     product(id: ID!): Product
     popular(
@@ -31,20 +41,12 @@ export default gql`
       sort: String
       q: String
     ): SearchRes
-    myProducts(
-      page: Int
-      skip: Int
-      limit: Int
-      search: String
-      sort: String
-      q: String
-    ): SearchRes
   }
 
   extend type Mutation {
     deleteProduct(id: ID): Boolean
     createProduct(
-      name: String!
+      name: String
       description: String
       type: String
       price: Int
@@ -52,10 +54,11 @@ export default gql`
       img: String
       time: String
       category: String
+      categories: [String]
     ): Product @auth
-    updateProduct(
-      id: ID!
-      name: String!
+    saveProduct(
+      id: String
+      name: String
       description: String
       type: String
       price: Int
@@ -63,6 +66,19 @@ export default gql`
       img: String
       time: String
       category: String
+      categories: [String]
+      active: Boolean
+      vendor: String
+      popularity: Int
+      position: Int
+      featured: Boolean
+      hot: Boolean
+      new: Boolean
+      sale: Boolean
+      recommended: Boolean
+      title: String
+      metaDescription: String
+      keywords: String
   ): Product @auth
     # saveVariant(
     #   id: ID!
@@ -72,6 +88,12 @@ export default gql`
     #   img: String
     # ): Variant @auth
   }
+
+input UserIp{
+  firstName: String
+  lastName: String
+  info:InputInfo
+}
 
   type BestSellers {
     t:[BS],
@@ -140,7 +162,7 @@ type BS1{
   }
 
   type Product {
-    id: ID!
+    id: ID
     name: String
     description: String
     slug: String
@@ -163,35 +185,47 @@ type BS1{
     keyFeatures: [Feature]
     vendor: User
     active: Boolean
-    meta: Meta
-    badge: Badge
-    stats: Stats
-    related: [Product!]
-    createdAt: String!
-    updatedAt: String!
-  }
-
-  type Meta {
     info: String
     title: String
-    description: String
+    metaDescription: String
     keywords: String
-  }
-
-  type Badge {
     recommended: Boolean
     hot: Boolean
     sale: Boolean
     new: Boolean
     featured: Boolean
-    approved: Boolean
-  }
-
-  type Stats {
     position: Float
     popularity: Float
     sales: Int
     ratings: Float
     reviews: Int
+    approved: Boolean
+    related: [Product!]
+    createdAt: String!
+    updatedAt: String!
   }
+
+  # type Meta {
+  #   info: String
+  #   title: String
+  #   description: String
+  #   keywords: String
+  # }
+
+  # type Badge {
+  #   recommended: Boolean
+  #   hot: Boolean
+  #   sale: Boolean
+  #   new: Boolean
+  #   featured: Boolean
+  #   approved: Boolean
+  # }
+
+  # type Stats {
+  #   position: Float
+  #   popularity: Float
+  #   sales: Int
+  #   ratings: Float
+  #   reviews: Int
+  # }
 `

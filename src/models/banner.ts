@@ -25,4 +25,7 @@ bannerSchema.pre('save', async function (this: BannerDocument) {
   this.q = this.q.trim()
 })
 
+bannerSchema.index({
+  '$**': 'text'
+});
 export default mongoose.model<BannerDocument>('Banner', bannerSchema)

@@ -19,6 +19,7 @@ export default gql`
       id: String!
       firstName: String
       lastName: String
+      email: String
       avatar: String
       banner: String
       gender: String

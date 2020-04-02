@@ -39,5 +39,7 @@ couponSchema.pre('save', async function (this: CouponDocument) {
   this.q += this.active ? this.active + " " : "";
   this.q = this.q.trim()
 })
-
+couponSchema.index({
+  '$**': 'text'
+});
 export default mongoose.model<CouponDocument>('Coupon', couponSchema)

@@ -23,7 +23,7 @@ export const saveMyCart = async (cart: CartDocument) => {
   }
 }
 
-export const clear = async (req: Request) => {
+export const clearCart = async (req: Request) => {
   req.session.cart.items = []
   await calculateSummary(req)
 }
@@ -78,18 +78,20 @@ export const addToCart = async (
   }
   try {
     // Required for stock verification
-    product = await Product.findById(pid).select('name slug img price vendor')
+    product = await Product.findById(pid).select('name slug img price time vendor')
     vid = 0
     if (!product) {
       items = removeFromCartSession(items, pid, vid)
-      throw new UserInputError('Product not found')
+      const code = req.session.cart.discount && req.session.cart.discount.code
+      await calculateSummary(req, code)
+      return req.session.cart
     }
   } catch (e) {
     items = removeFromCartSession(items, pid, vid)
     throw new UserInputError(e.toString())
   }
   if (!product) throw new UserInputError('Product not found')
-  const { name, slug, img, price } = product
+  const { name, slug, img, price, time } = product
   // if (!_id || !vendor || !vendor.info) throw new UserInputError('Restaurant info missing')
   // if (
   //   req.session.cart.vendor &&
@@ -97,7 +99,7 @@ export const addToCart = async (
   //   items.length > 0
   // )
   //   throw new UserInputError(
-  //     `Your cart contain dishes from ${req.session.cart.vendor.info.restaurant}. Do you wish to clear cart and add dishes from ${vendor.info.restaurant}?`
+  //     `Your cart contain dishes from ${req.session.cart.vendor.info.restaurant}. Do you wish to Cart cart and add dishes from ${vendor.info.restaurant}?`
   //   )
   const record = items.find((p: CartItemDocument) => p.pid === pid)
   if (record) {
@@ -111,7 +113,7 @@ export const addToCart = async (
   } else {
     console.log('Not in cart', pid)
     if (+product.qty < +qty) throw new UserInputError('Not enough stock')
-    items.push({ pid, name, slug, img, price, qty })
+    items.push({ pid, name, slug, img, price, qty, time })
   }
   // req.session.cart.vendor = vendor
   const code = req.session.cart.discount && req.session.cart.discount.code
