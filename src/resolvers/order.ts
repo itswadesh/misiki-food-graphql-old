@@ -33,8 +33,7 @@ const resolvers: IResolvers = {
       let result = await Order.aggregate([
         {
           $match: {
-            'items.status': 'Prepared',
-            // createdAt: { $gte: start, $lte: end }
+            createdAt: { $gte: start, $lte: end }
           }
         },
         { $unwind: '$items' },
@@ -63,7 +62,7 @@ const resolvers: IResolvers = {
       // }
       const { start, end } = getStartEndDate(0)
       // createdAt: { $gte: start, $lte: end },
-      let q: any = { 'items.status': 'Waiting for confirmation' }
+      let q: any = { createdAt: { $gte: start, $lte: end }, 'items.status': 'Waiting for confirmation' }
       let pending = await Order.aggregate(
         [
           { $match: q },
@@ -126,7 +125,7 @@ const resolvers: IResolvers = {
           { $unwind: '$items' },
           {
             $group: {
-              _id: '$items.status',
+              _id: null,
               total: { $sum: '$items.price' },
               count: { $sum: 1 },
               items: { $addToSet: { _id: '$_id', user: '$user', address: '$address', items: '$items', amount: '$amount' } }
@@ -166,35 +165,36 @@ const resolvers: IResolvers = {
       //   // { $sort: { "address.address": 1 } }
       // ])
     },
-    todaysSummary: async (root, args, { req }: { req: Request }, info) => {
+    myItemsSummaryByName: async (root, args, { req }: { req: Request }, info) => {
       const { start, end } = getStartEndDate(0)
       const { userId } = req.session
       let result = await Order.aggregate([
         {
           $match: {
             'items.vendor.id': Types.ObjectId(userId),
-            status: 'Waiting for confirmation',
+            status: args.status,
             // createdAt: { $gte: start, $lte: end }
           }
         },
         { $unwind: '$items' },
         {
           $group: {
-            _id: '$item.name',
+            _id: '$items.name',
             count: { $sum: '$amount.qty' },
-            amount: { $sum: '$amount.subtotal' }
+            amount: { $sum: '$amount.subtotal' },
+            createdAt: { $max: '$createdAt' },
           }
         }
       ])
-      return result[0]
+      return result
     },
-    myToday: async (root, args, { req }: { req: Request }, info) => {
+    myTodaysSummary: async (root, args, { req }: { req: Request }, info) => {
       const { start, end } = getStartEndDate(0)
       const { userId } = req.session
       let data = await Order.aggregate([
         {
           $match: {
-            // createdAt: { $gte: start, $lte: end },
+            createdAt: { $gte: start, $lte: end },
           }
         },
         { $unwind: '$items' },
@@ -210,42 +210,109 @@ const resolvers: IResolvers = {
       ])
       return data[0]
     },
-    pendingOrders: (root, args, { req }: { req: Request }, info) => {
-      args.status = 'Waiting for confirmation'
-      return index({ model: Order, args, info })
+    todaysSummary: async (root, args, { req }: { req: Request }, info) => {
+      const { start, end } = getStartEndDate(0)
+      const { userId } = req.session
+      let data = await Order.aggregate([
+        {
+          $match: {
+            createdAt: { $gte: start, $lte: end },
+          }
+        },
+        { $unwind: '$items' },
+        {
+          $group: {
+            _id: null,
+            amount: { $sum: '$items.price' },
+            count: { $sum: 1 },
+            createdAt: { $max: '$createdAt' },
+          }
+        }
+      ])
+      return data[0]
     },
-    deliveryOrders: (root, args, { req }: { req: Request }, info) => {
-      let userId = Types.ObjectId(args.id)
+    todaysStatusSummary: async (root, args, { req }: { req: Request }, info) => {
+      const { start, end } = getStartEndDate(0)
+      const { userId } = req.session
+      let data = await Order.aggregate([
+        {
+          $match: {
+            createdAt: { $gte: start, $lte: end },
+          }
+        },
+        { $unwind: '$items' },
+        {
+          $group: {
+            _id: '$items.status',
+            amount: { $sum: '$items.price' },
+            count: { $sum: 1 },
+            createdAt: { $max: '$createdAt' },
+          }
+        },
+        { $sort: { "_id": 1 } }
+      ])
+      return data
+    },
+    myTodaysStatusSummary: async (root, args, { req }: { req: Request }, info) => {
+      const { start, end } = getStartEndDate(0)
+      const { userId } = req.session
+      let data = await Order.aggregate([
+        {
+          $match: {
+            createdAt: { $gte: start, $lte: end },
+          }
+        },
+        { $unwind: '$items' },
+        { $match: { 'items.vendor.id': Types.ObjectId(userId) } },
+        {
+          $group: {
+            _id: '$items.status',
+            amount: { $sum: '$items.price' },
+            count: { $sum: 1 },
+            createdAt: { $max: '$createdAt' },
+          }
+        }
+      ])
+      return data
+    },
+    // pendingOrders: (root, args, { req }: { req: Request }, info) => {
+    //   args.status = 'Waiting for confirmation'
+    //   return index({ model: Order, args, info })
+    // },
+    ordersByStatus: (root, args, { req }: { req: Request }, info) => {
+      // let userId = Types.ObjectId(args.id)
       args['items.status'] = args.status
-      return indexSub({ model: Order, args, info, userId })
+      delete args.status
+      return indexSub({ model: Order, args, info })
+    },
+    ordersForPickup: async (root, args, { req }: { req: Request }, info) => {
+      const { start, end } = getStartEndDate(0)
+      let vendor = Types.ObjectId(args.vendor)
+      args['items.vendor.id'] = vendor
+      args['items.status'] = args.status
+      delete args.vendor
+      delete args.status
+      args.createdAt = { $gte: start, $lte: end }
+      return indexSub({ model: Order, args, info })
     },
     myCustomers: async (root, args, { req }: { req: Request }, info) => {
       const { start, end } = getStartEndDate(0)
       let { userId } = req.session
       userId = Types.ObjectId(userId)
       args['items.vendor.id'] = userId
-      // args.createdAt = { $gte: start, $lte: end }
+      args.createdAt = { $gte: start, $lte: end }
       // args.uid = userId
       return indexSub({ model: Order, args, info, userId })
     },
-    ordersForPickup: async (root, args, { req }: { req: Request }, info) => {
-      const { start, end } = getStartEndDate(0)
-      let userId = Types.ObjectId(args.id)
-      delete args.id
-      args['items.vendor.id'] = userId
-      args['items.status'] = 'Prepared'
-      // args.createdAt = { $gte: start, $lte: end }
-      return indexSub({ model: Order, args, info, userId })
-    },
-    myOrders: async (root, args, { req }: { req: Request }, info) => {
-      const { start, end } = getStartEndDate(0)
-      let userId = Types.ObjectId(args.id)
-      delete args.id
-      args['items.vendor.id'] = userId
-      args['items.status'] = 'Prepared'
-      // args.createdAt = { $gte: start, $lte: end }
-      return indexSub({ model: Order, args, info, userId })
-    },
+    // myOrders: async (root, args, { req }: { req: Request }, info) => {
+    //   const { start, end } = getStartEndDate(0)
+    //   let userId = Types.ObjectId(args.id)
+    //   delete args.id
+    //   args['items.vendor.id'] = userId
+    //   args['items.status'] = 'Prepared'
+    //   // args.createdAt = { $gte: start, $lte: end }
+    //   return indexSub({ model: Order, args, info, userId })
+    // },
     order: async (
       root,
       args: { id: string },

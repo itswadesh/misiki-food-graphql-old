@@ -25,17 +25,24 @@ export default gql`
       status: String
     ): orderRes @auth
     order(id: ID!): Order @auth
-    myToday: TodaysSummary @auth
+
+    # For delivery boy
+    todaysStatusSummary: [TodaysSummary] @auth
     todaysSummary: TodaysSummary @auth
+
+    # For chef
+    myTodaysStatusSummary: [TodaysSummary] @auth
+    myTodaysSummary: TodaysSummary @auth
+    myItemsSummaryByName: [TodaysSummary] @auth
+
     delivery: delivery @auth
-    deliveryOrders(
+    ordersByStatus(
       page: Int
       skip: Int
       limit: Int
       search: String
       sort: String
-      q: String
-      status: String
+      status: String!
     ): myCustomerRes @auth
     ordersForPickup(
       page: Int
@@ -43,8 +50,8 @@ export default gql`
       limit: Int
       search: String
       sort: String
-      q: String
-      id: ID
+      status: String!
+      vendor: ID!
     ): myCustomerRes @auth
     myOrders(
       page: Int
@@ -59,7 +66,6 @@ export default gql`
       limit: Int
       search: String
       sort: String
-      q: String
     ): myCustomerRes @auth
     todaysChefs: [TC] @auth
     ordersOfChef(
@@ -70,14 +76,14 @@ export default gql`
       sort: String
       q: String
     ): orderRes @auth
-    pendingOrders(
-      page: Int
-      skip: Int
-      limit: Int
-      search: String
-      sort: String
-      q: String
-    ): orderRes @auth
+    # pendingOrders(
+    #   page: Int
+    #   skip: Int
+    #   limit: Int
+    #   search: String
+    #   sort: String
+    #   q: String
+    # ): orderRes @auth
   }
 
   extend type Mutation {

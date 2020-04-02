@@ -78,7 +78,7 @@ export const index = async ({ model, args, info, userId }: any) => {
   }
 }
 
-export const indexSub = async ({ model, args, info, userId }: any) => {
+export const indexSub = async ({ model, args, info }: any) => {
   const setting: any = await Setting.findOne()
   let page = !args.page && args.page != 0 ? 1 : parseInt(args.page)
   const qlimit = parseInt(args.limit || 0)
