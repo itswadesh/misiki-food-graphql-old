@@ -188,6 +188,102 @@ const resolvers: IResolvers = {
       ])
       return result
     },
+    // todayOrderSummary: async (root, args, { req }: { req: Request }, info) => {
+    //   const { start, end } = getStartEndDate(0)
+    //   let data = await await Order.aggregate(
+    //     [
+    //       { $match: { createdAt: { $gte: start, $lte: end } } },
+    //       { $unwind: '$items' },
+    //       {
+    //         $group: {
+    //           _id: null,
+    //           total: { $sum: '$items.price' },
+    //           count: { $sum: 1 },
+    //           createdAt: { $max: '$createdAt' },
+    //         }
+    //       }, { $sort: { 'items.address.qrno': 1 } }
+    //     ])
+    //   return data[0]
+    // },
+    todaysSummary: async (root, args, { req }: { req: Request }, info) => {
+      const { start, end } = getStartEndDate(0)
+      const { userId } = req.session
+      let data = await Order.aggregate([
+        {
+          $match: {
+            createdAt: { $gte: start, $lte: end },
+          }
+        },
+        { $unwind: '$items' },
+        {
+          $group: {
+            _id: null,
+            amount: { $sum: '$items.price' },
+            count: { $sum: 1 },
+            createdAt: { $max: '$createdAt' },
+          }
+        }
+      ])
+      return data[0]
+    },
+    paymentsSummary: async (root, args, { req }: { req: Request }, info) => {
+      let data = await Order.aggregate([
+        {
+          $group: {
+            _id: null,
+            amount: { $sum: '$amount.total' },
+            count: { $sum: "$amount.qty" },
+            cod_paid: { $sum: "$cod_paid" },
+          }
+        }
+      ])
+      return data[0]
+    },
+    allOrderSummary: async (root, args, { req }: { req: Request }, info) => {
+      let data = await Order.aggregate([
+        { $unwind: '$items' },
+        {
+          $group: {
+            _id: null,
+            amount: { $sum: '$items.price' },
+            count: { $sum: 1 },
+            createdAt: { $max: '$createdAt' },
+          }
+        }
+      ])
+      return data[0]
+    },
+    // todayTotalPaid: async (root, args, { req }: { req: Request }, info) => {
+    //   let data = await Order.aggregate([
+    //     { $unwind: '$items' },
+    //     {
+    //       $group: {
+    //         _id: null,
+    //         amount: { $sum: '$items.price' },
+    //         paid: { $sum: '$items.paid' },
+    //         count: { $sum: 1 },
+    //         createdAt: { $max: '$createdAt' },
+    //       }
+    //     }
+    //   ])
+    //   return data[0]
+    // },
+    mySummary: async (root, args, { req }: { req: Request }, info) => {
+      const { userId } = req.session
+      let data = await Order.aggregate([
+        { $unwind: '$items' },
+        { $match: { 'items.vendor.id': Types.ObjectId(userId) } },
+        {
+          $group: {
+            _id: null,
+            amount: { $sum: '$items.price' },
+            count: { $sum: 1 },
+            createdAt: { $max: '$createdAt' },
+          }
+        }
+      ])
+      return data[0]
+    },
     myTodaysSummary: async (root, args, { req }: { req: Request }, info) => {
       const { start, end } = getStartEndDate(0)
       const { userId } = req.session
@@ -210,27 +306,7 @@ const resolvers: IResolvers = {
       ])
       return data[0]
     },
-    todaysSummary: async (root, args, { req }: { req: Request }, info) => {
-      const { start, end } = getStartEndDate(0)
-      const { userId } = req.session
-      let data = await Order.aggregate([
-        {
-          $match: {
-            createdAt: { $gte: start, $lte: end },
-          }
-        },
-        { $unwind: '$items' },
-        {
-          $group: {
-            _id: null,
-            amount: { $sum: '$items.price' },
-            count: { $sum: 1 },
-            createdAt: { $max: '$createdAt' },
-          }
-        }
-      ])
-      return data[0]
-    },
+
     todaysStatusSummary: async (root, args, { req }: { req: Request }, info) => {
       const { start, end } = getStartEndDate(0)
       const { userId } = req.session

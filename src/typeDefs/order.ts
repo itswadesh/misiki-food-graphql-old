@@ -29,10 +29,15 @@ export default gql`
     # For delivery boy
     todaysStatusSummary: [TodaysSummary] @auth
     todaysSummary: TodaysSummary @auth
+    todayTotalAmount: TodaysSummary @auth
+    allOrderSummary: TodaysSummary @auth
+    todayTotalPaid: TodaysSummary @auth
+    paymentsSummary: TodaysSummary @auth
 
     # For chef
     myTodaysStatusSummary: [TodaysSummary] @auth
     myTodaysSummary: TodaysSummary @auth
+    mySummary: TodaysSummary @auth
     myItemsSummaryByName: [TodaysSummary] @auth
 
     delivery: delivery @auth
@@ -127,6 +132,7 @@ export default gql`
     count: Float
     amount: Float
     createdAt:String
+    cod_paid:Float
   }
 
   type myCustomerRes {
