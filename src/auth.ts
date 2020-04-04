@@ -22,7 +22,6 @@ export const verifyOtp = async (
   if (!user || !(await user.matchesPassword(otp))) {
     throw new AuthenticationError('Incorrect phone or otp. Please try again.')
   }
-
   return user
 }
 export const attemptSignIn = async (

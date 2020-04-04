@@ -12,7 +12,7 @@ const userSchema = new Schema(
       type: String,
       validate: [
         async (email: string): Promise<boolean> =>
-          (await User.count({ email })) < 2,
+          (await User.countDocuments({ email })) < 2,
         'Email is already taken.'
       ]
     },

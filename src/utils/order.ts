@@ -70,7 +70,7 @@ export const updateStats = async (pid: Types.ObjectId) => {
       }
     }
   ])
-  const orders = await Order.count({ 'item._id': pid })
+  const orders = await Order.countDocuments({ 'item._id': pid })
   if (reviews.length > 0) {
     await Product.updateOne(
       { _id: pid },
