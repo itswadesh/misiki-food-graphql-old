@@ -17,7 +17,7 @@ const addressSchema = new Schema(
     zip: Number,
     phone: String,
     active: { type: Boolean, default: true },
-    uid: { type: ObjectId, ref: 'User' }
+    user: { type: ObjectId, ref: 'User' }
   },
   {
     versionKey: false,

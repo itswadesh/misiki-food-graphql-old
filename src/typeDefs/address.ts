@@ -2,8 +2,8 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Query {
-    addresses: [Address!]
-    address(id: ID!): Address
+    addresses: [Address!] @auth
+    address(id: ID!): Address @auth
     getLocation(lat: String, lng: String): Address
   }
 

@@ -30,8 +30,9 @@ const resolvers: IResolvers = {
       }
       return l
     },
-    addresses: (root, args, ctx, info): Promise<AddressDocument[]> => {
-      return Address.find({}, fields(info)).exec()
+    addresses: (root, args, { req }: { req: Request }, info): Promise<AddressDocument[]> => {
+      const { userId } = req.session
+      return Address.find({ user: userId }, fields(info)).exec()
     },
     address: async (
       root,
@@ -63,14 +64,14 @@ const resolvers: IResolvers = {
     ): Promise<AddressDocument> => {
       await validate(addressSchema, args)
       const { userId } = req.session
-      const address = await Address.create({ ...args, uid: userId })
+      const address = await Address.create({ ...args, user: userId })
       await address.save()
       return address
     },
     updateAddress: async (
       root,
       args: {
-        uid: string
+        user: string
         id: string
         email: string
         firstName: string
@@ -88,7 +89,7 @@ const resolvers: IResolvers = {
     ): Promise<AddressDocument | null> => {
       await validate(addressSchema, args)
       const { userId } = req.session
-      args.uid = userId
+      args.user = userId
       const address = await Address.findOneAndUpdate({ _id: args.id }, args, {
         new: true
       })
@@ -102,8 +103,7 @@ const resolvers: IResolvers = {
       { req }: { req: Request }
     ): Promise<Boolean> => {
       const { userId } = req.session
-      const address = await Address.deleteOne({ _id: args.id, uid: userId })
-      console.log('xxxxxxxxxxxxxxxxx', address)
+      const address = await Address.deleteOne({ _id: args.id, user: userId })
       return address.deletedCount == 1
     }
   }

@@ -65,7 +65,7 @@ export const storeToFileSystem = async (args: {
       await fileWriteRequest(stream, path)
       files.push({ filename, mimetype, encoding })
     } catch (error) {
-      // console.log('err.........', error);
+      console.log('fileUpload err.........', error);
     }
   }
   return files

@@ -10,11 +10,11 @@ const userSchema = new Schema(
     phone: String,
     email: {
       type: String,
-      validate: [
-        async (email: string): Promise<boolean> =>
-          (await User.count({ email })) < 2,
-        'Email is already taken.'
-      ]
+      // validate: [
+      //   async (email: string): Promise<boolean> =>
+      //     (await User.count({ email })) < 2,
+      //   'Email is already taken.'
+      // ]
     },
     password: String,
     role: { type: String, default: 'user' },

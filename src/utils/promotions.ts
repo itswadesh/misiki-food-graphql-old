@@ -22,7 +22,7 @@ import { Order, User, Product, Promotion } from '../models'
 //       fo = false
 //       // console.log('User...............');
 //       if (!user) break
-//       let isCustomer = await Order.count({ uid: user._id })
+//       let isCustomer = await Order.countDocuments({ uid: user._id })
 //       if (isCustomer == 0) fo = true
 //     } else if (i.key == 'CartValue') {
 //       cv = false
