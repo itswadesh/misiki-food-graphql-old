@@ -12,7 +12,7 @@ import {
   ReviewDocument
 } from '../types'
 import { validate, objectId } from '../validation'
-import { Chat, Review } from '../models'
+import { Review } from '../models'
 import { fields, hasSubfields } from '../utils'
 import { reviewSchema } from '../validation/review'
 

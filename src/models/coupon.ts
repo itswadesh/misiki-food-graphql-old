@@ -42,4 +42,4 @@ couponSchema.pre('save', async function (this: CouponDocument) {
 couponSchema.index({
   '$**': 'text'
 });
-export default mongoose.model<CouponDocument>('Coupon', couponSchema)
+export const Coupon = mongoose.model<CouponDocument>('Coupon', couponSchema)

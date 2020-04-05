@@ -90,4 +90,4 @@ const orderSchema = new Schema(
 orderSchema.index({
   '$**': 'text'
 });
-export default mongoose.model<OrderDocument>('Order', orderSchema)
+export const Order = mongoose.model<OrderDocument>('Order', orderSchema)

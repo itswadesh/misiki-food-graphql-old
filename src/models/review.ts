@@ -22,4 +22,4 @@ reviewSchema.pre('save', async function (this: ReviewDocument) {
 reviewSchema.index({
   '$**': 'text'
 });
-export default mongoose.model<ReviewDocument>('Review', reviewSchema)
+export const Review = mongoose.model<ReviewDocument>('Review', reviewSchema)

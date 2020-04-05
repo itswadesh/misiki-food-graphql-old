@@ -22,4 +22,4 @@ const pageSchema = new Schema(
 pageSchema.index({
   '$**': 'text'
 });
-export default mongoose.model<PageDocument>('Page', pageSchema)
+export const Page = mongoose.model<PageDocument>('Page', pageSchema)

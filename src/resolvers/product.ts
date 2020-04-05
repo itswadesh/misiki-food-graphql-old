@@ -18,7 +18,7 @@ import {
   productSchema,
   ifImage
 } from '../validation'
-import { Chat, Message, Product, User, Slug } from '../models'
+import { Product, User, Slug } from '../models'
 import { fields, hasSubfields, getData } from '../utils'
 import pubsub from '../pubsub'
 

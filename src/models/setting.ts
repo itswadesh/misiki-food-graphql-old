@@ -131,4 +131,4 @@ const settingSchema = new Schema(
   }
 )
 
-export default mongoose.model<SettingsDocument>('Setting', settingSchema)
+export const Setting = mongoose.model<SettingsDocument>('Setting', settingSchema)

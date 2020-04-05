@@ -75,4 +75,4 @@ productSchema.pre('save', async function (this: ProductDocument) {
 productSchema.index({
   '$**': 'text'
 });
-export default mongoose.model<ProductDocument>('Product', productSchema)
+export const Product = mongoose.model<ProductDocument>('Product', productSchema)

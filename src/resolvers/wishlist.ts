@@ -12,7 +12,7 @@ import {
   WishlistDocument
 } from '../types'
 import { validate, objectId } from '../validation'
-import { Chat, Wishlist } from '../models'
+import { Wishlist } from '../models'
 import { fields, hasSubfields } from '../utils'
 import { wishlistSchema } from '../validation/wishlist'
 

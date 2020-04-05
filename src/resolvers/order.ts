@@ -7,7 +7,7 @@ import {
 } from 'apollo-server-express'
 import { Request, MessageDocument, UserDocument, OrderDocument } from '../types'
 import { validate, objectId, orderSchema } from '../validation'
-import { Chat, Order } from '../models'
+import { Order } from '../models'
 import { fields, hasSubfields, index, indexSub, getStartEndDate } from '../utils'
 import { ObjectId } from 'mongodb'
 

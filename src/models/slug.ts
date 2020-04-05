@@ -15,4 +15,4 @@ const slugSchema = new Schema(
   }
 )
 
-export default mongoose.model<SlugDocument>('Slug', slugSchema)
+export const Slug = mongoose.model<SlugDocument>('Slug', slugSchema)

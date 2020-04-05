@@ -34,4 +34,4 @@ const wishlistSchema = new Schema(
 wishlistSchema.index({
   '$**': 'text'
 });
-export default mongoose.model<WishlistDocument>('Wishlist', wishlistSchema)
+export const Wishlist = mongoose.model<WishlistDocument>('Wishlist', wishlistSchema)

@@ -7,7 +7,7 @@ import {
 } from 'apollo-server-express'
 import { Request, AddressDocument, UserDocument } from '../types'
 import { validate, addressSchema, objectId } from '../validation'
-import { Chat, Message, Address } from '../models'
+import { Address } from '../models'
 import { fields, hasSubfields } from '../utils'
 import pubsub from '../pubsub'
 import axios from 'axios'

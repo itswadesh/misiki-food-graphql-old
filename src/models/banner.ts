@@ -28,4 +28,4 @@ bannerSchema.pre('save', async function (this: BannerDocument) {
 bannerSchema.index({
   '$**': 'text'
 });
-export default mongoose.model<BannerDocument>('Banner', bannerSchema)
+export const Banner = mongoose.model<BannerDocument>('Banner', bannerSchema)

@@ -78,4 +78,4 @@ const orderSchema = new Schema(
   { versionKey: false, timestamps: true }
 )
 
-export default mongoose.model<OrderDocument>('Order', orderSchema)
+export const FashionOrder = mongoose.model<OrderDocument>('Order', orderSchema)

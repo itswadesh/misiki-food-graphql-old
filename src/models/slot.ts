@@ -31,4 +31,4 @@ slotSchema.pre('save', async function (this: SlotDocument) {
 slotSchema.index({
   '$**': 'text'
 });
-export default mongoose.model<SlotDocument>('Slot', slotSchema)
+export const Slot = mongoose.model<SlotDocument>('Slot', slotSchema)

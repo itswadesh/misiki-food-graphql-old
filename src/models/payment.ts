@@ -66,4 +66,4 @@ paymentSchema.pre('save', async function (this: PaymentDocument) {
 paymentSchema.index({
   '$**': 'text'
 });
-export default mongoose.model<PaymentDocument>('Payment', paymentSchema)
+export const Payment = mongoose.model<PaymentDocument>('Payment', paymentSchema)

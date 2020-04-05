@@ -36,4 +36,4 @@ brandSchema.pre('save', async function (this: BrandDocument) {
 brandSchema.index({
   '$**': 'text'
 });
-export default mongoose.model<BrandDocument>('Brand', brandSchema)
+export const Brand = mongoose.model<BrandDocument>('Brand', brandSchema)

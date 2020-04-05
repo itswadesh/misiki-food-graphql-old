@@ -27,4 +27,4 @@ const mediaSchema = new Schema(
 mediaSchema.index({
   '$**': 'text'
 });
-export default mongoose.model<MediaDocument>('Media', mediaSchema)
+export const Media = mongoose.model<MediaDocument>('Media', mediaSchema)

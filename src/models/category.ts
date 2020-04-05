@@ -71,4 +71,4 @@ categorySchema.pre('save', async function (this: CategoryDocument) {
 categorySchema.index({
   '$**': 'text'
 });
-export default mongoose.model<CategoryDocument>('Category', categorySchema)
+export const Category = mongoose.model<CategoryDocument>('Category', categorySchema)

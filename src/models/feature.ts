@@ -30,4 +30,4 @@ let featureSchema = new mongoose.Schema(
 featureSchema.index({
   '$**': 'text'
 });
-export default mongoose.model<FeatureDocument>('Feature', featureSchema)
+export const Feature = mongoose.model<FeatureDocument>('Feature', featureSchema)

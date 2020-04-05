@@ -57,7 +57,6 @@ userSchema.methods.matchesPassword = function (
   return compare(password, this.password)
 }
 
-const User = model<UserDocument, UserModel>('User', userSchema)
 
 userSchema.pre('save', async function (this: UserDocument) {
   this.q = this.firstName ? this.firstName.toLowerCase() + " " : "";
@@ -73,4 +72,4 @@ userSchema.pre('save', async function (this: UserDocument) {
 userSchema.index({
   '$**': 'text'
 });
-export default User
+export const User = model<UserDocument, UserModel>('User', userSchema)

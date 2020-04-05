@@ -7,7 +7,7 @@ import {
 } from 'apollo-server-express'
 import { Request, MessageDocument, UserDocument, PageDocument } from '../types'
 import { validate, objectId } from '../validation'
-import { Chat, Page } from '../models'
+import { Page } from '../models'
 import { fields, hasSubfields } from '../utils'
 import { pageSchema } from '../validation/page'
 

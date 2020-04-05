@@ -10,7 +10,7 @@ import {
   CategoryDocument
 } from '../types'
 import { validate, objectId, categorySchema } from '../validation'
-import { Chat, Category, Slug } from '../models'
+import { Category, Slug } from '../models'
 import { fields, hasSubfields, index } from '../utils'
 
 const resolvers: IResolvers = {

@@ -7,7 +7,7 @@ import {
 } from 'apollo-server-express'
 import { Request, MessageDocument, UserDocument, BrandDocument } from '../types'
 import { validate, brandSchema, objectId } from '../validation'
-import { Chat, Brand } from '../models'
+import { Brand } from '../models'
 import { fields, hasSubfields } from '../utils'
 
 const resolvers: IResolvers = {

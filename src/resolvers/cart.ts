@@ -7,7 +7,7 @@ import {
 } from 'apollo-server-express'
 import { Request, MessageDocument, UserDocument, CartDocument } from '../types'
 import { validate, objectId, cartSchema } from '../validation'
-import { Chat, Cart } from '../models'
+import { Cart } from '../models'
 import { fields, hasSubfields } from '../utils'
 import { clearCart, addToCart } from '../utils/cart'
 
