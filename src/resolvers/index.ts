@@ -1,6 +1,7 @@
 import address from './address'
 import cart from './cart'
 import category from './category'
+import message from './message'
 import coupon from './coupon'
 import media from './media'
 import order from './order'
@@ -18,6 +19,7 @@ export default [
   user,
   address,
   cart,
+  message,
   category,
   coupon,
   media,

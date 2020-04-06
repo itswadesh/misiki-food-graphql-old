@@ -20,7 +20,7 @@ export const verifyOtp = async (
 ): Promise<UserDocument> => {
   const user = await User.findOne({ phone }).select(`${fields} password`)
   if (!user || !(await user.matchesPassword(otp))) {
-    throw new AuthenticationError('Incorrect phone or otp. Please try again.')
+    throw new AuthenticationError('Incorrect otp. Please try again.')
   }
   return user
 }

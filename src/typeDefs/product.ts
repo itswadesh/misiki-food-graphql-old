@@ -8,6 +8,8 @@ export default gql`
       skip: Int
       limit: Int
       search: String
+      city: String
+      type: String
       sort: String
       vendor: String
       category: String
@@ -37,6 +39,8 @@ export default gql`
       page: Int
       skip: Int
       limit: Int
+      city: String
+      type: String
       search: String
       sort: String
       q: String
@@ -49,11 +53,12 @@ export default gql`
       name: String
       description: String
       type: String
+      city: String
       price: Int
       stock: Int
       img: String
       time: String
-      category: String
+      category: ID
       categories: [String]
     ): Product @auth
     saveProduct(
@@ -61,11 +66,12 @@ export default gql`
       name: String
       description: String
       type: String
+      city: String
       price: Int
       stock: Int
       img: String
       time: String
-      category: String
+      category: ID
       categories: [String]
       active: Boolean
       vendor: String
@@ -177,6 +183,7 @@ type BS1{
     categories: [Category!]
     status: String
     type: String
+    city: String
     stock: Int
     price: Int
     time: String

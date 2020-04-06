@@ -6,18 +6,9 @@ const { ObjectId } = Schema.Types
 const messageSchema = new Schema(
   {
     body: String,
-    sender: {
-      type: ObjectId,
-      ref: 'User'
-    },
-    chat: {
-      type: ObjectId,
-      ref: 'Chat'
-    }
+    user: { type: ObjectId, ref: 'User' },
   },
-  {
-    timestamps: true
-  }
+  { timestamps: true }
 )
-
+messageSchema.index({ '$**': 'text' });
 export const Message = mongoose.model<MessageDocument>('Message', messageSchema)

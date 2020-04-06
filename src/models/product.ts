@@ -29,6 +29,7 @@ let productSchema = new Schema(
     description: String,
     status: String,
     type: String,
+    city: { type: String, default: 'Sunabeda' },
     stock: Number,
     price: Number,
     time: String,

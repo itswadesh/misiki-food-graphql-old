@@ -64,6 +64,7 @@ const resolvers: IResolvers = {
       return { t, t1, t2, t3, t4 }
     },
     search: (root, args, { req }: { req: Request }, info) => {
+      if (!args.city) throw new UserInputError("Please select city");
       args.stock = { $gt: 0 }
       return index({ model: Product, args, info })
     },
@@ -190,6 +191,7 @@ const resolvers: IResolvers = {
         name: string
         description: string
         type: string
+        city: string
         price: number
         stock: number
         img: string
@@ -201,7 +203,7 @@ const resolvers: IResolvers = {
       await validate(productSchema, args)
 
       const { userId } = req.session
-      const { name, description, type, price, stock, img, time, category } = args
+      const { name, description, type, city, price, stock, img, time, category } = args
 
       const user = await User.findById(userId)
       if (!user || !user.verified) throw new UserInputError('You must be verified by admin to create item')
@@ -214,6 +216,7 @@ const resolvers: IResolvers = {
         stock,
         img,
         time,
+        city,
         vendor: userId,
         category
       })
