@@ -36,7 +36,7 @@ const resolvers: IResolvers = {
     },
     popular: (root, args, { req }: { req: Request }, info) => {
       args.stock = { $gt: 0 }
-      args.sort = 'stats.popularity'
+      args.sort = 'popularity'
       args.limit = 10
       return index({ model: Product, args, info })
     },

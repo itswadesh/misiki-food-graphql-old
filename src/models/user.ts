@@ -33,7 +33,10 @@ const userSchema = new Schema(
     meta: String,
     metaTitle: String,
     metaDescription: String,
-    metaKeywords: String
+    metaKeywords: String,
+    ratings: Number,
+    reviews: Number,
+    avg_rating: Number,
   },
   {
     versionKey: false,

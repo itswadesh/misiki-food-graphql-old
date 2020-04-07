@@ -2,7 +2,7 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Query {
-    isOpen: Boolean
+    shutter: ISOpen
     settings: Setting
     settingsAdmin: Setting
   }
@@ -41,6 +41,11 @@ export default gql`
       sms: SmsIp
       email: EmailIp
     ): Setting @admin
+  }
+
+  type ISOpen{
+    open: Boolean
+    message: String
   }
 
   input TaxIp {

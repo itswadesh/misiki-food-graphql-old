@@ -10,7 +10,8 @@ import {
   MessageDocument,
   UserDocument,
   ReviewDocument,
-  SettingsDocument
+  SettingsDocument,
+  ProductDocument
 } from '../types'
 import { validate, objectId } from '../validation'
 import { Review, Setting, Order, Product } from '../models'
@@ -27,16 +28,31 @@ const resolvers: IResolvers = {
       await objectId.validateAsync(args)
       return Review.findById(args.id, fields(info))
     },
-    productReviews: async (root, args: { id: string }, ctx, info): Promise<ReviewDocument | null> => {
-      await objectId.validateAsync(args)
-      return Review.findById(args.id, fields(info))
-      // let total = 0
-      // for (let r of this.reviews) {
-      //   total += r.rating
-      // }
-      // const avg = Math.round((total / this.reviews.length) * 10) / 10
-      // this.avg = avg || 0
-      // this.total = total
+    productReviews: async (root, args, ctx, info) => {
+    },
+    reviewSummary: async (root, args, ctx, info) => {
+      const reviews = await Review.aggregate([
+        { $match: { product: Types.ObjectId(args.product) } },
+        {
+          $group: {
+            _id: '$product',
+            avg: { $avg: '$rating' },
+            count: { $sum: 1 },
+            total: { $sum: '$rating' },
+            reviews: { $addToSet: '$message' }
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            avg: { $round: ['$avg', 1] },
+            count: 1,
+            total: 1,
+            reviews: 1
+          }
+        }
+      ])
+      return reviews[0]
     }
   },
   Mutation: {
@@ -60,13 +76,13 @@ const resolvers: IResolvers = {
       p.reviewed = true
       const review = await Review.findOneAndUpdate(
         { _id: args.id || Types.ObjectId() },
-        { ...args, user: userId },
+        { ...args, user: userId, vendor: product.vendor },
         { new: true, upsert: true }
       ).populate('user').populate('product')
       await review.save() // To fire pre save hoook
       await order.save()
       // await Order.updateMany({ 'items.pid': new ObjectId(product._id), 'user.id': userId }, { $set: { 'items.$.reviewed': true } })
-      updateStats(product._id)
+      updateStats(product)
       return review
     },
   }

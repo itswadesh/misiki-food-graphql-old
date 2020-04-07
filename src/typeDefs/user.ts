@@ -113,7 +113,8 @@ export default gql`
     active: Boolean
     verified: Boolean
     address: Address
-    rating: Int
+    ratings: Float
+    reviews: Float
     city: String
     meta: String
     metaTitle: String

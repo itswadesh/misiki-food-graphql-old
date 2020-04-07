@@ -58,9 +58,9 @@ export const getData = async (start: Date, end: Date, q: any) => {
   ])
   return data
 }
-export const updateStats = async (pid: Types.ObjectId) => {
+export const updateStats = async (product: ProductDocument) => {
   const reviews = await Review.aggregate([
-    { $match: { product: pid } },
+    { $match: { product: product._id } },
     {
       $group: {
         _id: '$product',
@@ -69,10 +69,21 @@ export const updateStats = async (pid: Types.ObjectId) => {
       }
     }
   ])
-  const orders = await Order.countDocuments({ 'items.pid': pid })
+  const vendorReviews = await Review.aggregate([
+    { $match: { vendor: product.vendor } },
+    {
+      $group: {
+        _id: '$vendor',
+        avg: { $avg: '$rating' },
+        count: { $sum: 1 }
+      }
+    }
+  ])
+  await User.findByIdAndUpdate(product.vendor, { ratings: Math.round(vendorReviews[0].avg * 10) / 10, reviews: vendorReviews[0].count })
+  const orders = await Order.countDocuments({ 'items.pid': product._id })
   if (reviews.length > 0) {
     await Product.updateOne(
-      { _id: pid },
+      { _id: product._id },
       {
         $set: {
           ratings: Math.round(reviews[0].avg * 10) / 10,

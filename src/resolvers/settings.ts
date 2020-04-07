@@ -5,10 +5,18 @@ import { objectId, ifImage } from '../validation'
 import { Setting } from '../models'
 import { fields, hasSubfields } from '../utils'
 import pubsub from '../pubsub'
+import { closed } from "./../config";
 
 const MESSAGE_SENT = 'MESSAGE_SENT'
 const resolvers: IResolvers = {
   Query: {
+    shutter: (root, args, { req }: { req: Request }, info) => {
+      const start = closed.from.hour * 60 + closed.from.minute;
+      const end = closed.to.hour * 60 + closed.to.minute;
+      const date = new Date();
+      const now = date.getHours() * 60 + date.getMinutes();
+      return { open: !(start <= now && now <= end), message: closed.message }
+    },
     settings: (root, args, { req }: { req: Request }, info) => {
       return Setting.findOne({}, fields(info)).exec()
     },

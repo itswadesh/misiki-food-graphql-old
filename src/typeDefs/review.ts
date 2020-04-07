@@ -10,7 +10,9 @@ export default gql`
       sort: String
       q: String
     ): ReviewRes
+    reviewSummary( product:ID! ): ReviewSummary
     productReviews(
+      product:ID!
       page: Int
       skip: Int
       limit: Int
@@ -23,6 +25,13 @@ export default gql`
 
   extend type Mutation {
     saveReview(id: String, product: ID, variant: ID, user: ID, rating: Int, message: String, active:Boolean): Review @auth
+  }
+
+  type ReviewSummary{
+    avg: Float
+    count: Float
+    total: Float
+    reviews: [String]
   }
 
   type ReviewRes{

@@ -15,11 +15,11 @@ const resolvers: IResolvers = {
   Query: {
     hasOrder: async (root, args, { req }: { req: Request }, info) => {
       const { userId } = req.session
-      const order = await Order.findOne({ 'user.id': userId, "items.pid": args.id });
+      const order = await Order.findOne({ 'user.id': userId, "items.pid": args.product });
       if (!order)
         return false
-      const p = order.items.find(element => element.pid == args.id)
-      return !p.reviewed
+      const p = order.items.find(element => element.pid == args.product)
+      return p && !p.reviewed
     },
     orders: (root, args, { req }: { req: Request }, info) => {
       const { userId } = req.session
