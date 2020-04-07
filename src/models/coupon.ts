@@ -16,9 +16,9 @@ const couponSchema = new Schema(
     minimumCartValue: Number,
     amount: Number,
     maxAmount: Number,
-    from: Date,
+    validFromDate: Date,
+    validToDate: Date,
     color: String,
-    to: Date,
     q: String
   },
   {

@@ -22,8 +22,8 @@ export default gql`
       minimumCartValue: Float
       amount: Float
       maxAmount: Float
-      from: String
-      to: String
+      validFromDate:String
+      validToDate:String
       active: Boolean
     ): Coupon @auth
     createCoupon(
@@ -38,8 +38,8 @@ export default gql`
       minimumCartValue: Float
       amount: Float
       maxAmount: Float
-      from: String
-      to: String
+      validFromDate:String
+      validToDate:String
       active: Boolean
     ): Coupon @auth
   }
@@ -57,8 +57,8 @@ export default gql`
     minimumCartValue: Float
     amount: Float
     maxAmount: Float
-    from: String
-    to: String
+    validFromDate:String
+    validToDate:String
     active: Boolean
     createdAt: String!
     updatedAt: String!

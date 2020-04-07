@@ -219,23 +219,21 @@ export const calculateSummary = async (req: Request, code?: string) => {
   let { items, discount } = cart
   cart.qty = getTotalQty(items)
   let subtotal = (cart.subtotal = await getSubTotal(items))
-  try {
-    const coupon = await Coupon.findOne({ code, active: true })
-      .select('code color type text terms value minimumCartValue amount maxAmount from to')
-      .exec()
-    if (coupon && coupon.value) {
-      discount = coupon
-      discount.amount = await applyDiscount(
-        subtotal,
-        discount.value,
-        discount.minimumCartValue,
-        discount.maxAmount,
-        discount.type
-      )
-    } else {
-      discount = { amount: 0 }
-    }
-  } catch (e) {
+  // Can not use try catch here, it will not fire the following UserInputError
+  const coupon = await Coupon.findOne({ code, active: true, validFromDate: { $lte: new Date() }, validToDate: { $gte: new Date() } })
+    .select('code color type text terms value minimumCartValue amount maxAmount validFromDate validToDate')
+    .exec()
+  if (!coupon) throw new UserInputError('The selected coupon is expired.')
+  if (coupon && coupon.value) {
+    discount = coupon
+    discount.amount = await applyDiscount(
+      subtotal,
+      discount.value,
+      discount.minimumCartValue,
+      discount.maxAmount,
+      discount.type
+    )
+  } else {
     discount = { amount: 0 }
   }
   let shipping, tax
