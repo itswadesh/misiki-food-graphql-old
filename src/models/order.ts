@@ -64,6 +64,7 @@ const orderSchema = new Schema(
         subtotal: Number,
         total: Number,
         currency: String,
+        reviewed: { type: Boolean, default: false },
         vendor: {
           restaurant: String,
           address: Object,
@@ -80,7 +81,6 @@ const orderSchema = new Schema(
     cancellationReason: String,
     cancellationComment: String,
     returnComment: String,
-    reviewed: { type: Boolean, default: false },
     active: { type: Boolean, default: true },
     payment_order_id: String,
     cod_paid: Number

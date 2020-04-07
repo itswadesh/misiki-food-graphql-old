@@ -8,6 +8,7 @@ const reviewSchema = new Schema(
     user: { type: ObjectId, ref: 'User' },
     rating: Number,
     message: String,
+    votes: { voters: [{ type: ObjectId, ref: 'User' }], count: Number },
     active: { type: Boolean, default: true },
     q: String
   },
@@ -19,7 +20,5 @@ reviewSchema.pre('save', async function (this: ReviewDocument) {
   this.q += this.active ? this.active + " " : "";
   this.q = this.q.trim()
 })
-reviewSchema.index({
-  '$**': 'text'
-});
+reviewSchema.index({ '$**': 'text' });
 export const Review = mongoose.model<ReviewDocument>('Review', reviewSchema)

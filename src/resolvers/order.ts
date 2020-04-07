@@ -13,6 +13,14 @@ import { ObjectId } from 'mongodb'
 
 const resolvers: IResolvers = {
   Query: {
+    hasOrder: async (root, args, { req }: { req: Request }, info) => {
+      const { userId } = req.session
+      const order = await Order.findOne({ 'user.id': userId, "items.pid": args.id });
+      if (!order)
+        return false
+      const p = order.items.find(element => element.pid == args.id)
+      return !p.reviewed
+    },
     orders: (root, args, { req }: { req: Request }, info) => {
       const { userId } = req.session
       args['user.id'] = userId

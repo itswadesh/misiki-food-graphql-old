@@ -2,6 +2,7 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Query {
+    hasOrder(id:ID!):Boolean
     allOrders(
       page: Int
       skip: Int

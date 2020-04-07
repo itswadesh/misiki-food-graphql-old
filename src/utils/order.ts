@@ -59,18 +59,17 @@ export const getData = async (start: Date, end: Date, q: any) => {
   return data
 }
 export const updateStats = async (pid: Types.ObjectId) => {
-  await objectId.validateAsync(pid)
   const reviews = await Review.aggregate([
-    { $match: { pid } },
+    { $match: { product: pid } },
     {
       $group: {
-        _id: '$pid',
+        _id: '$product',
         avg: { $avg: '$rating' },
         count: { $sum: 1 }
       }
     }
   ])
-  const orders = await Order.countDocuments({ 'item._id': pid })
+  const orders = await Order.countDocuments({ 'items.pid': pid })
   if (reviews.length > 0) {
     await Product.updateOne(
       { _id: pid },
