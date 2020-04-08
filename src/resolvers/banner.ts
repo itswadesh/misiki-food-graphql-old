@@ -9,12 +9,7 @@ const resolvers: IResolvers = {
     banners: (root, args, { req }: { req: Request }, info) => {
       return index({ model: Banner, args, info })
     },
-    banner: async (
-      root,
-      args: { id: string },
-      ctx,
-      info
-    ): Promise<BannerDocument | null> => {
+    banner: async (root, args: { id: string }, ctx, info): Promise<BannerDocument | null> => {
       return Banner.findById(args.id, fields(info))
     }
   },

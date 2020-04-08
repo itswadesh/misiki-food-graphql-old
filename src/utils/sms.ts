@@ -17,14 +17,3 @@ export const sms = async ({ phone, msg, otp }: any) => {
     console.error('sms err...', error.toString());
   }
 }
-// export const fast2sms = async ({ phone, otp }: any) => {
-//   try {
-//     let settings = await Setting.findOne({}).exec()
-//     if (!settings || !settings.sms.enabled) return
-//     const { FAST2SMS_KEY, FAST2SMS_SENDER_ID } = process.env
-//     fetch(`https://www.fast2sms.com/dev/bulk?authorization=${FAST2SMS_KEY}&sender_id=${FAST2SMS_SENDER_ID}&language=english&route=qt&numbers=${phone}&message=${1372}&variables={#AA#}&variables_values=${otp}`)
-//     console.log(`${phone} = ${otp}`)
-//   } catch (error) {
-//     console.error('sms err...', error.toString());
-//   }
-// }
