@@ -7,11 +7,7 @@ export const generateOTP = () => {
 }
 export const requestOTP = async (phone: string, otp: number) => {
   try {
-    let settings = await Setting.findOne().exec()
-    sms({
-      phone,
-      msg: `Hi. ${otp} is your OTP to login to Misiki`
-    })
+    sms({ phone, msg: `Hi. ${otp} is your OTP to login to Misiki`, otp })
   } catch (e) {
     throw e
   }
