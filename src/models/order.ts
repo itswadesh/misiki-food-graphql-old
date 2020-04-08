@@ -33,9 +33,19 @@ const orderSchema = new Schema(
       type: Object,
       default: {
         method: 'COD',
-        status: 'Pending',
-        details: String,
-        payment_order_id: String
+        status: 'pending',
+        amount: 0,
+        currency: 'INR',
+        refund_status: null,
+        captured: false,
+        email: null,
+        contact: null,
+        fee: 0,
+        tax: 0,
+        error_code: null,
+        error_description: null,
+        created_at: new Date(),
+        payment_order_id: null
       }
     },
     amount: {

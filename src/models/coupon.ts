@@ -8,7 +8,7 @@ const couponSchema = new Schema(
     code: String,
     value: Number,
     type: { type: String, default: 'Discount' },
-    active: { type: Boolean, default: true },
+    active: { type: Boolean, default: false },
     info: String,
     msg: String,
     text: String,

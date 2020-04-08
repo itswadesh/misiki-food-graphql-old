@@ -15,7 +15,8 @@ const resolvers: IResolvers = {
       const end = closed.to.hour * 60 + closed.to.minute;
       const date = new Date();
       const now = date.getHours() * 60 + date.getMinutes();
-      return { open: !(start <= now && now <= end), message: closed.message }
+      if (start <= now && now <= end) throw new UserInputError(closed.message)
+      else return true
     },
     settings: (root, args, { req }: { req: Request }, info) => {
       return Setting.findOne({}, fields(info)).exec()
@@ -27,11 +28,7 @@ const resolvers: IResolvers = {
   },
 
   Mutation: {
-    saveSettings: async (
-      root,
-      args,
-      { req }: { req: Request }
-    ): Promise<SettingsDocument> => {
+    saveSettings: async (root, args, { req }: { req: Request }): Promise<SettingsDocument> => {
       const { userId } = req.session
       const { id } = args
       let settings = await Setting.findByIdAndUpdate(

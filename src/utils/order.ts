@@ -1,5 +1,5 @@
 import { Types } from 'mongoose'
-import { getSubTotal, getTotalQty, saveMyCart, getTotal } from './cart'
+import { getSubTotal, getTotalQty, saveMyCart, getTotal, calculateSummary, validateCart } from './cart'
 // import { calculateOffers } from './promotions'
 import { generateOTP } from './'
 import { Review, Order, Product, Setting, User } from '../models'
@@ -96,6 +96,8 @@ export const updateStats = async (product: ProductDocument) => {
 }
 
 export const placeOrder = async (req: Request, { address, comment }: any) => {
+  await validateCart(req)
+  await calculateSummary(req) // Validates coupon expiry
   let setting: SettingsDocument | null = await Setting.findOne().exec()
   if (!setting) throw new UserInputError('Invalid settings')
   if (
@@ -105,11 +107,13 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
     req.session.cart.items.length == 0
   )
     throw new UserInputError('No items in cart')
-
   let { userId, cart } = req.session
-  let { items } = cart
+  let { cart_id, phone, items } = cart
+  if (!items || !cart_id)
+    throw new UserInputError('Cart was not found')
   if (!items || items.length < 1)
     throw new UserInputError('Cart is empty.')
+  if (!userId) throw new UserInputError("User not found")
 
   for (let i of items) {
     // If item not found in cart remove it

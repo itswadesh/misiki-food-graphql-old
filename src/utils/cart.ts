@@ -212,34 +212,56 @@ export const applyDiscount = (
 }
 
 // Also called from Coupon Controller
-export const calculateSummary = async (req: Request, code?: string) => {
+export const validateCart = async (req: Request) => {
   const { session } = req
-  const { cart, userId, id } = session
+  if (!session) throw new UserInputError('Cart not initiated')
+  const { cart } = session
   if (!cart) throw new UserInputError('Cart is empty')
-  let { items, discount } = cart
+  let { items } = cart
+  if (!items || items.length < 1)
+    throw new UserInputError('No items in cart')
   cart.qty = getTotalQty(items)
   let subtotal = (cart.subtotal = await getSubTotal(items))
-  // Can not use try catch here, it will not fire the following UserInputError
-  const coupon = await Coupon.findOne({ code, active: true, validFromDate: { $lte: new Date() }, validToDate: { $gte: new Date() } })
+  const setting: any = (await Setting.findOne({}).select('shipping tax minimumOrderValue').exec()) || { minimumOrderValue: 0, shipping: { charge: 0 }, tax: { cgst: 0, sgst: 0, igst: 0 } }
+  if (subtotal < setting.minimumOrderValue) throw new UserInputError('Min order value is ' + setting.minimumOrderValue)
+}
+
+export const validateCoupon = async (cart: CartDocument, code?: string, silent?: boolean) => {
+  cart.qty = getTotalQty(cart.items)
+  let subtotal = (cart.subtotal = await getSubTotal(cart.items))
+  let coupon = await Coupon.findOne({ code, active: true, validFromDate: { $lte: new Date() }, validToDate: { $gte: new Date() } })
     .select('code color type text terms value minimumCartValue amount maxAmount validFromDate validToDate')
     .exec()
-  if (!coupon) throw new UserInputError('The selected coupon is expired.')
-  if (coupon && coupon.value) {
-    discount = coupon
-    discount.amount = await applyDiscount(
-      subtotal,
-      discount.value,
-      discount.minimumCartValue,
-      discount.maxAmount,
-      discount.type
-    )
-  } else {
-    discount = { amount: 0 }
+  if (code && !silent) {
+    if (!coupon) throw new UserInputError('The selected coupon is expired.') // code is required here because when no coupon is applied this should not throw error
+    else if (coupon.minimumCartValue > cart.subtotal) throw new UserInputError('Can not apply coupon, add some more items to cart.') // code is required here because when no coupon is applied this should not throw error
   }
-  let shipping, tax
-  let setting = (await Setting.findOne({})
-    .select('shipping tax')
-    .exec()) || { shipping: { charge: 0 }, tax: { cgst: 0, sgst: 0, igst: 0 } }
+
+  if (coupon && coupon.value) {
+    coupon.amount = await applyDiscount(
+      cart.subtotal,
+      coupon.value,
+      coupon.minimumCartValue,
+      coupon.maxAmount,
+      coupon.type
+    )
+    return coupon
+  } else {
+    return { amount: 0 }
+  }
+}
+
+export const calculateSummary = async (req: Request, code?: string) => {
+  // Other validations moved to separate function named validateCart because when cart is cleared, validate cart will throw error of minimumordervalue + cart is empty
+  const { session } = req
+  const { cart, userId, id } = session
+  let { items } = cart
+  cart.qty = getTotalQty(items)
+  let subtotal = (cart.subtotal = await getSubTotal(items))
+  let shipping, tax, minimumOrderValue = 0
+  const setting: any = (await Setting.findOne({}).select('shipping tax minimumOrderValue').exec()) || { minimumOrderValue: 0, shipping: { charge: 0 }, tax: { cgst: 0, sgst: 0, igst: 0 } }
+  // Can not use try catch here, it will not fire the following UserInputError
+  const discount = await validateCoupon(cart, code) // 3rd param true= Silent no error
   shipping = cart.shipping = setting.shipping
   if (!shipping || !shipping.charge) shipping.charge = 0
   cart.discount = discount

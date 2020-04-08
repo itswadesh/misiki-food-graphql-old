@@ -10,8 +10,9 @@ export interface CouponDocument extends Document {
   terms: string
   minimumCartValue: number
   maxAmount: number
-  from: string
-  to: string
+  validFromDate: Date
+  validToDate: Date
+  amount: number
   active: boolean
   q: string
   color: string

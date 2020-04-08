@@ -12,32 +12,32 @@ export default gql`
     saveCoupon(
       id: String
       code: String!
-      value: Float!
+      value: String!
       type: String
       info: String
       msg: String
       text: String
       terms: String
       color: String
-      minimumCartValue: Float
-      amount: Float
-      maxAmount: Float
+      minimumCartValue: String
+      amount: String
+      maxAmount: String
       validFromDate:String
       validToDate:String
       active: Boolean
     ): Coupon @auth
     createCoupon(
       code: String!
-      value: Float!
+      value: String!
       type: String
       info: String
       msg: String
       text: String
       terms: String
       color: String
-      minimumCartValue: Float
-      amount: Float
-      maxAmount: Float
+      minimumCartValue: String
+      amount: String
+      maxAmount: String
       validFromDate:String
       validToDate:String
       active: Boolean
@@ -47,16 +47,16 @@ export default gql`
   type Coupon {
     id: ID!
     code: String
-    value: Float
+    value: String
     type: String
     info: String
     msg: String
     text: String
     terms: String
     color: String
-    minimumCartValue: Float
-    amount: Float
-    maxAmount: Float
+    minimumCartValue: String
+    amount: String
+    maxAmount: String
     validFromDate:String
     validToDate:String
     active: Boolean

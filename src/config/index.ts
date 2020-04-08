@@ -39,6 +39,6 @@ export const endT = { h: 22, m: 0 }
 export const end = '10:00 pm'
 
 export const closed = {
-  from: { hour: 13, minute: 44 }, to: { hour: 13, minute: 55 },
-  message: 'Sorry we are closed from 1:30 PM to 1:40 PM'
+  from: { hour: 13, minute: 44 }, to: { hour: 13, minute: 59 },
+  message: 'Sorry we are closed from 1:44 PM to 1:59 PM'
 }

@@ -5,14 +5,23 @@ import {
   ForbiddenError,
   withFilter
 } from 'apollo-server-express'
-import { Request, MessageDocument, UserDocument, OrderDocument } from '../types'
+import { Request, MessageDocument, UserDocument, OrderDocument, PaymentDocument } from '../types'
 import { validate, objectId, orderSchema } from '../validation'
-import { Order } from '../models'
-import { fields, hasSubfields, index, indexSub, getStartEndDate } from '../utils'
+import { Order, Payment } from '../models'
+import { fields, hasSubfields, index, indexSub, getStartEndDate, placeOrder, clearCart, validateCart, validateCoupon, calculateSummary } from '../utils'
 import { ObjectId } from 'mongodb'
 
 const resolvers: IResolvers = {
   Query: {
+    validateCoupon: async (root, args, { req }) => {
+      const { cart } = req.session
+      const code = req.session.cart.discount && req.session.cart.discount.code
+      await calculateSummary(req, code)
+      // await validateCoupon(cart, code)
+    },
+    validateCart: async (root, args, { req }) => {
+      await validateCart(req)
+    },
     hasOrder: async (root, args, { req }: { req: Request }, info) => {
       const { userId } = req.session
       const order = await Order.findOne({ 'user.id': userId, "items.pid": args.product });
@@ -417,29 +426,36 @@ const resolvers: IResolvers = {
       return Order.findOneAndUpdate({ _id: args.id, 'items.pid': args.pid },
         { $set: { "items.$.status": args.status } })
     },
-    collectPayment: async (
-      root,
-      args: { id: string; cod_paid: number },
-      { req }: { req: Request }
-    ): Promise<Boolean> => {
+    collectPayment: async (root, args: { id: string; cod_paid: number }, { req }: { req: Request }): Promise<Boolean> => {
       const { userId } = req.session
       const o = await Order.updateOne({ _id: args.id },
-        { $set: { "cod_paid": args.cod_paid } })
+        { $set: { 'payment.amount_paid': args.cod_paid, "cod_paid": args.cod_paid } })
       return o.nModified
     },
-    checkout: async (
-      root,
-      args: { address: string; comment: string },
-      { req }: { req: Request }
-    ): Promise<OrderDocument> => {
+
+    checkout: async (root, args, { req }) => {
       // await checkout.validateAsync(args, { abortEarly: false })
-      const { userId } = req.session
-
-      const order = await Order.create(req, { ...args, uid: userId })
-
-      await order.save()
-
-      return order
+      const newOrder: any = await placeOrder(req, { address: args.address })
+      const amount = Math.round(newOrder.amount.total * 100)
+      const payment = {
+        payment_order_id: null,
+        amount,
+        receipt: newOrder.cartId.toString(),
+        notes: { phone: newOrder.user.phone, purpose: '' },
+        amount_paid: 0,
+        amount_due: amount,
+        status: 'created',
+        method: 'COD',
+        captured: false,
+        email: newOrder.user.email,
+        contact: newOrder.user.phone,
+        fee: 0,
+        error_code: null,
+        error_description: null,
+        invoice_id: newOrder._id
+      }
+      clearCart(req)
+      return Order.findByIdAndUpdate({ _id: newOrder._id }, { $set: { payment } }, { new: true })
     },
     create: async (
       root,

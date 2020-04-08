@@ -2,7 +2,7 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Query {
-    shutter: ISOpen
+    shutter: Boolean
     settings: Setting
     settingsAdmin: Setting
   }
@@ -10,12 +10,12 @@ export default gql`
     saveSettings(
       id:ID!
       websiteName: String
-      closeMessage: String
       title: String
       alert: String
       keywords: String
       description: String
-      # shipping: { charge: Int, free: Int, method: String },
+      minimumOrderValue:Int
+      shipping: ShippingIp
       tax: TaxIp
       shippingMethod: String
       shopEmail: String
@@ -43,7 +43,21 @@ export default gql`
     ): Setting @admin
   }
 
-  type ISOpen{
+  input ShippingIp {
+    delivery_days: Int
+    charge: Int
+    free: Int
+    method: String
+  }
+
+  type Shipping {
+    delivery_days: Int
+    charge: Int
+    free: Int
+    method: String
+  }
+
+  type Shutter{
     open: Boolean
     message: String
   }
@@ -93,12 +107,13 @@ export default gql`
   type Setting {
     id:String
     websiteName: String
-    closeMessage: String
+    shutter: Shutter,
     title: String
     alert: String
     keywords: String
     description: String
-    # shipping: { charge: Int, free: Int, method: String },
+    minimumOrderValue:Int
+    shipping: Shipping
     tax: Tax
     shippingMethod: String
     shopEmail: String

@@ -3,6 +3,8 @@ import { gql } from 'apollo-server-express'
 export default gql`
   extend type Query {
     hasOrder(product:ID!):Boolean
+    validateCart:Boolean
+    validateCoupon:Boolean
     allOrders(
       page: Int
       skip: Int
@@ -94,7 +96,7 @@ export default gql`
 
   extend type Mutation {
     create(chatId: ID!, body: String!): Order @auth
-    checkout(qty: String!, pid: String!): Boolean @auth
+    checkout(paymentMethod: String, address: AddressInput!): Order @auth
     updateOrder(id: ID!, pid: ID!, status:String): Order @auth
     collectPayment(id: ID!, cod_paid:Int): Boolean @auth
   }

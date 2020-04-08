@@ -2,7 +2,6 @@ import { Document } from 'mongoose'
 
 export interface SettingsDocument extends Document {
   websiteName: string
-  closeMessage: { type: string; default: 'Closed 6PM - 10PM' }
   title: string
   alert: string
   keywords: string
@@ -13,6 +12,7 @@ export interface SettingsDocument extends Document {
   homeMeta4: string
   listingMeta: string
   detailMeta: string
+  minimumOrderValue: number
   shipping: {
     delivery_days: number
     charge: number

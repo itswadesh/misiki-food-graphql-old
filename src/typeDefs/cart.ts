@@ -44,8 +44,4 @@ export default gql`
     qty: Int
     time:String
   }
-
-  type Shipping {
-    charge: Int
-  }
 `

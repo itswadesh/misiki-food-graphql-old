@@ -6,10 +6,6 @@ const { ObjectId } = Schema.Types
 const settingSchema = new Schema(
   {
     websiteName: String,
-    closeMessage: {
-      type: String,
-      default: 'Closed 6PM - 10PM'
-    },
     title: String,
     alert: String,
     keywords: String,
@@ -20,6 +16,7 @@ const settingSchema = new Schema(
     homeMeta4: String,
     listingMeta: String,
     detailMeta: String,
+    minimumOrderValue: { type: Number, default: 0 },
     shipping: { charge: Number, free: Number, method: String },
     tax: {
       cgst: { type: Number, default: 0 },

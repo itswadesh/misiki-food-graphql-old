@@ -2,7 +2,7 @@ import { IResolvers } from 'apollo-server-express'
 import { Request, BannerDocument } from '../types'
 import { validate, objectId, bannerSchema } from '../validation'
 import { Banner } from '../models'
-import { fields, calculateSummary, index } from '../utils'
+import { fields, index } from '../utils'
 
 const resolvers: IResolvers = {
   Query: {
@@ -19,11 +19,7 @@ const resolvers: IResolvers = {
     }
   },
   Mutation: {
-    saveBanner: async (
-      root,
-      args,
-      { req }: { req: Request }
-    ): Promise<BannerDocument | null> => {
+    saveBanner: async (root, args, { req }: { req: Request }): Promise<BannerDocument | null> => {
       const { userId } = req.session
       if (args.id == 'new')
         return await Banner.create(args)
