@@ -14,7 +14,7 @@ import {
   ProductDocument
 } from '../types'
 import { validate, objectId } from '../validation'
-import { Review, Setting, Order, Product } from '../models'
+import { Review, Setting, Order, Product, User } from '../models'
 import { fields, hasSubfields, index, updateStats } from '../utils'
 import { reviewSchema } from '../validation/review'
 import { ObjectId } from 'mongodb'
@@ -22,6 +22,7 @@ import { ObjectId } from 'mongodb'
 const resolvers: IResolvers = {
   Query: {
     reviews: (root, args, ctx, info) => {
+      args.populate = 'product user vendor'
       return index({ model: Review, args, info })
     },
     review: async (root, args: { id: string }, ctx, info): Promise<ReviewDocument | null> => {
@@ -56,6 +57,16 @@ const resolvers: IResolvers = {
     }
   },
   Mutation: {
+    removeReview: async (root, args, { req }: { req: Request }): Promise<ReviewDocument | null> => {
+      const { userId } = req.session
+      const review = await Review.findById(args.id)
+      if (!review) throw new UserInputError('Review not found')
+      const user = await User.findById(userId)
+      if (!user) throw new UserInputError('Please login again to continue')
+      if (user.role != 'admin' && review.user == userId)
+        throw new UserInputError('Review does not belong to you')
+      return await Review.findByIdAndDelete({ _id: args.id })
+    },
     saveReview: async (root, args, { req }: { req: Request }): Promise<ReviewDocument | null> => {
       const { userId } = req.session
       const settings = await Setting.findOne({}).exec()

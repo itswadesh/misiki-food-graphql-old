@@ -8,5 +8,5 @@ export interface PageDocument extends Document {
   slug: string
   description: string
   content: string
-  uid: UserDocument['_id']
+  user: UserDocument['_id']
 }

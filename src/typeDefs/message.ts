@@ -6,7 +6,7 @@ export default gql`
     message(id: String!): Message
   }
   extend type Mutation {
-    removeMessage: Message @auth
+    removeMessage(id:ID!): Message @auth
     saveMessage(      id: String      body:String    ): Message @auth
   }
   # extend type Subscription {

@@ -5,17 +5,15 @@ const { ObjectId } = Schema.Types
 
 const pageSchema = new Schema(
   {
-    id: String,
-    menuTitle: String,
     name: String,
     title: String,
     slug: String,
     description: String,
     content: String,
+    menuTitle: String,
+    user: { type: ObjectId, ref: 'User' },
     q: String,
-    email: String,
-    uid: { type: ObjectId, ref: 'User' },
-    status: { type: Boolean, default: true }
+    active: { type: Boolean, default: true }
   },
   { versionKey: false, timestamps: true }
 )

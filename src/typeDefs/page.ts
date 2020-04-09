@@ -2,25 +2,42 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Query {
-    pages: [Page!]
+    pages(page: Int, search: String, limit:Int, sort:String): pageRes
     page(id: ID!): Page
   }
 
   extend type Mutation {
-    createPage(chatId: ID!, body: String!): Page @auth
+    removePage(id: ID!): Page @auth
+    savePage(
+      id: String, 
+      name: String,
+      title: String
+      slug: String,
+      description: String,
+      content: String,
+      menuTitle: String,
+      active: Boolean
+    ): Page @auth
   }
 
   type Page {
     id: ID!
-    menuTitle: String
     name: String
     title: String
     slug: String
     description: String
     content: String
-    uid: User
+    menuTitle: String
+    user: User
     active: Boolean
     createdAt: String!
     updatedAt: String!
+  }
+  
+  type pageRes {
+    data: [Page]
+    count: Int
+    pageSize: Int
+    page: Int
   }
 `

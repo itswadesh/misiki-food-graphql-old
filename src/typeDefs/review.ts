@@ -24,6 +24,7 @@ export default gql`
   }
 
   extend type Mutation {
+    removeReview(id:ID!): Review @auth
     saveReview(id: String, product: ID, variant: ID, user: ID, rating: Int, message: String, active:Boolean): Review @auth
   }
 
@@ -48,6 +49,7 @@ export default gql`
     product: Product!
     variant: Variant
     user: User!
+    vendor: User
     message: String
     votes: Vote
     rating: Float
