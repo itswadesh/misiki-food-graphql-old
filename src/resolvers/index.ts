@@ -14,6 +14,7 @@ import user from './user'
 import wishlist from './wishlist'
 import settings from './settings'
 import banner from './banner'
+import city from './city'
 
 export default [
   user,
@@ -31,5 +32,6 @@ export default [
   slot,
   settings,
   wishlist,
-  banner
+  banner,
+  city
 ]

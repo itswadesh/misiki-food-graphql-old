@@ -18,6 +18,7 @@ import slot from './slot'
 import wishlist from './wishlist'
 import settings from './settings'
 import banner from './banner'
+import city from './city'
 
 export default [
   root,
@@ -39,5 +40,6 @@ export default [
   slot,
   wishlist,
   settings,
-  banner
+  banner,
+  city
 ]

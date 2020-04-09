@@ -4,7 +4,7 @@ export default gql`
   extend type Query {
     addresses: [Address!] @auth
     address(id: ID!): Address @auth
-    getLocation(lat: String, lng: String): Address
+    getLocation(lat: Float, lng: Float): Address
   }
 
   extend type Mutation {
@@ -60,8 +60,8 @@ export default gql`
   }
 
   input Geo {
-    lat: String
-    lng: String
+    lat: Float
+    lng: Float
   }
 
   type Coords {
