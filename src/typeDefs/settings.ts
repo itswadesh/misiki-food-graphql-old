@@ -39,8 +39,28 @@ export default gql`
       orderStatuses: [String]
       paymentStatuses: [String]
       sms: SmsIp
-      email: EmailIp
+      email: EmailIp,
+      review: ReviewSettingIp
+      product: ProductSettingIp
     ): Setting @admin
+  }
+
+  input ProductSettingIp {
+    moderate: Boolean
+  }
+
+  type ProductSetting {
+    moderate: Boolean
+  }
+
+  input ReviewSettingIp {
+    enabled: Boolean
+    moderate: Boolean
+  }
+
+  type ReviewSetting {
+    enabled: Boolean
+    moderate: Boolean
   }
 
   input ShippingIp {
@@ -137,6 +157,8 @@ export default gql`
     orderStatuses: [String]
     paymentStatuses: [String]
     sms: Sms
-    email: Email
+    email: Email,
+    review:ReviewSetting
+    product:ProductSetting
   }
 `

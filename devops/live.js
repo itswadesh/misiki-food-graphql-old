@@ -2,9 +2,9 @@ const shell = require('shelljs');
 require('dotenv').config();
 
 // Start Config
-const PM2_NAME = 'graphql'
-const REMOTE_DIR = '/var/www/misiki/graphql'
-const REMOTE_HOST = '139.59.42.129'
+const PM2_NAME = 'mapi'
+const REMOTE_DIR = '/var/www/misiki/api'
+const REMOTE_HOST = '45.76.186.182'
 const REMOTE_USER = 'root'
 const PRIVATE_KEY = process.env.LIVE_KEY
 const FILE_NAMES = 'exports dist package.json'
