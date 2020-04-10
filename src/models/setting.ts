@@ -23,6 +23,9 @@ const settingSchema = new Schema(
       sgst: { type: Number, default: 0 },
       igst: { type: Number, default: 0 }
     },
+    currency_code: String,
+    currency_symbol: String,
+    open_graph_image: String,
     shippingMethod: String,
     shopEmail: String,
     shopPhone: String,

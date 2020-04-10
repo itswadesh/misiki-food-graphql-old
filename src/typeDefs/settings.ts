@@ -3,6 +3,9 @@ import { gql } from 'apollo-server-express'
 export default gql`
   extend type Query {
     shutter: Boolean
+    worldCurrencies: [String!]
+    sorts: [NameVal!]
+    timesList: [String!]
     settings: Setting
     settingsAdmin: Setting
   }
@@ -21,6 +24,9 @@ export default gql`
       shopEmail: String
       shopPhone: String
       shopAddress: String
+      currency_code: String
+      currency_symbol: String
+      country: String
       country: String
       language: String
       logo: String
@@ -112,6 +118,11 @@ export default gql`
     printers: [String]
   }
 
+  type NameVal {
+    name: String
+    val: String
+  }
+
   type Sms {
     enabled: Boolean
   }
@@ -134,6 +145,11 @@ export default gql`
     description: String
     minimumOrderValue:Int
     shipping: Shipping
+    currency_code:String
+    open_graph_image:String
+    currency_symbol: String
+    userRoles:[String]
+    sorts:[NameVal]
     tax: Tax
     shippingMethod: String
     shopEmail: String

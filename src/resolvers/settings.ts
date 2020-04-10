@@ -5,7 +5,7 @@ import { objectId, ifImage } from '../validation'
 import { Setting } from '../models'
 import { fields, hasSubfields } from '../utils'
 import pubsub from '../pubsub'
-import { closed } from "./../config";
+import { closed, worldCurrencies, sorts, timesList } from "./../config";
 
 const MESSAGE_SENT = 'MESSAGE_SENT'
 const resolvers: IResolvers = {
@@ -17,6 +17,15 @@ const resolvers: IResolvers = {
       const now = date.getHours() * 60 + date.getMinutes();
       if (start <= now && now <= end) throw new UserInputError(closed.message)
       else return true
+    },
+    worldCurrencies: (root, args, { req }: { req: Request }, info) => {
+      return worldCurrencies
+    },
+    sorts: (root, args, { req }: { req: Request }, info) => {
+      return sorts
+    },
+    timesList: (root, args, { req }: { req: Request }, info) => {
+      return timesList
     },
     settings: (root, args, { req }: { req: Request }, info) => {
       return Setting.findOne({}, fields(info)).exec()
