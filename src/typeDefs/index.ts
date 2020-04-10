@@ -19,6 +19,7 @@ import wishlist from './wishlist'
 import settings from './settings'
 import banner from './banner'
 import city from './city'
+import emailTemplate from './emailTemplate'
 
 export default [
   root,
@@ -41,5 +42,6 @@ export default [
   wishlist,
   settings,
   banner,
-  city
+  city,
+  emailTemplate
 ]

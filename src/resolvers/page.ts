@@ -16,9 +16,18 @@ const resolvers: IResolvers = {
     pages: (root, args, ctx, info) => {
       return index({ model: Page, args, info })
     },
+    pageSlug: async (root, args: { slug: string }, ctx, info): Promise<PageDocument | null> => {
+      // await objectId.validateAsync(args)
+      return Page.findOne({ slug: args.slug }, fields(info))
+    },
     page: async (root, args: { id: string }, ctx, info): Promise<PageDocument | null> => {
-      await objectId.validateAsync(args)
-      return Page.findById(args.id, fields(info))
+      if (args.id != 'new') {
+        await objectId.validateAsync(args)
+        return Page.findById(args.id, fields(info))
+      }
+      else {
+        return null
+      }
     }
   },
   Mutation: {
@@ -46,7 +55,7 @@ const resolvers: IResolvers = {
       },
       { req }: { req: Request }
     ): Promise<PageDocument> => {
-      await validate(pageSchema, args)
+      // await validate(pageSchema, args)
       if (args.id == 'new') delete args.id
       const { userId } = req.session
       const page = await Page.findOneAndUpdate({ _id: args.id || Types.ObjectId() }, { $set: { ...args, user: userId } }, { upsert: true, new: true })

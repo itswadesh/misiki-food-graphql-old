@@ -2,43 +2,32 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Query {
-    pages(page: Int, search: String, limit:Int, sort:String): pageRes
-    page(id: String): Page
-    pageSlug(slug: String): Page
+    emailTemplates(folder:String, name: String): String
+    emailTemplate(id: String): EmailTemplate
   }
 
   extend type Mutation {
-    removePage(id: ID!): Page @auth
-    savePage(
+    # removeEmailTemplate(id: ID!): EmailTemplate @auth
+    saveEmailTemplate(
       id: String, 
       name: String,
       title: String
-      slug: String,
       description: String,
       content: String,
-      menuTitle: String,
       active: Boolean
-    ): Page @auth
+    ): EmailTemplate @auth
   }
 
-  type Page {
-    id: ID!
+  type EmailTemplate {
+    id: String
     name: String
     title: String
-    slug: String
     description: String
     content: String
-    menuTitle: String
     user: User
     active: Boolean
     createdAt: String!
     updatedAt: String!
   }
   
-  type pageRes {
-    data: [Page]
-    count: Int
-    pageSize: Int
-    page: Int
-  }
 `

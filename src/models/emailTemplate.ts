@@ -1,27 +1,24 @@
 import mongoose, { Schema } from 'mongoose'
-import { PageDocument } from '../types'
+import { EmailTemplateDocument } from '../types'
 import { generateSlug } from '../utils'
 
 const { ObjectId } = Schema.Types
 
-const pageSchema = new Schema(
+const emailTemplateSchema = new Schema(
   {
+    id: String,
     name: String,
     title: String,
-    slug: String,
     description: String,
     content: String,
-    menuTitle: String,
     user: { type: ObjectId, ref: 'User' },
-    q: String,
     active: { type: Boolean, default: true }
   },
   { versionKey: false, timestamps: true }
 )
-pageSchema.pre('save', async function (this: PageDocument) {
+emailTemplateSchema.pre('save', async function (this: EmailTemplateDocument) {
   if (!this.slug)
     this.slug = await generateSlug(this.name)
-
 })
-pageSchema.index({ '$**': 'text' });
-export const Page = mongoose.model<PageDocument>('Page', pageSchema)
+emailTemplateSchema.index({ '$**': 'text' });
+export const Page = mongoose.model<EmailTemplateDocument>('EmailTemplate', emailTemplateSchema)
