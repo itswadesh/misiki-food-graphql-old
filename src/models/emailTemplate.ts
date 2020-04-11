@@ -21,4 +21,4 @@ emailTemplateSchema.pre('save', async function (this: EmailTemplateDocument) {
     this.slug = await generateSlug(this.name)
 })
 emailTemplateSchema.index({ '$**': 'text' });
-export const Page = mongoose.model<EmailTemplateDocument>('EmailTemplate', emailTemplateSchema)
+export const EmailTemplate = mongoose.model<EmailTemplateDocument>('EmailTemplate', emailTemplateSchema)

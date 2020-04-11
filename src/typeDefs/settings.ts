@@ -19,13 +19,15 @@ export default gql`
       description: String
       minimumOrderValue:Int
       shipping: ShippingIp
+      RAZORPAY_KEY: String
       tax: TaxIp
-      shippingMethod: String
       shopEmail: String
       shopPhone: String
       shopAddress: String
       currency_code: String
       currency_symbol: String
+      currency_decimals: Int
+      open_graph_image:String
       country: String
       country: String
       language: String
@@ -48,11 +50,41 @@ export default gql`
       email: EmailIp,
       review: ReviewSettingIp
       product: ProductSettingIp
+      login: LoginSettingIp
+      GOOGLE_MAPS_API: String
+      facebook: String
+      twitter: String
+      google: String
+      instagram: String
+      enableTax: Boolean
+      locationExpiry: Float
     ): Setting @admin
   }
 
   input ProductSettingIp {
     moderate: Boolean
+  }
+
+  input LoginSettingIp {
+    FACEBOOK_ID:String
+    FACEBOOK_SECRET:String
+    TWITTER_ID:String
+    TWITTER_SECRET:String
+    GOOGLE_ID:String
+    GOOGLE_SECRET:String
+    GITHUB_ID:String
+    GITHUB_SECRET:String
+  }
+
+  type LoginSetting {
+    FACEBOOK_ID:String
+    FACEBOOK_SECRET:String
+    TWITTER_ID:String
+    TWITTER_SECRET:String
+    GOOGLE_ID:String
+    GOOGLE_SECRET:String
+    GITHUB_ID:String
+    GITHUB_SECRET:String
   }
 
   type ProductSetting {
@@ -148,8 +180,10 @@ export default gql`
     currency_code:String
     open_graph_image:String
     currency_symbol: String
+    currency_decimals: Int
     userRoles:[String]
     sorts:[NameVal]
+    RAZORPAY_KEY: String
     tax: Tax
     shippingMethod: String
     shopEmail: String
@@ -176,5 +210,13 @@ export default gql`
     email: Email,
     review:ReviewSetting
     product:ProductSetting
+    login:LoginSetting
+    GOOGLE_MAPS_API: String
+    facebook: String
+    twitter: String
+    google: String
+    instagram: String
+    enableTax:Boolean
+    locationExpiry:Float
   }
 `
