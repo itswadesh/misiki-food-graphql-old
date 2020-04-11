@@ -19,7 +19,9 @@ export const {
   SESSION_IDLE_TIMEOUT = ONE_YEAR
 } = env
 
-export const SESSION_ABSOLUTE_TIMEOUT = +(env.SESSION_ABSOLUTE_TIMEOUT || TWO_YEAR)
+export const SESSION_ABSOLUTE_TIMEOUT = +(
+  env.SESSION_ABSOLUTE_TIMEOUT || TWO_YEAR
+)
 
 export const SESSION_OPTIONS: SessionOptions = {
   secret: SESSION_SECRET,

@@ -2,7 +2,7 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Query {
-    coupons(page: Int, search: String, limit:Int, sort:String): couponRes
+    coupons(page: Int, search: String, limit: Int, sort: String): couponRes
     coupon(id: String!): Coupon
   }
 
@@ -22,8 +22,8 @@ export default gql`
       minimumCartValue: String
       amount: String
       maxAmount: String
-      validFromDate:String
-      validToDate:String
+      validFromDate: String
+      validToDate: String
       active: Boolean
     ): Coupon @auth
     createCoupon(
@@ -38,8 +38,8 @@ export default gql`
       minimumCartValue: String
       amount: String
       maxAmount: String
-      validFromDate:String
-      validToDate:String
+      validFromDate: String
+      validToDate: String
       active: Boolean
     ): Coupon @auth
   }
@@ -57,8 +57,8 @@ export default gql`
     minimumCartValue: String
     amount: String
     maxAmount: String
-    validFromDate:String
-    validToDate:String
+    validFromDate: String
+    validToDate: String
     active: Boolean
     createdAt: String!
     updatedAt: String!

@@ -1,5 +1,12 @@
 import { Types } from 'mongoose'
-import { getSubTotal, getTotalQty, saveMyCart, getTotal, calculateSummary, validateCart } from './cart'
+import {
+  getSubTotal,
+  getTotalQty,
+  saveMyCart,
+  getTotal,
+  calculateSummary,
+  validateCart
+} from './cart'
 // import { calculateOffers } from './promotions'
 import { generateOTP } from './'
 import { Review, Order, Product, Setting, User } from '../models'
@@ -22,7 +29,7 @@ export const getData = async (start: Date, end: Date, q: any) => {
     {
       $match: {
         ...q,
-        status: { $nin: ["Cancelled"] },
+        status: { $nin: ['Cancelled'] },
         createdAt: { $gte: start, $lte: end }
       }
     },
@@ -43,7 +50,7 @@ export const getData = async (start: Date, end: Date, q: any) => {
           slug: '$items.slug',
           name: '$items.name',
           price: '$items.price',
-          updatedAt: { $max: "$updatedAt" },
+          updatedAt: { $max: '$updatedAt' },
           time: '$items.time',
           type: '$items.type',
           ratings: '$items.ratings',
@@ -79,7 +86,10 @@ export const updateStats = async (product: ProductDocument) => {
       }
     }
   ])
-  await User.findByIdAndUpdate(product.vendor, { ratings: Math.round(vendorReviews[0].avg * 10) / 10, reviews: vendorReviews[0].count })
+  await User.findByIdAndUpdate(product.vendor, {
+    ratings: Math.round(vendorReviews[0].avg * 10) / 10,
+    reviews: vendorReviews[0].count
+  })
   const orders = await Order.countDocuments({ 'items.pid': product._id })
   if (reviews.length > 0) {
     await Product.updateOne(
@@ -109,11 +119,9 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
     throw new UserInputError('No items in cart')
   let { userId, cart } = req.session
   let { cart_id, phone, items } = cart
-  if (!items || !cart_id)
-    throw new UserInputError('Cart was not found')
-  if (!items || items.length < 1)
-    throw new UserInputError('Cart is empty.')
-  if (!userId) throw new UserInputError("User not found")
+  if (!items || !cart_id) throw new UserInputError('Cart was not found')
+  if (!items || items.length < 1) throw new UserInputError('Cart is empty.')
+  if (!userId) throw new UserInputError('User not found')
 
   for (let i of items) {
     // If item not found in cart remove it
@@ -125,7 +133,9 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
 
     if (!product.vendor) throw new UserInputError('Vendor not found')
 
-    let v: UserDocument | null = await User.findById(product.vendor).select('email phone address firstName lastName address info').exec()
+    let v: UserDocument | null = await User.findById(product.vendor)
+      .select('email phone address firstName lastName address info')
+      .exec()
     if (!v) throw new UserInputError('Vendor not found')
     if (!v.info || !v.info.restaurant)
       throw new UserInputError('Restaurant info missing')

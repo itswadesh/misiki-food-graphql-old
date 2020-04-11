@@ -30,7 +30,12 @@ const resolvers: IResolvers = {
       }
       return l
     },
-    addresses: (root, args, { req }: { req: Request }, info): Promise<AddressDocument[]> => {
+    addresses: (
+      root,
+      args,
+      { req }: { req: Request },
+      info
+    ): Promise<AddressDocument[]> => {
       const { userId } = req.session
       return Address.find({ user: userId }, fields(info)).exec()
     },

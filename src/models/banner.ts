@@ -16,16 +16,16 @@ const bannerSchema = new Schema(
   }
 )
 
-bannerSchema.pre('save', async function (this: BannerDocument) {
-  this.q = this.link ? this.link.toLowerCase() + " " : "";
-  this.q += this.heading ? this.heading.toLowerCase() + " " : "";
-  this.q += this.img ? this.img.toLowerCase() + " " : "";
-  this.q += this.type ? this.type.toLowerCase() + " " : "";
-  this.q += this.active ? this.active + " " : "";
+bannerSchema.pre('save', async function(this: BannerDocument) {
+  this.q = this.link ? this.link.toLowerCase() + ' ' : ''
+  this.q += this.heading ? this.heading.toLowerCase() + ' ' : ''
+  this.q += this.img ? this.img.toLowerCase() + ' ' : ''
+  this.q += this.type ? this.type.toLowerCase() + ' ' : ''
+  this.q += this.active ? this.active + ' ' : ''
   this.q = this.q.trim()
 })
 
 bannerSchema.index({
   '$**': 'text'
-});
+})
 export const Banner = mongoose.model<BannerDocument>('Banner', bannerSchema)

@@ -10,21 +10,38 @@ const resolvers: IResolvers = {
     coupons: (root, args, { req }: { req: Request }, info) => {
       return index({ model: Coupon, args, info })
     },
-    coupon: async (root, args: { id: string }, ctx, info): Promise<CouponDocument | null> => {
+    coupon: async (
+      root,
+      args: { id: string },
+      ctx,
+      info
+    ): Promise<CouponDocument | null> => {
       await objectId.validateAsync(args)
       return Coupon.findById(args.id, fields(info))
     }
   },
   Mutation: {
-    applyCoupon: async (root, args, { req }: { req: Request }): Promise<any> => {
+    applyCoupon: async (
+      root,
+      args,
+      { req }: { req: Request }
+    ): Promise<any> => {
       await calculateSummary(req, args.code)
       return req.session.cart
     },
-    removeCoupon: async (root, args, { req }: { req: Request }): Promise<any> => {
+    removeCoupon: async (
+      root,
+      args,
+      { req }: { req: Request }
+    ): Promise<any> => {
       await calculateSummary(req)
       return req.session.cart
     },
-    saveCoupon: async (root, args, { req }: { req: Request }): Promise<CouponDocument | null> => {
+    saveCoupon: async (
+      root,
+      args,
+      { req }: { req: Request }
+    ): Promise<CouponDocument | null> => {
       const { userId } = req.session
       if (args.id == 'new') delete args.id
       const coupon = await Coupon.findOneAndUpdate(

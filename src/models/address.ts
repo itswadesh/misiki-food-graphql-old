@@ -26,5 +26,5 @@ const addressSchema = new Schema(
 )
 addressSchema.index({
   '$**': 'text'
-});
+})
 export const Address = mongoose.model<AddressDocument>('Address', addressSchema)

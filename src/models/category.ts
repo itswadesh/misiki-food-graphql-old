@@ -39,12 +39,12 @@ const categorySchema = new Schema(
   schemaOptions
 )
 
-categorySchema.pre('save', async function (this: CategoryDocument) {
+categorySchema.pre('save', async function(this: CategoryDocument) {
   if (!this.slug) {
     this.slug = await generateSlug(this.name)
   }
-  this.q = this.name ? this.name.toLowerCase() + " " : "";
-  this.q += this.active ? this.active + " " : "";
+  this.q = this.name ? this.name.toLowerCase() + ' ' : ''
+  this.q += this.active ? this.active + ' ' : ''
   this.q = this.q.trim()
 })
 
@@ -70,5 +70,8 @@ categorySchema.pre('save', async function (this: CategoryDocument) {
 // }
 categorySchema.index({
   '$**': 'text'
-});
-export const Category = mongoose.model<CategoryDocument>('Category', categorySchema)
+})
+export const Category = mongoose.model<CategoryDocument>(
+  'Category',
+  categorySchema
+)

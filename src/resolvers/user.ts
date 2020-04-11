@@ -1,4 +1,8 @@
-import { IResolvers, UserInputError, AuthenticationError } from 'apollo-server-express'
+import {
+  IResolvers,
+  UserInputError,
+  AuthenticationError
+} from 'apollo-server-express'
 import {
   Request,
   Response,
@@ -7,7 +11,16 @@ import {
   InfoDocument,
   AddressDocument
 } from '../types'
-import { signUp, signIn, objectId, signInOtp, validate, registerSchema, loginSchema, changePasswordSchema } from '../validation'
+import {
+  signUp,
+  signIn,
+  objectId,
+  signInOtp,
+  validate,
+  registerSchema,
+  loginSchema,
+  changePasswordSchema
+} from '../validation'
 import { logIn, verifyOtp, signOut, changePassword } from '../auth'
 import { User } from '../models'
 import { fields, generateOTP, index, requestOTP } from '../utils'
@@ -47,10 +60,11 @@ const resolvers: IResolvers = {
       const { oldPassword, password } = args
       const { userId } = req.session
       const user = await User.findById(userId)
-      if (!user)
-        throw new UserInputError('User not registered') //Invalid old password provided
+      if (!user) throw new UserInputError('User not registered') //Invalid old password provided
       if (!(await user.matchesPassword(oldPassword)))
-        throw new AuthenticationError('Incorrect old password. Please try again.')
+        throw new AuthenticationError(
+          'Incorrect old password. Please try again.'
+        )
       user.password = password
       user.save()
       // email({
@@ -100,10 +114,7 @@ const resolvers: IResolvers = {
       info
     ): Promise<UserDocument | null> => {
       const { userId } = req.session
-      const user = await User.findOneAndUpdate(
-        { _id: args.id },
-        { $set: args }
-      )
+      const user = await User.findOneAndUpdate({ _id: args.id }, { $set: args })
       return user
     },
     verifyOtp: async (
@@ -131,7 +142,7 @@ const resolvers: IResolvers = {
         user.password = otp.toString()
         await user.save()
       }
-      requestOTP(args.phone, otp);
+      requestOTP(args.phone, otp)
       return otp
     },
     register: async (

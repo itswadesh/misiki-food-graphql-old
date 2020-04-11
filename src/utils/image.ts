@@ -45,7 +45,7 @@ export const store1ToFileSystem = async (args: {
   try {
     await fileWriteRequest(stream, path)
     return { filename, mimetype, encoding }
-  } catch (error) { }
+  } catch (error) {}
 }
 export const storeToFileSystem = async (args: {
   files: any
@@ -65,7 +65,7 @@ export const storeToFileSystem = async (args: {
       await fileWriteRequest(stream, path)
       files.push({ filename, mimetype, encoding })
     } catch (error) {
-      console.log('fileUpload err.........', error);
+      console.log('fileUpload err.........', error)
     }
   }
   return files
@@ -198,7 +198,7 @@ const readFile = async (url: string) => {
       stream = await request({ url, encoding: null })
     } else {
       stream = await fsx.createReadStream(path.resolve(url))
-      stream.on('error', function (err: Error) { })
+      stream.on('error', function(err: Error) {})
     }
     return stream
   } catch (e) {

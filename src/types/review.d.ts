@@ -1,5 +1,10 @@
 import { Document } from 'mongoose'
-import { UserDocument, ChatDocument, ProductDocument, VariantDocument } from './'
+import {
+  UserDocument,
+  ChatDocument,
+  ProductDocument,
+  VariantDocument
+} from './'
 
 export interface ReviewDocument extends Document {
   pid: ProductDocument['_id']
@@ -7,6 +12,6 @@ export interface ReviewDocument extends Document {
   user: UserDocument['_id']
   rating: number
   message: string
-  q: string,
+  q: string
   active: boolean
 }

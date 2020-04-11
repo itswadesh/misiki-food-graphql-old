@@ -12,12 +12,7 @@ import {
   ProductDocument,
   ChatDocument
 } from '../types'
-import {
-  validate,
-  objectId,
-  productSchema,
-  ifImage
-} from '../validation'
+import { validate, objectId, productSchema, ifImage } from '../validation'
 import { Product, User, Slug } from '../models'
 import { fields, hasSubfields, getData } from '../utils'
 import pubsub from '../pubsub'
@@ -41,30 +36,30 @@ const resolvers: IResolvers = {
       return index({ model: Product, args, info })
     },
     bestSellers: async (root, args, { req }: { req: Request }, info) => {
-      let q: any = {};
-      if (req.query.daily && req.query.daily != "null") {
-        q.daily = req.query.daily;
+      let q: any = {}
+      if (req.query.daily && req.query.daily != 'null') {
+        q.daily = req.query.daily
       }
-      if (req.query.type && req.query.type != "null") {
-        q.type = req.query.type;
+      if (req.query.type && req.query.type != 'null') {
+        q.type = req.query.type
       }
-      if (req.query.search) q.q = { $regex: new RegExp(req.query.search, "ig") };
+      if (req.query.search) q.q = { $regex: new RegExp(req.query.search, 'ig') }
       q.stock = { $gt: 0 }
 
-      const { start, end } = getStartEndDate3(0);
-      let t = await getData(start, end, q);
-      const startEnd1 = getStartEndDate3(1);
-      let t1 = await getData(startEnd1.start, startEnd1.end, q);
-      const startEnd2 = getStartEndDate3(2);
-      let t2 = await getData(startEnd2.start, startEnd2.end, q);
-      const startEnd3 = getStartEndDate3(3);
-      let t3 = await getData(startEnd3.start, startEnd3.end, q);
-      const startEnd4 = getStartEndDate3(4);
-      let t4 = await getData(startEnd4.start, startEnd4.end, q);
+      const { start, end } = getStartEndDate3(0)
+      let t = await getData(start, end, q)
+      const startEnd1 = getStartEndDate3(1)
+      let t1 = await getData(startEnd1.start, startEnd1.end, q)
+      const startEnd2 = getStartEndDate3(2)
+      let t2 = await getData(startEnd2.start, startEnd2.end, q)
+      const startEnd3 = getStartEndDate3(3)
+      let t3 = await getData(startEnd3.start, startEnd3.end, q)
+      const startEnd4 = getStartEndDate3(4)
+      let t4 = await getData(startEnd4.start, startEnd4.end, q)
       return { t, t1, t2, t3, t4 }
     },
     search: (root, args, { req }: { req: Request }, info) => {
-      if (!args.city) throw new UserInputError("Please select city");
+      if (!args.city) throw new UserInputError('Please select city')
       args.stock = { $gt: 0 }
       return index({ model: Product, args, info })
     },
@@ -88,7 +83,9 @@ const resolvers: IResolvers = {
       info
     ): Promise<ProductDocument | null> => {
       await objectId.validateAsync(args)
-      return Product.findById(args.id, fields(info)).populate('categories').populate('category')
+      return Product.findById(args.id, fields(info))
+        .populate('categories')
+        .populate('category')
     }
   },
 
@@ -103,7 +100,8 @@ const resolvers: IResolvers = {
       if (!product) throw new UserInputError('Item not found')
       const user = await User.findById(userId)
       if (!user) throw new UserInputError('Please login again to continue')
-      if (!user.verified) throw new UserInputError('You must be verified by admin to delete item')
+      if (!user.verified)
+        throw new UserInputError('You must be verified by admin to delete item')
       if (user.role == 'admin' || product.vendor == userId) {
         let p = await Product.findByIdAndDelete({ _id: args.id })
         if (p) {
@@ -138,13 +136,17 @@ const resolvers: IResolvers = {
       const { userId } = req.session
       const user = await User.findById(userId)
       if (!user) throw new UserInputError('Please login again to continue')
-      if (user.role != 'admin' && !user.verified) throw new UserInputError('You must be verified by admin to update item')
-      const forUpdate = user.role == 'admin' ? args : { ...args, vendor: userId }
+      if (user.role != 'admin' && !user.verified)
+        throw new UserInputError('You must be verified by admin to update item')
+      const forUpdate =
+        user.role == 'admin' ? args : { ...args, vendor: userId }
       let newProduct
       if (args.id) {
         const product = await Product.findById(args.id)
-        if (!product) throw new UserInputError(`Product with id= ${id} not found`)
-        if (user.role !== 'admin' && product.vendor != userId) // Always use != instead of !== so that type checking is skipped
+        if (!product)
+          throw new UserInputError(`Product with id= ${id} not found`)
+        if (user.role !== 'admin' && product.vendor != userId)
+          // Always use != instead of !== so that type checking is skipped
           throw new Error('This item does not belong to you')
         newProduct = await Product.findOneAndUpdate(
           { _id: id },
@@ -157,7 +159,6 @@ const resolvers: IResolvers = {
       if (!newProduct) throw new UserInputError(`Error updating item id= ${id}`)
       await newProduct.save() // To fire pre save hoook
       return newProduct.populate('category').execPopulate()
-
     },
     // saveVariant: async (
     //   root,
@@ -203,10 +204,21 @@ const resolvers: IResolvers = {
       await validate(productSchema, args)
 
       const { userId } = req.session
-      const { name, description, type, city, price, stock, img, time, category } = args
+      const {
+        name,
+        description,
+        type,
+        city,
+        price,
+        stock,
+        img,
+        time,
+        category
+      } = args
 
       const user = await User.findById(userId)
-      if (!user || !user.verified) throw new UserInputError('You must be verified by admin to create item')
+      if (!user || !user.verified)
+        throw new UserInputError('You must be verified by admin to create item')
 
       const product = await Product.create({
         name,

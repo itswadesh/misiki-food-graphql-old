@@ -16,10 +16,10 @@ const reviewSchema = new Schema(
   { versionKey: false, timestamps: true }
 )
 
-reviewSchema.pre('save', async function (this: ReviewDocument) {
-  this.q = this.message ? this.message.toLowerCase() + " " : "";
-  this.q += this.active ? this.active + " " : "";
+reviewSchema.pre('save', async function(this: ReviewDocument) {
+  this.q = this.message ? this.message.toLowerCase() + ' ' : ''
+  this.q += this.active ? this.active + ' ' : ''
   this.q = this.q.trim()
 })
-reviewSchema.index({ '$**': 'text' });
+reviewSchema.index({ '$**': 'text' })
 export const Review = mongoose.model<ReviewDocument>('Review', reviewSchema)

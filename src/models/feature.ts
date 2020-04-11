@@ -29,5 +29,5 @@ let featureSchema = new mongoose.Schema(
 )
 featureSchema.index({
   '$**': 'text'
-});
+})
 export const Feature = mongoose.model<FeatureDocument>('Feature', featureSchema)

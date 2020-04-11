@@ -29,4 +29,7 @@ const promotionSchema = new Schema(
   }
 )
 
-export const Promotion = mongoose.model<PromotionDocument>('Promotion', promotionSchema)
+export const Promotion = mongoose.model<PromotionDocument>(
+  'Promotion',
+  promotionSchema
+)

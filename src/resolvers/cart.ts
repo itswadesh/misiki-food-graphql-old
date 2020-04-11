@@ -61,11 +61,7 @@ const resolvers: IResolvers = {
       // await cart.save()
       return addToCart(req, { pid, vid, qty, replace })
     },
-    clearCart: async (
-      root,
-      _,
-      { req }: { req: Request }
-    ): Promise<Boolean> => {
+    clearCart: async (root, _, { req }: { req: Request }): Promise<Boolean> => {
       clearCart(req)
       return true
     }

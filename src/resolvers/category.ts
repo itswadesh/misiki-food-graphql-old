@@ -5,10 +5,7 @@ import {
   ForbiddenError,
   withFilter
 } from 'apollo-server-express'
-import {
-  Request,
-  CategoryDocument
-} from '../types'
+import { Request, CategoryDocument } from '../types'
 import { validate, objectId, categorySchema } from '../validation'
 import { Category, Slug } from '../models'
 import { fields, hasSubfields, index } from '../utils'
@@ -20,7 +17,7 @@ const resolvers: IResolvers = {
     },
     category: async (
       root,
-      args: { id: string, slug: string },
+      args: { id: string; slug: string },
       ctx,
       info
     ): Promise<CategoryDocument | null> => {
@@ -52,8 +49,7 @@ const resolvers: IResolvers = {
       { req }: { req: Request }
     ): Promise<CategoryDocument | null> => {
       const { userId } = req.session
-      if (args.id == 'new')
-        return await Category.create(args)
+      if (args.id == 'new') return await Category.create(args)
       else {
         const category = await Category.findOneAndUpdate(
           { _id: args.id },
@@ -63,7 +59,7 @@ const resolvers: IResolvers = {
         await category.save() // To fire pre save hoook
         return category
       }
-    },
+    }
   }
 }
 

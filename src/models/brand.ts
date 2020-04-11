@@ -25,15 +25,15 @@ const brandSchema = new Schema(
   }
 )
 
-brandSchema.pre('save', async function (this: BrandDocument) {
-  this.q = this.name ? this.name.toLowerCase() + " " : "";
-  this.q += this.info ? this.info.toLowerCase() + " " : "";
-  this.q += this.parent ? this.parent.toLowerCase() + " " : "";
-  this.q += this.img ? this.img.toLowerCase() + " " : "";
-  this.q += this.banner ? this.banner.toLowerCase() + " " : "";
+brandSchema.pre('save', async function(this: BrandDocument) {
+  this.q = this.name ? this.name.toLowerCase() + ' ' : ''
+  this.q += this.info ? this.info.toLowerCase() + ' ' : ''
+  this.q += this.parent ? this.parent.toLowerCase() + ' ' : ''
+  this.q += this.img ? this.img.toLowerCase() + ' ' : ''
+  this.q += this.banner ? this.banner.toLowerCase() + ' ' : ''
   this.q = this.q.trim()
 })
 brandSchema.index({
   '$**': 'text'
-});
+})
 export const Brand = mongoose.model<BrandDocument>('Brand', brandSchema)

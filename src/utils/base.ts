@@ -30,13 +30,11 @@ export const index = async ({ model, args, info, userId }: any) => {
   }
   if (where.category) {
     const c = await Category.findOne({ slug: where.category })
-    if (c)
-      where.category = c._id
+    if (c) where.category = c._id
   }
   if (where.vendor) {
     const c = await User.findOne({ role: 'vendor', slug: where.vendor })
-    if (c)
-      where.vendor = c._id
+    if (c) where.vendor = c._id
   }
   where = toJson(where) || {}
   let role = 'user'
@@ -64,7 +62,6 @@ export const index = async ({ model, args, info, userId }: any) => {
   if (search != 'null' && !!search)
     searchString = { ...where, $text: { $search: search } }
   try {
-
     let data: any = await model
       .find(searchString, searchFields(info))
       .sort(sort)
@@ -138,13 +135,22 @@ export const indexSub = async ({ model, args, info }: any) => {
     {
       $group: {
         _id: {
-          id: '$_id', orderNo: '$orderNo', createdAt: '$createdAt', updatedAt: '$updatedAt', reviewed: '$reviewed', address: '$address', payment: '$payment', amount: '$amount', vendor: '$items.vendor', user: '$user'
+          id: '$_id',
+          orderNo: '$orderNo',
+          createdAt: '$createdAt',
+          updatedAt: '$updatedAt',
+          reviewed: '$reviewed',
+          address: '$address',
+          payment: '$payment',
+          amount: '$amount',
+          vendor: '$items.vendor',
+          user: '$user'
         },
-        items: { $addToSet: "$items" },
-        total: { $sum: "$items.price" }
+        items: { $addToSet: '$items' },
+        total: { $sum: '$items.price' }
       }
     },
-    { $sort: { "_id": -1 } }
+    { $sort: { _id: -1 } }
   ])
   let count: any = await model.countDocuments(searchString)
   return { data, count, pageSize, page }

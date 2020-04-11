@@ -11,13 +11,13 @@ export default gql`
   }
   extend type Mutation {
     saveSettings(
-      id:ID!
+      id: ID!
       websiteName: String
       title: String
       alert: String
       keywords: String
       description: String
-      minimumOrderValue:Int
+      minimumOrderValue: Int
       shipping: ShippingIp
       RAZORPAY_KEY: String
       tax: TaxIp
@@ -27,7 +27,7 @@ export default gql`
       currency_code: String
       currency_symbol: String
       currency_decimals: Int
-      open_graph_image:String
+      open_graph_image: String
       country: String
       country: String
       language: String
@@ -47,7 +47,7 @@ export default gql`
       orderStatuses: [String]
       paymentStatuses: [String]
       sms: SmsIp
-      email: EmailIp,
+      email: EmailIp
       review: ReviewSettingIp
       product: ProductSettingIp
       login: LoginSettingIp
@@ -66,25 +66,25 @@ export default gql`
   }
 
   input LoginSettingIp {
-    FACEBOOK_ID:String
-    FACEBOOK_SECRET:String
-    TWITTER_ID:String
-    TWITTER_SECRET:String
-    GOOGLE_ID:String
-    GOOGLE_SECRET:String
-    GITHUB_ID:String
-    GITHUB_SECRET:String
+    FACEBOOK_ID: String
+    FACEBOOK_SECRET: String
+    TWITTER_ID: String
+    TWITTER_SECRET: String
+    GOOGLE_ID: String
+    GOOGLE_SECRET: String
+    GITHUB_ID: String
+    GITHUB_SECRET: String
   }
 
   type LoginSetting {
-    FACEBOOK_ID:String
-    FACEBOOK_SECRET:String
-    TWITTER_ID:String
-    TWITTER_SECRET:String
-    GOOGLE_ID:String
-    GOOGLE_SECRET:String
-    GITHUB_ID:String
-    GITHUB_SECRET:String
+    FACEBOOK_ID: String
+    FACEBOOK_SECRET: String
+    TWITTER_ID: String
+    TWITTER_SECRET: String
+    GOOGLE_ID: String
+    GOOGLE_SECRET: String
+    GITHUB_ID: String
+    GITHUB_SECRET: String
   }
 
   type ProductSetting {
@@ -115,7 +115,7 @@ export default gql`
     method: String
   }
 
-  type Shutter{
+  type Shutter {
     open: Boolean
     message: String
   }
@@ -160,29 +160,29 @@ export default gql`
   }
 
   input SmsIp {
-    provider:String
-    FAST2SMS_API_KEY:String
-    TWILIO_API_KEY:String
-    Fast2SMS_OTP_TEMPLATE_ID:Int
+    provider: String
+    FAST2SMS_API_KEY: String
+    TWILIO_API_KEY: String
+    Fast2SMS_OTP_TEMPLATE_ID: Int
     enabled: Boolean
   }
 
   type Setting {
-    id:String
+    id: String
     websiteName: String
-    shutter: Shutter,
+    shutter: Shutter
     title: String
     alert: String
     keywords: String
     description: String
-    minimumOrderValue:Int
+    minimumOrderValue: Int
     shipping: Shipping
-    currency_code:String
-    open_graph_image:String
+    currency_code: String
+    open_graph_image: String
     currency_symbol: String
     currency_decimals: Int
-    userRoles:[String]
-    sorts:[NameVal]
+    userRoles: [String]
+    sorts: [NameVal]
     RAZORPAY_KEY: String
     tax: Tax
     shippingMethod: String
@@ -207,16 +207,16 @@ export default gql`
     orderStatuses: [String]
     paymentStatuses: [String]
     sms: Sms
-    email: Email,
-    review:ReviewSetting
-    product:ProductSetting
-    login:LoginSetting
+    email: Email
+    review: ReviewSetting
+    product: ProductSetting
+    login: LoginSetting
     GOOGLE_MAPS_API: String
     facebook: String
     twitter: String
     google: String
     instagram: String
-    enableTax:Boolean
-    locationExpiry:Float
+    enableTax: Boolean
+    locationExpiry: Float
   }
 `

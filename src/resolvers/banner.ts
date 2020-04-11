@@ -9,15 +9,23 @@ const resolvers: IResolvers = {
     banners: (root, args, { req }: { req: Request }, info) => {
       return index({ model: Banner, args, info })
     },
-    banner: async (root, args: { id: string }, ctx, info): Promise<BannerDocument | null> => {
+    banner: async (
+      root,
+      args: { id: string },
+      ctx,
+      info
+    ): Promise<BannerDocument | null> => {
       return Banner.findById(args.id, fields(info))
     }
   },
   Mutation: {
-    saveBanner: async (root, args, { req }: { req: Request }): Promise<BannerDocument | null> => {
+    saveBanner: async (
+      root,
+      args,
+      { req }: { req: Request }
+    ): Promise<BannerDocument | null> => {
       const { userId } = req.session
-      if (args.id == 'new')
-        return await Banner.create(args)
+      if (args.id == 'new') return await Banner.create(args)
       else {
         let banner = await Banner.findOneAndUpdate(
           { _id: args.id },

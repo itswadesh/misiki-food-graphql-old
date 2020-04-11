@@ -3,7 +3,11 @@ import { UserDocument } from '../../types'
 
 import passport from 'passport'
 import express from 'express'
-import { APP_ORIGIN, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from '../../config'
+import {
+  APP_ORIGIN,
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET
+} from '../../config'
 let googleRouter = express.Router()
 googleRouter.get(
   '/',

@@ -2,9 +2,9 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Query {
-    hasOrder(product:ID!):Boolean
-    validateCart:Boolean
-    validateCoupon:Boolean
+    hasOrder(product: ID!): Boolean
+    validateCart: Boolean
+    validateCoupon: Boolean
     allOrders(
       page: Int
       skip: Int
@@ -97,8 +97,8 @@ export default gql`
   extend type Mutation {
     create(chatId: ID!, body: String!): Order @auth
     checkout(paymentMethod: String, address: AddressInput!): Order @auth
-    updateOrder(id: ID!, pid: ID!, status:String): Order @auth
-    collectPayment(id: ID!, cod_paid:Int): Boolean @auth
+    updateOrder(id: ID!, pid: ID!, status: String): Order @auth
+    collectPayment(id: ID!, cod_paid: Int): Boolean @auth
   }
 
   type TC {
@@ -123,19 +123,19 @@ export default gql`
     all: DeliveryGroup
   }
 
-  type DeliveryGroup{
-      _id:String
-      total: Float
-      count: Int
-      items: [Order]
+  type DeliveryGroup {
+    _id: String
+    total: Float
+    count: Int
+    items: [Order]
   }
 
   type TodaysSummary {
     _id: String
     count: Float
     amount: Float
-    createdAt:String
-    cod_paid:Float
+    createdAt: String
+    cod_paid: Float
   }
 
   type myCustomerRes {
@@ -145,9 +145,9 @@ export default gql`
     page: Int
   }
 
-  type myCustomer{
-    _id:Order
-    items:[CartItem]
+  type myCustomer {
+    _id: Order
+    items: [CartItem]
   }
 
   type orderRes {

@@ -17,7 +17,12 @@ const settingSchema = new Schema(
     listingMeta: String,
     detailMeta: String,
     minimumOrderValue: { type: Number, default: 0 },
-    shipping: { charge: Number, free: Number, method: String, delivery_days: Number },
+    shipping: {
+      charge: Number,
+      free: Number,
+      method: String,
+      delivery_days: Number
+    },
     enableTax: Boolean,
     RAZORPAY_KEY: String,
     tax: {
@@ -134,4 +139,7 @@ const settingSchema = new Schema(
   }
 )
 
-export const Setting = mongoose.model<SettingsDocument>('Setting', settingSchema)
+export const Setting = mongoose.model<SettingsDocument>(
+  'Setting',
+  settingSchema
+)

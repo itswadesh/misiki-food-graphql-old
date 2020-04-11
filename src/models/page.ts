@@ -18,10 +18,8 @@ const pageSchema = new Schema(
   },
   { versionKey: false, timestamps: true }
 )
-pageSchema.pre('save', async function (this: PageDocument) {
-  if (!this.slug)
-    this.slug = await generateSlug(this.name)
-
+pageSchema.pre('save', async function(this: PageDocument) {
+  if (!this.slug) this.slug = await generateSlug(this.name)
 })
-pageSchema.index({ '$**': 'text' });
+pageSchema.index({ '$**': 'text' })
 export const Page = mongoose.model<PageDocument>('Page', pageSchema)

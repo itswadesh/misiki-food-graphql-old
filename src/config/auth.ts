@@ -24,4 +24,9 @@ export const PASSWORD_RESET_BYTES = 40
 
 export const PASSWORD_RESET_TIMEOUT = ONE_HOUR
 
-export const { GOOGLE_CLIENT_ID = '', GOOGLE_CLIENT_SECRET = '', FACEBOOK_APP_ID = '', FACEBOOK_APP_SECRET = '' } = process.env
+export const {
+  GOOGLE_CLIENT_ID = '',
+  GOOGLE_CLIENT_SECRET = '',
+  FACEBOOK_APP_ID = '',
+  FACEBOOK_APP_SECRET = ''
+} = process.env

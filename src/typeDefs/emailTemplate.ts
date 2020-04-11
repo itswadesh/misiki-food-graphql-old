@@ -2,18 +2,18 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Query {
-    emailTemplates(folder:String, name: String): String
+    emailTemplates(folder: String, name: String): String
     emailTemplate(id: String): EmailTemplate
   }
 
   extend type Mutation {
     # removeEmailTemplate(id: ID!): EmailTemplate @auth
     saveEmailTemplate(
-      id: String, 
-      name: String,
+      id: String
+      name: String
       title: String
-      description: String,
-      content: String,
+      description: String
+      content: String
       active: Boolean
     ): EmailTemplate @auth
   }
@@ -29,5 +29,4 @@ export default gql`
     createdAt: String!
     updatedAt: String!
   }
-  
 `

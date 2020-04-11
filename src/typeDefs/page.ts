@@ -2,7 +2,7 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Query {
-    pages(page: Int, search: String, limit:Int, sort:String): pageRes
+    pages(page: Int, search: String, limit: Int, sort: String): pageRes
     page(id: String): Page
     pageSlug(slug: String): Page
   }
@@ -10,13 +10,13 @@ export default gql`
   extend type Mutation {
     removePage(id: ID!): Page @auth
     savePage(
-      id: String, 
-      name: String,
+      id: String
+      name: String
       title: String
-      slug: String,
-      description: String,
-      content: String,
-      menuTitle: String,
+      slug: String
+      description: String
+      content: String
+      menuTitle: String
       active: Boolean
     ): Page @auth
   }
@@ -34,7 +34,7 @@ export default gql`
     createdAt: String!
     updatedAt: String!
   }
-  
+
   type pageRes {
     data: [Page]
     count: Int

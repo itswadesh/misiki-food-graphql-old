@@ -7,7 +7,7 @@ class AdminDirective extends SchemaDirectiveVisitor {
   public visitFieldDefinition(field: GraphQLField<any, any>) {
     const { resolve = defaultFieldResolver } = field
 
-    field.resolve = async function (...args) {
+    field.resolve = async function(...args) {
       const [, , context] = args
 
       ensureSignedIn(context.req)

@@ -84,4 +84,7 @@ let productSchema = new mongoose.Schema(
   }
 )
 
-export const FashionProduct = mongoose.model<ProductDocument>('Product', productSchema)
+export const FashionProduct = mongoose.model<ProductDocument>(
+  'Product',
+  productSchema
+)

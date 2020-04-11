@@ -5,16 +5,16 @@ import { objectId, ifImage } from '../validation'
 import { Setting } from '../models'
 import { fields, hasSubfields } from '../utils'
 import pubsub from '../pubsub'
-import { closed, worldCurrencies, sorts, timesList } from "./../config";
+import { closed, worldCurrencies, sorts, timesList } from './../config'
 
 const MESSAGE_SENT = 'MESSAGE_SENT'
 const resolvers: IResolvers = {
   Query: {
     shutter: (root, args, { req }: { req: Request }, info) => {
-      const start = closed.from.hour * 60 + closed.from.minute;
-      const end = closed.to.hour * 60 + closed.to.minute;
-      const date = new Date();
-      const now = date.getHours() * 60 + date.getMinutes();
+      const start = closed.from.hour * 60 + closed.from.minute
+      const end = closed.to.hour * 60 + closed.to.minute
+      const date = new Date()
+      const now = date.getHours() * 60 + date.getMinutes()
       if (start <= now && now <= end) throw new UserInputError(closed.message)
       else return true
     },
@@ -37,7 +37,11 @@ const resolvers: IResolvers = {
   },
 
   Mutation: {
-    saveSettings: async (root, args, { req }: { req: Request }): Promise<SettingsDocument> => {
+    saveSettings: async (
+      root,
+      args,
+      { req }: { req: Request }
+    ): Promise<SettingsDocument> => {
       const { userId } = req.session
       const { id } = args
       let settings = await Setting.findByIdAndUpdate(

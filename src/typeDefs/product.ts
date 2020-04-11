@@ -85,7 +85,7 @@ export default gql`
       title: String
       metaDescription: String
       keywords: String
-  ): Product @auth
+    ): Product @auth
     # saveVariant(
     #   id: ID!
     #   name: String!
@@ -95,42 +95,42 @@ export default gql`
     # ): Variant @auth
   }
 
-input UserIp{
-  firstName: String
-  lastName: String
-  info:InputInfo
-}
-
-  type BestSellers {
-    t:[BS],
-    t1:[BS],
-    t2:[BS],
-    t3:[BS],
-    t4:[BS] 
+  input UserIp {
+    firstName: String
+    lastName: String
+    info: InputInfo
   }
 
-  type BS{
+  type BestSellers {
+    t: [BS]
+    t1: [BS]
+    t2: [BS]
+    t3: [BS]
+    t4: [BS]
+  }
+
+  type BS {
     _id: BS1
     count: Int
     amount: Int
     updatedAt: String
   }
 
-type BS1{
+  type BS1 {
     id: ID
     date: String
     name: String
-    slug:String
+    slug: String
     img: String
-    price:Float
-    category:Category
-    updatedAt:String
+    price: Float
+    category: Category
+    updatedAt: String
     restaurant: String
     time: String
     type: String
     ratings: String
     reviews: String
-}
+  }
 
   type SearchRes {
     data: [Product]
@@ -175,7 +175,7 @@ type BS1{
     sku: String
     group: String
     img: String
-    variants:[Variant]
+    variants: [Variant]
     enableZips: Boolean
     zips: [String!]
     category: Category

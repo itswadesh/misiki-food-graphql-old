@@ -5,10 +5,27 @@ import {
   ForbiddenError,
   withFilter
 } from 'apollo-server-express'
-import { Request, MessageDocument, UserDocument, OrderDocument, PaymentDocument } from '../types'
+import {
+  Request,
+  MessageDocument,
+  UserDocument,
+  OrderDocument,
+  PaymentDocument
+} from '../types'
 import { validate, objectId, orderSchema } from '../validation'
 import { Order, Payment } from '../models'
-import { fields, hasSubfields, index, indexSub, getStartEndDate, placeOrder, clearCart, validateCart, validateCoupon, calculateSummary } from '../utils'
+import {
+  fields,
+  hasSubfields,
+  index,
+  indexSub,
+  getStartEndDate,
+  placeOrder,
+  clearCart,
+  validateCart,
+  validateCoupon,
+  calculateSummary
+} from '../utils'
 import { ObjectId } from 'mongodb'
 
 const resolvers: IResolvers = {
@@ -24,9 +41,11 @@ const resolvers: IResolvers = {
     },
     hasOrder: async (root, args, { req }: { req: Request }, info) => {
       const { userId } = req.session
-      const order = await Order.findOne({ 'user.id': userId, "items.pid": args.product });
-      if (!order)
-        return false
+      const order = await Order.findOne({
+        'user.id': userId,
+        'items.pid': args.product
+      })
+      if (!order) return false
       const p = order.items.find(element => element.pid == args.product)
       return p && !p.reviewed
     },
@@ -79,77 +98,132 @@ const resolvers: IResolvers = {
       // }
       const { start, end } = getStartEndDate(0)
       // createdAt: { $gte: start, $lte: end },
-      let q: any = { createdAt: { $gte: start, $lte: end }, 'items.status': 'Waiting for confirmation' }
-      let pending = await Order.aggregate(
-        [
-          { $match: q },
-          { $unwind: '$items' },
-          {
-            $group: {
-              _id: '$items.status',
-              total: { $sum: '$items.price' },
-              count: { $sum: 1 },
-              items: { $addToSet: { _id: '$_id', name: '$name', address: '$address', phone: '$phone', amount: '$amount', vendor: '$vendor' } }
+      let q: any = {
+        createdAt: { $gte: start, $lte: end },
+        'items.status': 'Waiting for confirmation'
+      }
+      let pending = await Order.aggregate([
+        { $match: q },
+        { $unwind: '$items' },
+        {
+          $group: {
+            _id: '$items.status',
+            total: { $sum: '$items.price' },
+            count: { $sum: 1 },
+            items: {
+              $addToSet: {
+                _id: '$_id',
+                name: '$name',
+                address: '$address',
+                phone: '$phone',
+                amount: '$amount',
+                vendor: '$vendor'
+              }
             }
-          }, { $sort: { 'items.vendor.address.address': 1 } }
-        ])
-      q = { createdAt: { $gte: start, $lte: end }, 'items.status': 'Out For Delivery' }
-      let od = await await Order.aggregate(
-        [
-          { $match: q },
-          { $unwind: '$items' },
-          {
-            $group: {
-              _id: '$items.status',
-              total: { $sum: '$items.price' },
-              count: { $sum: 1 },
-              items: { $addToSet: { _id: '$_id', name: '$name', address: '$address', phone: '$phone', amount: '$amount', vendor: '$vendor' } }
+          }
+        },
+        { $sort: { 'items.vendor.address.address': 1 } }
+      ])
+      q = {
+        createdAt: { $gte: start, $lte: end },
+        'items.status': 'Out For Delivery'
+      }
+      let od = await await Order.aggregate([
+        { $match: q },
+        { $unwind: '$items' },
+        {
+          $group: {
+            _id: '$items.status',
+            total: { $sum: '$items.price' },
+            count: { $sum: 1 },
+            items: {
+              $addToSet: {
+                _id: '$_id',
+                name: '$name',
+                address: '$address',
+                phone: '$phone',
+                amount: '$amount',
+                vendor: '$vendor'
+              }
             }
-          }, { $sort: { 'items.address.qrno': 1 } }
-        ])
+          }
+        },
+        { $sort: { 'items.address.qrno': 1 } }
+      ])
       q = { createdAt: { $gte: start, $lte: end }, 'items.status': 'Delivered' }
-      let delivered = await Order.aggregate(
-        [
-          { $match: q },
-          { $unwind: '$items' },
-          {
-            $group: {
-              _id: '$items.status',
-              total: { $sum: '$items.price' },
-              count: { $sum: 1 },
-              items: { $addToSet: { _id: '$_id', name: '$name', address: '$address', phone: '$phone', amount: '$amount', vendor: '$vendor' } }
+      let delivered = await Order.aggregate([
+        { $match: q },
+        { $unwind: '$items' },
+        {
+          $group: {
+            _id: '$items.status',
+            total: { $sum: '$items.price' },
+            count: { $sum: 1 },
+            items: {
+              $addToSet: {
+                _id: '$_id',
+                name: '$name',
+                address: '$address',
+                phone: '$phone',
+                amount: '$amount',
+                vendor: '$vendor'
+              }
             }
-          }, { $sort: { 'items.address.qrno': 1 } }
-        ])
+          }
+        },
+        { $sort: { 'items.address.qrno': 1 } }
+      ])
       q = { createdAt: { $gte: start, $lte: end }, 'items.status': 'Cancelled' }
-      let cancelled = await Order.aggregate(
-        [
-          { $match: q },
-          { $unwind: '$items' },
-          {
-            $group: {
-              _id: '$items.status',
-              total: { $sum: '$items.price' },
-              count: { $sum: 1 },
-              items: { $addToSet: { _id: '$_id', address: '$address', phone: '$phone', amount: '$amount', vendor: '$vendor' } }
+      let cancelled = await Order.aggregate([
+        { $match: q },
+        { $unwind: '$items' },
+        {
+          $group: {
+            _id: '$items.status',
+            total: { $sum: '$items.price' },
+            count: { $sum: 1 },
+            items: {
+              $addToSet: {
+                _id: '$_id',
+                address: '$address',
+                phone: '$phone',
+                amount: '$amount',
+                vendor: '$vendor'
+              }
             }
-          }, { $sort: { 'items.address.qrno': 1 } }
-        ])
+          }
+        },
+        { $sort: { 'items.address.qrno': 1 } }
+      ])
       q = { createdAt: { $gte: start, $lte: end } }
-      let all = await await Order.aggregate(
-        [
-          { $match: q },
-          { $unwind: '$items' },
-          {
-            $group: {
-              _id: null,
-              total: { $sum: '$items.price' },
-              count: { $sum: 1 },
-              items: { $addToSet: { _id: '$_id', user: '$user', address: '$address', items: '$items', amount: '$amount' } }
+      let all = await await Order.aggregate([
+        { $match: q },
+        { $unwind: '$items' },
+        {
+          $group: {
+            _id: null,
+            total: { $sum: '$items.price' },
+            count: { $sum: 1 },
+            items: {
+              $addToSet: {
+                _id: '$_id',
+                user: '$user',
+                address: '$address',
+                items: '$items',
+                amount: '$amount'
+              }
             }
-          }, { $sort: { 'items.address.qrno': 1 } }
-        ])
-      return { pending: pending[0] || {}, out: od[0] || {}, delivered: delivered[0] || {}, cancelled: cancelled[0] || {}, all: all[0] || {} }
+          }
+        },
+        { $sort: { 'items.address.qrno': 1 } }
+      ])
+      return {
+        pending: pending[0] || {},
+        out: od[0] || {},
+        delivered: delivered[0] || {},
+        cancelled: cancelled[0] || {},
+        all: all[0] || {}
+      }
       // let all = await await Order.aggregate([
       //   { $match: q },
       //   { $unwind: '$items' },
@@ -182,14 +256,19 @@ const resolvers: IResolvers = {
       //   // { $sort: { "address.address": 1 } }
       // ])
     },
-    myItemsSummaryByName: async (root, args, { req }: { req: Request }, info) => {
+    myItemsSummaryByName: async (
+      root,
+      args,
+      { req }: { req: Request },
+      info
+    ) => {
       const { start, end } = getStartEndDate(0)
       const { userId } = req.session
       let result = await Order.aggregate([
         {
           $match: {
             'items.vendor.id': Types.ObjectId(userId),
-            status: args.status,
+            status: args.status
             // createdAt: { $gte: start, $lte: end }
           }
         },
@@ -199,7 +278,7 @@ const resolvers: IResolvers = {
             _id: '$items.name',
             count: { $sum: '$amount.qty' },
             amount: { $sum: '$amount.subtotal' },
-            createdAt: { $max: '$createdAt' },
+            createdAt: { $max: '$createdAt' }
           }
         }
       ])
@@ -228,7 +307,7 @@ const resolvers: IResolvers = {
       let data = await Order.aggregate([
         {
           $match: {
-            createdAt: { $gte: start, $lte: end },
+            createdAt: { $gte: start, $lte: end }
           }
         },
         { $unwind: '$items' },
@@ -237,7 +316,7 @@ const resolvers: IResolvers = {
             _id: null,
             amount: { $sum: '$items.price' },
             count: { $sum: 1 },
-            createdAt: { $max: '$createdAt' },
+            createdAt: { $max: '$createdAt' }
           }
         }
       ])
@@ -249,8 +328,8 @@ const resolvers: IResolvers = {
           $group: {
             _id: null,
             amount: { $sum: '$amount.total' },
-            count: { $sum: "$amount.qty" },
-            cod_paid: { $sum: "$cod_paid" },
+            count: { $sum: '$amount.qty' },
+            cod_paid: { $sum: '$cod_paid' }
           }
         }
       ])
@@ -264,7 +343,7 @@ const resolvers: IResolvers = {
             _id: null,
             amount: { $sum: '$items.price' },
             count: { $sum: 1 },
-            createdAt: { $max: '$createdAt' },
+            createdAt: { $max: '$createdAt' }
           }
         }
       ])
@@ -295,7 +374,7 @@ const resolvers: IResolvers = {
             _id: null,
             amount: { $sum: '$items.price' },
             count: { $sum: 1 },
-            createdAt: { $max: '$createdAt' },
+            createdAt: { $max: '$createdAt' }
           }
         }
       ])
@@ -307,7 +386,7 @@ const resolvers: IResolvers = {
       let data = await Order.aggregate([
         {
           $match: {
-            createdAt: { $gte: start, $lte: end },
+            createdAt: { $gte: start, $lte: end }
           }
         },
         { $unwind: '$items' },
@@ -317,20 +396,25 @@ const resolvers: IResolvers = {
             _id: null,
             amount: { $sum: '$items.price' },
             count: { $sum: 1 },
-            createdAt: { $max: '$createdAt' },
+            createdAt: { $max: '$createdAt' }
           }
         }
       ])
       return data[0]
     },
 
-    todaysStatusSummary: async (root, args, { req }: { req: Request }, info) => {
+    todaysStatusSummary: async (
+      root,
+      args,
+      { req }: { req: Request },
+      info
+    ) => {
       const { start, end } = getStartEndDate(0)
       const { userId } = req.session
       let data = await Order.aggregate([
         {
           $match: {
-            createdAt: { $gte: start, $lte: end },
+            createdAt: { $gte: start, $lte: end }
           }
         },
         { $unwind: '$items' },
@@ -339,20 +423,25 @@ const resolvers: IResolvers = {
             _id: '$items.status',
             amount: { $sum: '$items.price' },
             count: { $sum: 1 },
-            createdAt: { $max: '$createdAt' },
+            createdAt: { $max: '$createdAt' }
           }
         },
-        { $sort: { "_id": 1 } }
+        { $sort: { _id: 1 } }
       ])
       return data
     },
-    myTodaysStatusSummary: async (root, args, { req }: { req: Request }, info) => {
+    myTodaysStatusSummary: async (
+      root,
+      args,
+      { req }: { req: Request },
+      info
+    ) => {
       const { start, end } = getStartEndDate(0)
       const { userId } = req.session
       let data = await Order.aggregate([
         {
           $match: {
-            createdAt: { $gte: start, $lte: end },
+            createdAt: { $gte: start, $lte: end }
           }
         },
         { $unwind: '$items' },
@@ -362,7 +451,7 @@ const resolvers: IResolvers = {
             _id: '$items.status',
             amount: { $sum: '$items.price' },
             count: { $sum: 1 },
-            createdAt: { $max: '$createdAt' },
+            createdAt: { $max: '$createdAt' }
           }
         }
       ])
@@ -419,17 +508,30 @@ const resolvers: IResolvers = {
   Mutation: {
     updateOrder: async (
       root,
-      args: { id: string; pid: string, status: string },
+      args: { id: string; pid: string; status: string },
       { req }: { req: Request }
     ): Promise<OrderDocument | null> => {
       const { userId } = req.session
-      return Order.findOneAndUpdate({ _id: args.id, 'items.pid': args.pid },
-        { $set: { "items.$.status": args.status } })
+      return Order.findOneAndUpdate(
+        { _id: args.id, 'items.pid': args.pid },
+        { $set: { 'items.$.status': args.status } }
+      )
     },
-    collectPayment: async (root, args: { id: string; cod_paid: number }, { req }: { req: Request }): Promise<Boolean> => {
+    collectPayment: async (
+      root,
+      args: { id: string; cod_paid: number },
+      { req }: { req: Request }
+    ): Promise<Boolean> => {
       const { userId } = req.session
-      const o = await Order.updateOne({ _id: args.id },
-        { $set: { 'payment.amount_paid': args.cod_paid, "cod_paid": args.cod_paid } })
+      const o = await Order.updateOne(
+        { _id: args.id },
+        {
+          $set: {
+            'payment.amount_paid': args.cod_paid,
+            cod_paid: args.cod_paid
+          }
+        }
+      )
       return o.nModified
     },
 
@@ -455,7 +557,11 @@ const resolvers: IResolvers = {
         invoice_id: newOrder._id
       }
       clearCart(req)
-      return Order.findByIdAndUpdate({ _id: newOrder._id }, { $set: { payment } }, { new: true })
+      return Order.findByIdAndUpdate(
+        { _id: newOrder._id },
+        { $set: { payment } },
+        { new: true }
+      )
     },
     create: async (
       root,

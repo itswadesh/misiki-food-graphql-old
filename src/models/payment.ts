@@ -42,28 +42,30 @@ const paymentSchema = new Schema(
   }
 )
 
-paymentSchema.pre('save', async function (this: PaymentDocument) {
-  this.q = this.id ? this.id + " " : "";
-  this.q += this.amount ? this.amount + " " : "";
-  this.q += this.invoice_id ? this.invoice_id + " " : "";
-  this.q += this.currency ? this.currency.toLowerCase() + " " : "";
-  this.q += this.method ? this.method.toLowerCase() + " " : "";
-  this.q += this.offer_id ? this.offer_id + " " : "";
-  this.q += this.amount_paid ? this.amount_paid + " " : "";
-  this.q += this.amount_due ? this.amount_due + " " : "";
-  this.q += this.receipt ? this.receipt.toLowerCase() + " " : "";
-  this.q += this.status ? this.status.toLowerCase() + " " : "";
-  this.q += this.entity ? this.entity.toLowerCase() + " " : "";
-  this.q += this.description ? this.description.toLowerCase() + " " : "";
-  this.q += this.card_id ? this.card_id.toLowerCase() + " " : "";
-  this.q += this.bank ? this.bank.toLowerCase() + " " : "";
-  this.q += this.wallet ? this.wallet.toLowerCase() + " " : "";
-  this.q += this.error_code ? this.error_code.toLowerCase() + " " : "";
-  this.q += this.error_description ? this.error_description.toLowerCase() + " " : "";
-  this.q += this.created_at ? this.created_at + " " : "";
+paymentSchema.pre('save', async function(this: PaymentDocument) {
+  this.q = this.id ? this.id + ' ' : ''
+  this.q += this.amount ? this.amount + ' ' : ''
+  this.q += this.invoice_id ? this.invoice_id + ' ' : ''
+  this.q += this.currency ? this.currency.toLowerCase() + ' ' : ''
+  this.q += this.method ? this.method.toLowerCase() + ' ' : ''
+  this.q += this.offer_id ? this.offer_id + ' ' : ''
+  this.q += this.amount_paid ? this.amount_paid + ' ' : ''
+  this.q += this.amount_due ? this.amount_due + ' ' : ''
+  this.q += this.receipt ? this.receipt.toLowerCase() + ' ' : ''
+  this.q += this.status ? this.status.toLowerCase() + ' ' : ''
+  this.q += this.entity ? this.entity.toLowerCase() + ' ' : ''
+  this.q += this.description ? this.description.toLowerCase() + ' ' : ''
+  this.q += this.card_id ? this.card_id.toLowerCase() + ' ' : ''
+  this.q += this.bank ? this.bank.toLowerCase() + ' ' : ''
+  this.q += this.wallet ? this.wallet.toLowerCase() + ' ' : ''
+  this.q += this.error_code ? this.error_code.toLowerCase() + ' ' : ''
+  this.q += this.error_description
+    ? this.error_description.toLowerCase() + ' '
+    : ''
+  this.q += this.created_at ? this.created_at + ' ' : ''
   this.q = this.q.trim()
 })
 paymentSchema.index({
   '$**': 'text'
-});
+})
 export const Payment = mongoose.model<PaymentDocument>('Payment', paymentSchema)

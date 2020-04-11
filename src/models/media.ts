@@ -26,5 +26,5 @@ const mediaSchema = new Schema(
 )
 mediaSchema.index({
   '$**': 'text'
-});
+})
 export const Media = mongoose.model<MediaDocument>('Media', mediaSchema)

@@ -16,22 +16,35 @@ const resolvers: IResolvers = {
     pages: (root, args, ctx, info) => {
       return index({ model: Page, args, info })
     },
-    pageSlug: async (root, args: { slug: string }, ctx, info): Promise<PageDocument | null> => {
+    pageSlug: async (
+      root,
+      args: { slug: string },
+      ctx,
+      info
+    ): Promise<PageDocument | null> => {
       // await objectId.validateAsync(args)
       return Page.findOne({ slug: args.slug }, fields(info))
     },
-    page: async (root, args: { id: string }, ctx, info): Promise<PageDocument | null> => {
+    page: async (
+      root,
+      args: { id: string },
+      ctx,
+      info
+    ): Promise<PageDocument | null> => {
       if (args.id != 'new') {
         await objectId.validateAsync(args)
         return Page.findById(args.id, fields(info))
-      }
-      else {
+      } else {
         return null
       }
     }
   },
   Mutation: {
-    removePage: async (root, args, { req }: { req: Request }): Promise<PageDocument | null> => {
+    removePage: async (
+      root,
+      args,
+      { req }: { req: Request }
+    ): Promise<PageDocument | null> => {
       const { userId } = req.session
       const page = await Page.findById(args.id)
       if (!page) throw new UserInputError('Page not found')
@@ -41,7 +54,8 @@ const resolvers: IResolvers = {
         throw new UserInputError('Page does not belong to you')
       return await Page.findByIdAndDelete({ _id: args.id })
     },
-    savePage: async (root,
+    savePage: async (
+      root,
       args: {
         id: string
         originalFilename: string
@@ -58,7 +72,11 @@ const resolvers: IResolvers = {
       // await validate(pageSchema, args)
       if (args.id == 'new') delete args.id
       const { userId } = req.session
-      const page = await Page.findOneAndUpdate({ _id: args.id || Types.ObjectId() }, { $set: { ...args, user: userId } }, { upsert: true, new: true })
+      const page = await Page.findOneAndUpdate(
+        { _id: args.id || Types.ObjectId() },
+        { $set: { ...args, user: userId } },
+        { upsert: true, new: true }
+      )
       await page.save() // To fire pre save hoook
       return page
     }

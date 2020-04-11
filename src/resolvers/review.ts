@@ -25,12 +25,16 @@ const resolvers: IResolvers = {
       args.populate = 'product user vendor'
       return index({ model: Review, args, info })
     },
-    review: async (root, args: { id: string }, ctx, info): Promise<ReviewDocument | null> => {
+    review: async (
+      root,
+      args: { id: string },
+      ctx,
+      info
+    ): Promise<ReviewDocument | null> => {
       await objectId.validateAsync(args)
       return Review.findById(args.id, fields(info))
     },
-    productReviews: async (root, args, ctx, info) => {
-    },
+    productReviews: async (root, args, ctx, info) => {},
     reviewSummary: async (root, args, ctx, info) => {
       const reviews = await Review.aggregate([
         { $match: { product: Types.ObjectId(args.product) } },
@@ -41,7 +45,7 @@ const resolvers: IResolvers = {
             count: { $sum: 1 },
             total: { $sum: '$rating' },
             reviews: { $addToSet: '$message' }
-          },
+          }
         },
         {
           $project: {
@@ -57,7 +61,11 @@ const resolvers: IResolvers = {
     }
   },
   Mutation: {
-    removeReview: async (root, args, { req }: { req: Request }): Promise<ReviewDocument | null> => {
+    removeReview: async (
+      root,
+      args,
+      { req }: { req: Request }
+    ): Promise<ReviewDocument | null> => {
       const { userId } = req.session
       const review = await Review.findById(args.id)
       if (!review) throw new UserInputError('Review not found')
@@ -67,35 +75,40 @@ const resolvers: IResolvers = {
         throw new UserInputError('Review does not belong to you')
       return await Review.findByIdAndDelete({ _id: args.id })
     },
-    saveReview: async (root, args, { req }: { req: Request }): Promise<ReviewDocument | null> => {
+    saveReview: async (
+      root,
+      args,
+      { req }: { req: Request }
+    ): Promise<ReviewDocument | null> => {
       const { userId } = req.session
       const settings = await Setting.findOne({}).exec()
-      if (!settings)
-        throw new UserInputError('Invalid settings')
-      if (settings.review.moderate)
-        req.body.active = false;
+      if (!settings) throw new UserInputError('Invalid settings')
+      if (settings.review.moderate) req.body.active = false
       const product = await Product.findById(args.product)
-      if (!product)
-        throw new UserInputError('Product not found')
-      const order = await Order.findOne({ 'items.pid': new ObjectId(product._id), 'user.id': userId })
-      if (!order)
-        throw new UserInputError('You have never ordered this item')
+      if (!product) throw new UserInputError('Product not found')
+      const order = await Order.findOne({
+        'items.pid': new ObjectId(product._id),
+        'user.id': userId
+      })
+      if (!order) throw new UserInputError('You have never ordered this item')
       const p = order.items.find(element => element.pid == args.product)
       if (p.reviewed)
-        throw new UserInputError('You have already reviewed this item...');
+        throw new UserInputError('You have already reviewed this item...')
 
       p.reviewed = true
       const review = await Review.findOneAndUpdate(
         { _id: args.id || Types.ObjectId() },
         { ...args, user: userId, vendor: product.vendor },
         { new: true, upsert: true }
-      ).populate('user').populate('product')
+      )
+        .populate('user')
+        .populate('product')
       await review.save() // To fire pre save hoook
       await order.save()
       // await Order.updateMany({ 'items.pid': new ObjectId(product._id), 'user.id': userId }, { $set: { 'items.$.reviewed': true } })
       updateStats(product)
       return review
-    },
+    }
   }
 }
 

@@ -1,14 +1,14 @@
-import { Product, Setting } from "../models";
-import { UserInputError } from "apollo-server-express";
-import { VariantDocument } from "../types";
+import { Product, Setting } from '../models'
+import { UserInputError } from 'apollo-server-express'
+import { VariantDocument } from '../types'
 
-const { ObjectId } = require('mongodb');
+const { ObjectId } = require('mongodb')
 const toJson = (str: string) => {
-    try {
-        return JSON.parse(str);
-    } catch (err) {
-        return str;
-    }
+  try {
+    return JSON.parse(str)
+  } catch (err) {
+    return str
+  }
 }
 // export const sortVariants = async (pid: string) => {
 //     try {
@@ -247,7 +247,7 @@ const toJson = (str: string) => {
 //             else {
 //                 try {
 //                     return await Color.create(colorObj)
-//                 } catch (e) { // When no color name specified 
+//                 } catch (e) { // When no color name specified
 //                     // console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', e.toString());
 //                     return
 //                 }

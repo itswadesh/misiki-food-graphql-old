@@ -9,7 +9,7 @@ const userSchema = new Schema(
     lastName: String,
     phone: String,
     email: {
-      type: String,
+      type: String
       // validate: [
       //   async (email: string): Promise<boolean> =>
       //     (await User.count({ email })) < 2,
@@ -36,7 +36,7 @@ const userSchema = new Schema(
     metaKeywords: String,
     ratings: Number,
     reviews: Number,
-    avg_rating: Number,
+    avg_rating: Number
   },
   {
     versionKey: false,
@@ -44,7 +44,7 @@ const userSchema = new Schema(
   }
 )
 
-userSchema.pre('save', async function (this: UserDocument) {
+userSchema.pre('save', async function(this: UserDocument) {
   if (this.isModified('password')) {
     this.password = await User.hash(this.password)
   }
@@ -53,26 +53,25 @@ userSchema.pre('save', async function (this: UserDocument) {
 userSchema.statics.hash = (password: string): Promise<string> =>
   hash(password, 10)
 
-userSchema.methods.matchesPassword = function (
+userSchema.methods.matchesPassword = function(
   this: UserDocument,
   password: string
 ): Promise<boolean> {
   return compare(password, this.password)
 }
 
-
-userSchema.pre('save', async function (this: UserDocument) {
-  this.q = this.firstName ? this.firstName.toLowerCase() + " " : "";
-  this.q += this.lastName ? this.lastName.toLowerCase() + " " : "";
-  this.q += this.phone ? this.phone + " " : "";
-  this.q += this.email ? this.email.toLowerCase() + " " : "";
-  this.q += this.role ? this.role.toLowerCase() + " " : "";
-  this.q += this.gender ? this.gender.toLowerCase() + " " : "";
-  this.q += this.city ? this.city.toLowerCase() + " " : "";
-  this.q += this.active ? this.active + " " : "";
+userSchema.pre('save', async function(this: UserDocument) {
+  this.q = this.firstName ? this.firstName.toLowerCase() + ' ' : ''
+  this.q += this.lastName ? this.lastName.toLowerCase() + ' ' : ''
+  this.q += this.phone ? this.phone + ' ' : ''
+  this.q += this.email ? this.email.toLowerCase() + ' ' : ''
+  this.q += this.role ? this.role.toLowerCase() + ' ' : ''
+  this.q += this.gender ? this.gender.toLowerCase() + ' ' : ''
+  this.q += this.city ? this.city.toLowerCase() + ' ' : ''
+  this.q += this.active ? this.active + ' ' : ''
   this.q = this.q.trim()
 })
 userSchema.index({
   '$**': 'text'
-});
+})
 export const User = model<UserDocument, UserModel>('User', userSchema)

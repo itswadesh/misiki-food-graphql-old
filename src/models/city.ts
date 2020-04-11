@@ -13,5 +13,5 @@ const citySchema = new Schema(
   },
   { timestamps: true }
 )
-citySchema.index({ '$**': 'text' });
+citySchema.index({ '$**': 'text' })
 export const City = mongoose.model<CityDocument>('City', citySchema)

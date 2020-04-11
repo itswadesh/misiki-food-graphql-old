@@ -24,7 +24,7 @@ const resolvers: IResolvers = {
     ): Promise<SlotDocument | null> => {
       await objectId.validateAsync(args)
       return Slot.findById(args.id, fields(info))
-    },
+    }
   },
   Mutation: {
     saveSlot: async (
@@ -33,8 +33,7 @@ const resolvers: IResolvers = {
       { req }: { req: Request }
     ): Promise<SlotDocument | null> => {
       const { userId } = req.session
-      if (args.id == 'new')
-        return await Slot.create(args)
+      if (args.id == 'new') return await Slot.create(args)
       else {
         const slot = await Slot.findOneAndUpdate(
           { _id: args.id },
@@ -44,7 +43,7 @@ const resolvers: IResolvers = {
         await slot.save() // To fire pre save hoook
         return slot
       }
-    },
+    }
   }
 }
 

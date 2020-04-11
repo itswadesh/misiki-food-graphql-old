@@ -88,10 +88,13 @@ export const markAsVerified = async (user: UserDocument) => {
   await user.save()
 }
 
-export const changePassword = async (userId: string, oldPassword: string, password: string, ) => {
+export const changePassword = async (
+  userId: string,
+  oldPassword: string,
+  password: string
+) => {
   const user = await User.findById(userId)
-  if (!user)
-    throw new UserInputError('User not registered') //Invalid old password provided
+  if (!user) throw new UserInputError('User not registered') //Invalid old password provided
   if (!(await user.matchesPassword(oldPassword)))
     throw new AuthenticationError('Incorrect old password. Please try again.')
   user.password = password

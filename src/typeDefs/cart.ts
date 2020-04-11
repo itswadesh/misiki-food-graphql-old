@@ -42,6 +42,6 @@ export default gql`
     status: String
     vendor: Vendor
     qty: Int
-    time:String
+    time: String
   }
 `

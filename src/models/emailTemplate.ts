@@ -16,9 +16,11 @@ const emailTemplateSchema = new Schema(
   },
   { versionKey: false, timestamps: true }
 )
-emailTemplateSchema.pre('save', async function (this: EmailTemplateDocument) {
-  if (!this.slug)
-    this.slug = await generateSlug(this.name)
+emailTemplateSchema.pre('save', async function(this: EmailTemplateDocument) {
+  if (!this.slug) this.slug = await generateSlug(this.name)
 })
-emailTemplateSchema.index({ '$**': 'text' });
-export const EmailTemplate = mongoose.model<EmailTemplateDocument>('EmailTemplate', emailTemplateSchema)
+emailTemplateSchema.index({ '$**': 'text' })
+export const EmailTemplate = mongoose.model<EmailTemplateDocument>(
+  'EmailTemplate',
+  emailTemplateSchema
+)

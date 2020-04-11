@@ -91,7 +91,8 @@ export const addToCart = async (
   }
   if (!product) throw new UserInputError('Product not found')
   const { _id, name, slug, img, price, vendor } = product
-  if (!_id || !vendor || !vendor.info) throw new UserInputError('Restaurant info missing')
+  if (!_id || !vendor || !vendor.info)
+    throw new UserInputError('Restaurant info missing')
   if (
     req.session.cart.vendor &&
     req.session.cart.vendor._id != vendor._id &&
@@ -102,7 +103,7 @@ export const addToCart = async (
     )
   const record = items.find(
     (p: CartItemDocument) => p.pid === pid && p.vid === vid
-  );
+  )
   if (record) {
     console.log('Already in cart', pid, vid)
     // If the product is already there in cart increase qty

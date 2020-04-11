@@ -12,7 +12,7 @@ const orderSchema = new Schema(
       lastName: String,
       address: Object,
       phone: String,
-      id: { type: ObjectId, ref: 'User' },
+      id: { type: ObjectId, ref: 'User' }
     },
     address: {
       email: String,
@@ -81,10 +81,13 @@ const orderSchema = new Schema(
           phone: String,
           firstName: String,
           lastName: String,
-          id: { type: ObjectId, ref: 'User' },
+          id: { type: ObjectId, ref: 'User' }
         },
-        delivery: { type: Object, default: { days: 1, received: 0, weight: 0, status: 'Pending' } },
-        status: { type: String, default: 'Waiting for confirmation' },
+        delivery: {
+          type: Object,
+          default: { days: 1, received: 0, weight: 0, status: 'Pending' }
+        },
+        status: { type: String, default: 'Waiting for confirmation' }
       }
     ],
     comment: String,
@@ -99,5 +102,5 @@ const orderSchema = new Schema(
 )
 orderSchema.index({
   '$**': 'text'
-});
+})
 export const Order = mongoose.model<OrderDocument>('Order', orderSchema)

@@ -1,12 +1,13 @@
-import { Strategy as FacebookStrategy } from 'passport-facebook';
-import { UserDocument } from '../../types';
+import { Strategy as FacebookStrategy } from 'passport-facebook'
+import { UserDocument } from '../../types'
 
-import passport from "passport"
+import passport from 'passport'
 import express from 'express'
-import { APP_ORIGIN, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET } from '../../config';
-let facebookRouter = express.Router();
+import { APP_ORIGIN, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET } from '../../config'
+let facebookRouter = express.Router()
 facebookRouter.get('/', passport.authenticate('facebook', { scope: ['email'] }))
-facebookRouter.get('/callback',
+facebookRouter.get(
+  '/callback',
   passport.authenticate('facebook', {
     successRedirect: '/auth/facebook/success',
     failureRedirect: '/auth/facebook/success?failed=true'
@@ -16,11 +17,9 @@ facebookRouter.get('/success', (req: any, res) => {
   if (req.session && req.user && req.user.id) {
     req.session.userId = req.user && req.user.id
     return res.redirect(APP_ORIGIN + '/my')
-  }
-  else if (req.query.failed)
+  } else if (req.query.failed)
     return res.redirect(APP_ORIGIN + '/login?failed=true')
-  else
-    return res.redirect(APP_ORIGIN + '/login')
+  else return res.redirect(APP_ORIGIN + '/login')
 })
 
 export async function setupFacebook(User: any) {
@@ -65,4 +64,4 @@ export async function setupFacebook(User: any) {
   )
 }
 
-export { facebookRouter };
+export { facebookRouter }

@@ -29,7 +29,12 @@ const resolvers: IResolvers = {
     payments: (root, args, { req }: { req: Request }, info) => {
       return index({ model: Payment, args, info })
     },
-    payment: async (root, args: { id: string }, ctx, info): Promise<PaymentDocument | null> => {
+    payment: async (
+      root,
+      args: { id: string },
+      ctx,
+      info
+    ): Promise<PaymentDocument | null> => {
       await objectId.validateAsync(args)
       return Payment.findById(args.id, fields(info))
     },
@@ -40,7 +45,11 @@ const resolvers: IResolvers = {
     }
   },
   Mutation: {
-    razorpay: async (root, args: { address: any }, { req }): Promise<PaymentDocument> => {
+    razorpay: async (
+      root,
+      args: { address: any },
+      { req }
+    ): Promise<PaymentDocument> => {
       // throw new UserInputError("Please specify your address");
       const newOrder: any = await placeOrder(req, { address: args.address })
       // try {
@@ -50,7 +59,10 @@ const resolvers: IResolvers = {
         receipt: newOrder.cartId.toString(),
         notes: { phone: newOrder.user.phone, purpose: PAY_MESSAGE }
       })
-      await Order.updateOne({ _id: newOrder._id }, { $set: { payment, payment_order_id: payment.id } })
+      await Order.updateOne(
+        { _id: newOrder._id },
+        { $set: { payment, payment_order_id: payment.id } }
+      )
       payment.invoice_id = newOrder._id
       payment.payment_order_id = payment.id
       await Payment.create(payment)
@@ -62,7 +74,12 @@ const resolvers: IResolvers = {
       //   throw new UserInputError(e)
       // }
     },
-    capturePay: async (root, args: { payment_id: string; oid: string }, { req }: { req: Request }, info): Promise<OrderDocument> => {
+    capturePay: async (
+      root,
+      args: { payment_id: string; oid: string },
+      { req }: { req: Request },
+      info
+    ): Promise<OrderDocument> => {
       let o = await Order.findOne({ payment_order_id: args.oid })
       if (!o) throw new UserInputError('Order not found. Please try again')
       const amount = Math.round(o.amount.total * 100)
@@ -70,8 +87,7 @@ const resolvers: IResolvers = {
       if (payment.status == 'captured') {
         payment.amount_paid = payment.amount
         payment.amount_due = 0
-      }
-      else {
+      } else {
         payment.amount_paid = 0
         payment.amount_due = payment.amount
       }
@@ -79,7 +95,10 @@ const resolvers: IResolvers = {
         { payment_order_id: payment.order_id },
         { $set: { payment } }
       )
-      await Payment.updateOne({ payment_order_id: payment.order_id }, { $set: payment })
+      await Payment.updateOne(
+        { payment_order_id: payment.order_id },
+        { $set: payment }
+      )
 
       for (let i of o.items) {
         let p: ProductDocument | null = await Product.findById(i)

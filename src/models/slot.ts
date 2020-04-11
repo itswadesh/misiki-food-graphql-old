@@ -19,16 +19,16 @@ const slotSchema = new Schema(
   }
 )
 
-slotSchema.pre('save', async function (this: SlotDocument) {
+slotSchema.pre('save', async function(this: SlotDocument) {
   if (!this.slug) {
     this.slug = await generateSlug(this.name)
   }
-  this.q = this.name ? this.name.toLowerCase() + " " : "";
-  this.q += this.val ? this.val.toLowerCase() + " " : "";
-  this.q += this.active ? this.active + " " : "";
+  this.q = this.name ? this.name.toLowerCase() + ' ' : ''
+  this.q += this.val ? this.val.toLowerCase() + ' ' : ''
+  this.q += this.active ? this.active + ' ' : ''
   this.q = this.q.trim()
 })
 slotSchema.index({
   '$**': 'text'
-});
+})
 export const Slot = mongoose.model<SlotDocument>('Slot', slotSchema)
