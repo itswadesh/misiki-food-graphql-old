@@ -24,7 +24,6 @@ export interface SettingsDocument extends Document {
     sgst: { type: number; default: 0 }
     igst: { type: number; default: 0 }
   }
-  shippingMethod: string
   shopEmail: string
   shopPhone: string
   shopAddress: string

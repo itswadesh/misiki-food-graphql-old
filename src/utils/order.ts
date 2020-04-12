@@ -122,7 +122,7 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
   if (!items || !cart_id) throw new UserInputError('Cart was not found')
   if (!items || items.length < 1) throw new UserInputError('Cart is empty.')
   if (!userId) throw new UserInputError('User not found')
-
+  const otp = generateOTP()
   for (let i of items) {
     // If item not found in cart remove it
     let product: ProductDocument | null = await Product.findById(i.pid)
@@ -149,7 +149,7 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
       id: v._id
     }
     let delivery = {
-      otp: generateOTP(),
+      otp,
       days: 1,
       start: vendor.address && vendor.address.coords,
       finish: address && address.coords
@@ -186,6 +186,7 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
     payment: { state: 'Pending', method: req.body.paymentMethod },
     platform: 'Mobile',
     orderNo: ORDER_PREFIX + Math.floor(new Date().valueOf() * Math.random()), //shortId.generate();
+    otp,
     address,
     items,
     amount: {

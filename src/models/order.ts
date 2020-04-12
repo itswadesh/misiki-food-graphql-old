@@ -7,6 +7,7 @@ const orderSchema = new Schema(
   {
     orderNo: String,
     cartId: String,
+    otp: String,
     user: {
       firstName: String,
       lastName: String,

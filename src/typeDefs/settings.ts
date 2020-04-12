@@ -185,7 +185,6 @@ export default gql`
     sorts: [NameVal]
     RAZORPAY_KEY: String
     tax: Tax
-    shippingMethod: String
     shopEmail: String
     shopPhone: String
     shopAddress: String

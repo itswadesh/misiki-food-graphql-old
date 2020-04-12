@@ -6,7 +6,6 @@ import { Order, User, Product, Promotion } from '../models'
 //   qty,
 //   cartValue,
 //   paymentMethod,
-//   shippingMethod,
 //   items
 // ) => {
 //   let fo = true
@@ -35,10 +34,6 @@ import { Order, User, Product, Promotion } from '../models'
 //     } else if (i.key == 'PaymentMethod') {
 //       pm = false
 //       if (paymentMethod == i.val) pm = true
-//     } else if (i.key == 'ShippingMethod') {
-//       sm = false
-//       if (shippingMethod == i.val) sm = true
-//     }
 //     // else if (i.key == 'Buy2get1') {
 //     //   buy2 = false
 //     //   let lowest = 100000000
