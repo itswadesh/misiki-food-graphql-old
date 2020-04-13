@@ -27,6 +27,9 @@ import {
   calculateSummary
 } from '../utils'
 import { ObjectId } from 'mongodb'
+import pubsub from '../pubsub'
+
+const ORDER_UPDATED = 'ORDER_UPDATED'
 
 const resolvers: IResolvers = {
   Query: {
@@ -512,10 +515,15 @@ const resolvers: IResolvers = {
       { req }: { req: Request }
     ): Promise<OrderDocument | null> => {
       const { userId } = req.session
-      return Order.findOneAndUpdate(
+      const order = await Order.findOneAndUpdate(
         { _id: args.id, 'items.pid': args.pid },
-        { $set: { 'items.$.status': args.status } }
+        { $set: { 'items.$.status': args.status } },
+        { new: true }
       )
+      if (!order) throw new UserInputError('Order not found.')
+      pubsub.publish(ORDER_UPDATED, { orderUpdated: order })
+
+      return order
     },
     collectPayment: async (
       root,
@@ -575,6 +583,32 @@ const resolvers: IResolvers = {
       await order.save()
 
       return order
+    }
+  },
+
+  Subscription: {
+    orderUpdated: {
+      resolve: (
+        { orderUpdated }: { orderUpdated: OrderDocument },
+        args,
+        ctx,
+        info
+      ) => {
+        orderUpdated.id = orderUpdated._id
+        return hasSubfields(info)
+          ? Order.findById(orderUpdated._id, fields(info))
+          : orderUpdated
+      },
+      subscribe: withFilter(
+        () => pubsub.asyncIterator(ORDER_UPDATED),
+        async (
+          { orderUpdated }: { orderUpdated: OrderDocument },
+          { id }: { id: string },
+          { req }: { req: Request }
+        ) => {
+          return orderUpdated._id == id
+        }
+      )
     }
   }
 }

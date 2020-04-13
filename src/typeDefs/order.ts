@@ -101,6 +101,10 @@ export default gql`
     collectPayment(id: ID!, cod_paid: Int): Boolean @auth
   }
 
+  extend type Subscription {
+    orderUpdated(id: ID!): Order @auth
+  }
+
   type TC {
     _id: todaysChefs
     amount: Int
