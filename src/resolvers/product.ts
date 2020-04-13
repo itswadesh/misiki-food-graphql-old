@@ -25,6 +25,13 @@ import product from '../typeDefs/product'
 const MESSAGE_SENT = 'MESSAGE_SENT'
 const resolvers: IResolvers = {
   Query: {
+    productsByIds: (root, args, { req }: { req: Request }, info) => {
+      return Product.find({
+        _id: {
+          $in: args.ids
+        }
+      }).limit(10)
+    },
     products: (root, args, { req }: { req: Request }, info) => {
       args.populate = 'category'
       return index({ model: Product, args, info })
