@@ -1,5 +1,5 @@
 import { Types } from 'mongoose'
-import { IResolvers, UserInputError } from 'apollo-server-express'
+import { IResolvers, UserInputError, withFilter } from 'apollo-server-express'
 import { Request, SettingsDocument } from '../types'
 import { objectId, ifImage } from '../validation'
 import { Setting } from '../models'
@@ -7,7 +7,7 @@ import { fields, hasSubfields } from '../utils'
 import pubsub from '../pubsub'
 import { closed, worldCurrencies, sorts, timesList } from './../config'
 
-const MESSAGE_SENT = 'MESSAGE_SENT'
+const SETTINGS_UPDATED = 'SETTINGS_UPDATED'
 const resolvers: IResolvers = {
   Query: {
     shutter: (root, args, { req }: { req: Request }, info) => {
@@ -52,9 +52,30 @@ const resolvers: IResolvers = {
       if (!settings)
         throw new UserInputError(`Settings with id= ${id} not found`)
 
+      pubsub.publish(SETTINGS_UPDATED, { settingsUpdated: settings })
+
       await settings.save() // To fire pre save hoook
 
       return settings
+    }
+  },
+
+  Subscription: {
+    settingsUpdated: {
+      resolve: (
+        { settingsUpdated }: { settingsUpdated: SettingsDocument },
+        args,
+        ctx,
+        info
+      ) => {
+        return settingsUpdated
+      },
+      subscribe: withFilter(
+        () => pubsub.asyncIterator(SETTINGS_UPDATED),
+        async (__, _, { req }: { req: Request }) => {
+          return true
+        }
+      )
     }
   }
 }

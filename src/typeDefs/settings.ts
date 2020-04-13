@@ -61,6 +61,10 @@ export default gql`
     ): Setting @admin
   }
 
+  extend type Subscription {
+    settingsUpdated: Setting @admin
+  }
+
   input ProductSettingIp {
     moderate: Boolean
   }
