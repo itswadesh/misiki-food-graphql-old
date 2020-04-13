@@ -11,7 +11,7 @@ const resolvers: IResolvers = {
       return index({ model: Coupon, args, info })
     },
     coupons: async (root, args, { req }: { req: Request }, info) => {
-      args.active = true
+      args.active = false
       args.validFromDate = { $lte: new Date() }
       args.validToDate = { $gte: new Date() }
       return index({ model: Coupon, args, info })

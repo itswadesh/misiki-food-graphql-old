@@ -18,12 +18,14 @@ export const index = async ({ model, args, info, userId }: any) => {
   delete args.populate
   delete args.limit
   let where = args
+
   for (let k in where) {
     if (
-      where[k] == '' ||
-      where[k] == 'null' ||
-      where[k] == 'undefined' ||
-      where[k] == undefined
+      (where[k] == '' ||
+        where[k] == 'null' ||
+        where[k] == 'undefined' ||
+        where[k] == undefined) &&
+      typeof where[k] != 'boolean'
     )
       delete where[k]
     if (where[k] == 'blank') where[k] = null
@@ -38,7 +40,6 @@ export const index = async ({ model, args, info, userId }: any) => {
   }
   where = toJson(where) || {}
   let role = 'user'
-
   //   if (req.user) {
   //     role = req.user.role
   //   }
