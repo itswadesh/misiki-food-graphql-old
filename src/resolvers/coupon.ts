@@ -1,13 +1,19 @@
-import { IResolvers } from 'apollo-server-express'
+import { IResolvers, UserInputError } from 'apollo-server-express'
 import { Request, CouponDocument } from '../types'
 import { validate, objectId, couponSchema } from '../validation'
-import { Coupon } from '../models'
+import { Coupon, User } from '../models'
 import { fields, calculateSummary, index, validateCart } from '../utils'
 import { Types } from 'mongoose'
 
 const resolvers: IResolvers = {
   Query: {
-    coupons: (root, args, { req }: { req: Request }, info) => {
+    couponsAdmin: async (root, args, { req }: { req: Request }, info) => {
+      return index({ model: Coupon, args, info })
+    },
+    coupons: async (root, args, { req }: { req: Request }, info) => {
+      args.active = true
+      args.validFromDate = { $lte: new Date() }
+      args.validToDate = { $gte: new Date() }
       return index({ model: Coupon, args, info })
     },
     coupon: async (

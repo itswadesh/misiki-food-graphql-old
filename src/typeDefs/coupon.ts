@@ -2,6 +2,12 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Query {
+    couponsAdmin(
+      page: Int
+      search: String
+      limit: Int
+      sort: String
+    ): couponRes @admin
     coupons(page: Int, search: String, limit: Int, sort: String): couponRes
     coupon(id: String!): Coupon
   }
