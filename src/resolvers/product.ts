@@ -31,7 +31,7 @@ const resolvers: IResolvers = {
     },
     popular: (root, args, { req }: { req: Request }, info) => {
       args.stock = { $gt: 0 }
-      args.sort = 'popularity'
+      args.sort = '-popularity'
       args.limit = 10
       return index({ model: Product, args, info })
     },
@@ -44,7 +44,7 @@ const resolvers: IResolvers = {
         q.type = req.query.type
       }
       if (req.query.search) q.q = { $regex: new RegExp(req.query.search, 'ig') }
-      q.stock = { $gt: 0 }
+      // q.stock = { $gt: 0 }
 
       const { start, end } = getStartEndDate3(0)
       let t = await getData(start, end, q)

@@ -44,18 +44,22 @@ export const getData = async (start: Date, end: Date, q: any) => {
               date: '$createdAt',
               timezone: '+0530'
             }
-          },
-          id: '$items._id',
-          img: '$items.img',
-          slug: '$items.slug',
-          name: '$items.name',
-          price: '$items.price',
-          updatedAt: { $max: '$updatedAt' },
-          time: '$items.time',
-          type: '$items.type',
-          ratings: '$items.ratings',
-          reviews: '$items.reviews',
-          restaurant: '$vendor.restaurant'
+          }
+        },
+        items: {
+          $addToSet: {
+            pid: '$items.pid',
+            img: '$items.img',
+            slug: '$items.slug',
+            name: '$items.name',
+            price: '$items.price',
+            // updatedAt: { $max: '$updatedAt' }, // This will not preserve uniqueness
+            time: '$items.time',
+            type: '$items.type',
+            ratings: '$items.ratings',
+            reviews: '$items.reviews',
+            restaurant: '$vendor.restaurant'
+          }
         },
         count: { $sum: '$amount.qty' },
         amount: { $sum: '$amount.subtotal' }

@@ -9,6 +9,7 @@ export const getStartEndDate3 = (i = 0) => {
     .millisecond(0)
     .toDate()
   let end = moment()
+    .subtract(i - 1, 'day')
     .hour(startT.h)
     .minute(startT.m)
     .second(0)

@@ -110,15 +110,20 @@ export default gql`
   }
 
   type BS {
-    _id: BS1
+    _id: BSDate
     count: Int
+    items: [BS1]
     amount: Int
     updatedAt: String
   }
 
+  type BSDate {
+    date: String
+  }
+
   type BS1 {
     id: ID
-    date: String
+    pid: ID
     name: String
     slug: String
     img: String
