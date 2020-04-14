@@ -78,11 +78,7 @@ export default gql`
       vendor: String
       popularity: Int
       position: Int
-      featured: Boolean
-      hot: Boolean
-      new: Boolean
-      sale: Boolean
-      recommended: Boolean
+      badge: BadgeI
       title: String
       metaDescription: String
       keywords: String
@@ -202,11 +198,7 @@ export default gql`
     title: String
     metaDescription: String
     keywords: String
-    recommended: Boolean
-    hot: Boolean
-    sale: Boolean
-    new: Boolean
-    featured: Boolean
+    badge: Badge
     position: Float
     popularity: Float
     sales: Int
@@ -225,14 +217,21 @@ export default gql`
   #   keywords: String
   # }
 
-  # type Badge {
-  #   recommended: Boolean
-  #   hot: Boolean
-  #   sale: Boolean
-  #   new: Boolean
-  #   featured: Boolean
-  #   approved: Boolean
-  # }
+  input BadgeI {
+    recommended: Boolean
+    hot: Boolean
+    sale: Boolean
+    new: Boolean
+    featured: Boolean
+  }
+
+  type Badge {
+    recommended: Boolean
+    hot: Boolean
+    sale: Boolean
+    new: Boolean
+    featured: Boolean
+  }
 
   # type Stats {
   #   position: Float

@@ -62,6 +62,7 @@ export const index = async ({ model, args, info, userId }: any) => {
   let searchString = where
   if (search != 'null' && !!search)
     searchString = { ...where, $text: { $search: search } }
+
   try {
     let data: any = await model
       .find(searchString, searchFields(info))

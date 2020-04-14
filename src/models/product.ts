@@ -59,11 +59,13 @@ let productSchema = new Schema(
     title: String,
     metaDescription: String,
     keywords: String,
-    recommended: { type: Boolean, default: false },
-    hot: { type: Boolean, default: false },
-    sale: { type: Boolean, default: false },
-    new: { type: Boolean, default: false },
-    featured: { type: Boolean, default: false },
+    badge: {
+      recommended: { type: Boolean, default: false },
+      hot: { type: Boolean, default: false },
+      sale: { type: Boolean, default: false },
+      new: { type: Boolean, default: false },
+      featured: { type: Boolean, default: false }
+    },
     position: { type: Number, default: 0 },
     popularity: { type: Number, default: 0 },
     sales: { type: Number, default: 0 },
