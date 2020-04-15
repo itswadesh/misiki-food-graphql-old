@@ -4,6 +4,7 @@ export default gql`
   extend type Query {
     shutter: Boolean
     worldCurrencies: [String!]
+    orderStatuses: [OrderStatus!]
     sorts: [NameVal!]
     timesList: [String!]
     settings: Setting
@@ -63,6 +64,13 @@ export default gql`
 
   extend type Subscription {
     settingsUpdated: Setting @admin
+  }
+
+  type OrderStatus {
+    status: String
+    title: String
+    body: String
+    icon: String
   }
 
   input ProductSettingIp {

@@ -5,7 +5,13 @@ import { objectId, ifImage } from '../validation'
 import { Setting } from '../models'
 import { fields, hasSubfields } from '../utils'
 import pubsub from '../pubsub'
-import { closed, worldCurrencies, sorts, timesList } from './../config'
+import {
+  closed,
+  worldCurrencies,
+  sorts,
+  timesList,
+  orderStatuses,
+} from './../config'
 
 const SETTINGS_UPDATED = 'SETTINGS_UPDATED'
 const resolvers: IResolvers = {
@@ -21,6 +27,9 @@ const resolvers: IResolvers = {
     worldCurrencies: (root, args, { req }: { req: Request }, info) => {
       return worldCurrencies
     },
+    orderStatuses: (root, args, { req }: { req: Request }, info) => {
+      return orderStatuses.filter((o) => o.public)
+    },
     sorts: (root, args, { req }: { req: Request }, info) => {
       return sorts
     },
@@ -33,7 +42,7 @@ const resolvers: IResolvers = {
     settingsAdmin: (root, args, { req }: { req: Request }, info) => {
       args.uid = req.session.userId
       return Setting.find({}, fields(info)).exec()
-    }
+    },
   },
 
   Mutation: {
@@ -57,7 +66,7 @@ const resolvers: IResolvers = {
       await settings.save() // To fire pre save hoook
 
       return settings
-    }
+    },
   },
 
   Subscription: {
@@ -75,9 +84,9 @@ const resolvers: IResolvers = {
         async (__, _, { req }: { req: Request }) => {
           return true
         }
-      )
-    }
-  }
+      ),
+    },
+  },
 }
 
 export default resolvers
