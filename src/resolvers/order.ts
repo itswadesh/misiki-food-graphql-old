@@ -484,9 +484,8 @@ const resolvers: IResolvers = {
       const { start, end } = getStartEndDate(0)
       let { userId } = req.session
       userId = Types.ObjectId(userId)
-      // args['items.vendor.id'] = userId
-      // args.createdAt = { $gte: start, $lte: end }
-      // args.uid = userId
+      args['items.vendor.id'] = userId
+      args.createdAt = { $gte: start, $lte: end }
       return indexSub({ model: Order, args, info, userId })
     },
     // myOrders: async (root, args, { req }: { req: Request }, info) => {
