@@ -4,7 +4,7 @@ import {
   Request,
   ProductDocument,
   CartItemDocument,
-  SettingsDocument
+  SettingsDocument,
 } from '../types'
 import { UserInputError } from 'apollo-server-express'
 
@@ -18,7 +18,7 @@ export const saveMyCart = async (cart: CartDocument) => {
       new: true,
       upsert: true,
       setDefaultsOnInsert: true,
-      runValidators: true
+      runValidators: true,
     }).exec()
   }
 }
@@ -35,7 +35,7 @@ export const merge = async (req: Request, uid: String) => {
   if (dbCart) {
     let items = dbCart.items
     if (items.length > 0) {
-      const promises = items.map(async i => {
+      const promises = items.map(async (i) => {
         await addToCart(req, { pid: i.product._id, qty: i.qty })
       })
       await Promise.all(promises)
@@ -64,7 +64,7 @@ export const addToCart = async (
       discount: {},
       subtotal: 0,
       total: 0,
-      cart_id: req.session.id
+      cart_id: req.session.id,
     }
   let items = req.session.cart.items
   // if (replace) items = req.session.cart.items = []
@@ -78,7 +78,9 @@ export const addToCart = async (
   }
   try {
     // Required for stock verification
-    product = await Product.findById(pid).select('name slug img price time vendor')
+    product = await Product.findById(pid).select(
+      'name slug img price time vendor stock'
+    )
     vid = 0
     if (!product) {
       items = removeFromCartSession(items, pid, vid)
@@ -101,8 +103,12 @@ export const addToCart = async (
   //   throw new UserInputError(
   //     `Your cart contain dishes from ${req.session.cart.vendor.info.restaurant}. Do you wish to Cart cart and add dishes from ${vendor.info.restaurant}?`
   //   )
-  const record = items.find((p: CartItemDocument) => p.pid === pid)
-  if (record) {
+  const record = items.find((p: CartItemDocument) => p.pid === pid) || {}
+
+  if (+product.stock < +record.qty + qty && +qty > 0)
+    throw new UserInputError('Not enough stock')
+
+  if (record.qty) {
     console.log('Already in cart', pid)
     // If the product is already there in cart increase qty
     record.qty = +record.qty + +qty
@@ -112,7 +118,6 @@ export const addToCart = async (
     }
   } else {
     console.log('Not in cart', pid)
-    if (+product.qty < +qty) throw new UserInputError('Not enough stock')
     items.push({ pid, name, slug, img, price, qty, time })
   }
   // req.session.cart.vendor = vendor
@@ -137,7 +142,7 @@ export const removeFromCartSession = async (
 
 export const getTotalQty = (items: Array<CartItemDocument>): number => {
   let qty = 0
-  items.forEach(item => {
+  items.forEach((item) => {
     qty += item.qty
   })
   return qty
@@ -190,7 +195,7 @@ export const getTotal = async (cart: CartDocument) => {
   cart.tax = {
     cgst: (total * +tax.cgst) / 100,
     sgst: (total * +tax.sgst) / 100,
-    igst: (total * +tax.igst) / 100
+    igst: (total * +tax.igst) / 100,
   }
   return (cart.total =
     total + total * (+tax.cgst + +tax.sgst + +tax.igst) * 0.01)
@@ -218,23 +223,44 @@ export const validateCart = async (req: Request) => {
   const { cart } = session
   if (!cart) throw new UserInputError('Cart is empty')
   let { items } = cart
-  if (!items || items.length < 1)
-    throw new UserInputError('No items in cart')
+  if (!items || items.length < 1) throw new UserInputError('No items in cart')
   cart.qty = getTotalQty(items)
   let subtotal = (cart.subtotal = await getSubTotal(items))
-  const setting: any = (await Setting.findOne({}).select('shipping tax minimumOrderValue').exec()) || { minimumOrderValue: 0, shipping: { charge: 0 }, tax: { cgst: 0, sgst: 0, igst: 0 } }
-  if (subtotal < setting.minimumOrderValue) throw new UserInputError('Min order value is ' + setting.minimumOrderValue)
+  const setting: any = (await Setting.findOne({})
+    .select('shipping tax minimumOrderValue')
+    .exec()) || {
+    minimumOrderValue: 0,
+    shipping: { charge: 0 },
+    tax: { cgst: 0, sgst: 0, igst: 0 },
+  }
+  if (subtotal < setting.minimumOrderValue)
+    throw new UserInputError('Min order value is ' + setting.minimumOrderValue)
 }
 
-export const validateCoupon = async (cart: CartDocument, code?: string, silent?: boolean) => {
+export const validateCoupon = async (
+  cart: CartDocument,
+  code?: string,
+  silent?: boolean
+) => {
   cart.qty = getTotalQty(cart.items)
   let subtotal = (cart.subtotal = await getSubTotal(cart.items))
-  let coupon = await Coupon.findOne({ code, active: true, validFromDate: { $lte: new Date() }, validToDate: { $gte: new Date() } })
-    .select('code color type text terms value minimumCartValue amount maxAmount validFromDate validToDate')
+  let coupon = await Coupon.findOne({
+    code,
+    active: true,
+    validFromDate: { $lte: new Date() },
+    validToDate: { $gte: new Date() },
+  })
+    .select(
+      'code color type text terms value minimumCartValue amount maxAmount validFromDate validToDate'
+    )
     .exec()
   if (code && !silent) {
-    if (!coupon) throw new UserInputError('The selected coupon is expired.') // code is required here because when no coupon is applied this should not throw error
-    else if (coupon.minimumCartValue > cart.subtotal) throw new UserInputError('Can not apply coupon, add some more items to cart.') // code is required here because when no coupon is applied this should not throw error
+    if (!coupon) throw new UserInputError('The selected coupon is expired.')
+    // code is required here because when no coupon is applied this should not throw error
+    else if (coupon.minimumCartValue > cart.subtotal)
+      throw new UserInputError(
+        'Can not apply coupon, add some more items to cart.'
+      ) // code is required here because when no coupon is applied this should not throw error
   }
 
   if (coupon && coupon.value) {
@@ -258,8 +284,16 @@ export const calculateSummary = async (req: Request, code?: string) => {
   let { items } = cart
   cart.qty = getTotalQty(items)
   let subtotal = (cart.subtotal = await getSubTotal(items))
-  let shipping, tax, minimumOrderValue = 0
-  const setting: any = (await Setting.findOne({}).select('shipping tax minimumOrderValue').exec()) || { minimumOrderValue: 0, shipping: { charge: 0 }, tax: { cgst: 0, sgst: 0, igst: 0 } }
+  let shipping,
+    tax,
+    minimumOrderValue = 0
+  const setting: any = (await Setting.findOne({})
+    .select('shipping tax minimumOrderValue')
+    .exec()) || {
+    minimumOrderValue: 0,
+    shipping: { charge: 0 },
+    tax: { cgst: 0, sgst: 0, igst: 0 },
+  }
   // Can not use try catch here, it will not fire the following UserInputError
   const discount = await validateCoupon(cart, code) // 3rd param true= Silent no error
   shipping = cart.shipping = setting.shipping
@@ -270,7 +304,7 @@ export const calculateSummary = async (req: Request, code?: string) => {
   cart.tax = {
     cgst: (total * +tax.cgst) / 100,
     sgst: (total * +tax.sgst) / 100,
-    igst: (total * +tax.igst) / 100
+    igst: (total * +tax.igst) / 100,
   }
   cart.total = total + total * (+tax.cgst + +tax.sgst + +tax.igst) * 0.01
   cart.uid = userId
