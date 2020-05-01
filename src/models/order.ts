@@ -13,7 +13,7 @@ const orderSchema = new Schema(
       lastName: String,
       address: Object,
       phone: String,
-      id: { type: ObjectId, ref: 'User' }
+      id: { type: ObjectId, ref: 'User' },
     },
     address: {
       email: String,
@@ -21,6 +21,7 @@ const orderSchema = new Schema(
       lastName: String,
       address: String,
       town: String,
+      district: String,
       city: String,
       country: String,
       state: String,
@@ -28,7 +29,7 @@ const orderSchema = new Schema(
       zip: Number,
       phone: String,
       active: { type: Boolean, default: true },
-      uid: { type: ObjectId, ref: 'User' }
+      uid: { type: ObjectId, ref: 'User' },
     },
     payment: {
       type: Object,
@@ -46,8 +47,8 @@ const orderSchema = new Schema(
         error_code: null,
         error_description: null,
         created_at: new Date(),
-        payment_order_id: null
-      }
+        payment_order_id: null,
+      },
     },
     amount: {
       qty: Number,
@@ -58,7 +59,7 @@ const orderSchema = new Schema(
       total: Number,
       currency: String,
       exchange_rate: Number,
-      offer: Object
+      offer: Object,
     },
     coupon: Object,
     items: [
@@ -82,14 +83,14 @@ const orderSchema = new Schema(
           phone: String,
           firstName: String,
           lastName: String,
-          id: { type: ObjectId, ref: 'User' }
+          id: { type: ObjectId, ref: 'User' },
         },
         delivery: {
           type: Object,
-          default: { days: 1, received: 0, weight: 0, status: 'Pending' }
+          default: { days: 1, received: 0, weight: 0, status: 'Pending' },
         },
-        status: { type: String, default: 'Waiting for confirmation' }
-      }
+        status: { type: String, default: 'Waiting for confirmation' },
+      },
     ],
     comment: String,
     cancellationReason: String,
@@ -97,11 +98,11 @@ const orderSchema = new Schema(
     returnComment: String,
     active: { type: Boolean, default: true },
     payment_order_id: String,
-    cod_paid: Number
+    cod_paid: Number,
   },
   { versionKey: false, timestamps: true }
 )
 orderSchema.index({
-  '$**': 'text'
+  '$**': 'text',
 })
 export const Order = mongoose.model<OrderDocument>('Order', orderSchema)

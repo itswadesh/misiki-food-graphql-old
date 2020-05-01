@@ -4,7 +4,7 @@ import {
   AddressDocument,
   CartDocument,
   ProductDocument,
-  ChatDocument
+  ChatDocument,
 } from './'
 
 export interface OrderDocument extends Document {
@@ -27,6 +27,7 @@ export interface OrderDocument extends Document {
     lastName: string
     address: string
     town: string
+    district: string
     city: string
     country: string
     state: string

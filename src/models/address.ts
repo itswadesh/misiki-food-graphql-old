@@ -11,20 +11,21 @@ const addressSchema = new Schema(
     address: String,
     town: String,
     city: String,
+    district: String,
     country: String,
     state: String,
     coords: { lat: Number, lng: Number },
     zip: Number,
     phone: String,
     active: { type: Boolean, default: true },
-    user: { type: ObjectId, ref: 'User' }
+    user: { type: ObjectId, ref: 'User' },
   },
   {
     versionKey: false,
-    timestamps: true
+    timestamps: true,
   }
 )
 addressSchema.index({
-  '$**': 'text'
+  '$**': 'text',
 })
 export const Address = mongoose.model<AddressDocument>('Address', addressSchema)

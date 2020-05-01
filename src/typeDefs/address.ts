@@ -17,6 +17,7 @@ export default gql`
       address: String
       town: String
       city: String
+      district: String
       country: String
       state: String
       coords: Geo
@@ -32,6 +33,7 @@ export default gql`
       address: String
       town: String
       city: String
+      district: String
       country: String
       state: String
       coords: Geo
@@ -49,6 +51,7 @@ export default gql`
     address: String
     town: String
     city: String
+    district: String
     country: String
     state: String
     coords: Coords

@@ -8,6 +8,7 @@ export interface AddressDocument extends Document {
   address: string
   town: string
   city: string
+  district: string
   country: string
   state: string
   coords: { lat: [number, number]; lng: [number, number] }

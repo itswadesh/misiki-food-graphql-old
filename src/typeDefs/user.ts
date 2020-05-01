@@ -24,6 +24,7 @@ export default gql`
       banner: String
       gender: String
       city: String
+      district: String
       state: String
       phone: String
       zip: Int

@@ -5,10 +5,9 @@ export const profileSchema = Joi.object({
   email: Joi.allow('').label('Email'),
   firstName: Joi.allow('').label('First Name'),
   lastName: Joi.allow('').label('Last Name'),
-  address: Joi.string()
-    .required()
-    .label('Address'),
+  address: Joi.string().required().label('Address'),
   town: Joi.allow('').label('Town'),
+  district: Joi.allow('').label('District'),
   city: Joi.allow('').label('City'),
   country: Joi.allow('').label('Country'),
   state: Joi.allow('').label('State'),
@@ -16,5 +15,5 @@ export const profileSchema = Joi.object({
   phone: Joi.allow('').label('Phone'),
   type: Joi.allow('').label('Type'),
   avatar: Joi.allow('').label('Avatar'),
-  banner: Joi.allow('').label('Banner')
+  banner: Joi.allow('').label('Banner'),
 })
