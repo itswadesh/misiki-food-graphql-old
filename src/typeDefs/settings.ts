@@ -11,6 +11,7 @@ export default gql`
     settingsAdmin: Setting
   }
   extend type Mutation {
+    closeRestaurant: Boolean
     saveSettings(
       id: ID!
       websiteName: String

@@ -2,7 +2,7 @@ import { Types } from 'mongoose'
 import { IResolvers, UserInputError, withFilter } from 'apollo-server-express'
 import { Request, SettingsDocument } from '../types'
 import { objectId, ifImage } from '../validation'
-import { Setting } from '../models'
+import { Setting, Product } from '../models'
 import { fields, hasSubfields } from '../utils'
 import pubsub from '../pubsub'
 import {
@@ -46,6 +46,18 @@ const resolvers: IResolvers = {
   },
 
   Mutation: {
+    closeRestaurant: async (
+      root,
+      args,
+      { req }: { req: Request }
+    ): Promise<Boolean> => {
+      const p = await Product.updateMany(
+        { stock: { $gt: 0 } },
+        { $set: { stock: 0 } }
+      )
+      return p.nModified
+    },
+
     saveSettings: async (
       root,
       args,
