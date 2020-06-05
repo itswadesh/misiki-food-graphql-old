@@ -7,7 +7,11 @@ import { Types } from 'mongoose'
 
 const resolvers: IResolvers = {
   Query: {
-    cities: (root, args, { req }: { req: Request }, info) => {
+    cities: async (root, args, { req }: { req: Request }, info) => {
+      const { userId } = req.session
+      const user = await User.findById(userId)
+      if (!user) args.active = true
+      if (user && user.role != 'admin') args.active = true
       return index({ model: City, args, info })
     },
     city: async (
@@ -17,7 +21,7 @@ const resolvers: IResolvers = {
       info
     ): Promise<CityDocument | null> => {
       return City.findById(args.id, fields(info))
-    }
+    },
   },
   Mutation: {
     removeCity: async (
@@ -48,8 +52,8 @@ const resolvers: IResolvers = {
       )
       await city.save() // To fire pre save hoook
       return city
-    }
-  }
+    },
+  },
 }
 
 export default resolvers
