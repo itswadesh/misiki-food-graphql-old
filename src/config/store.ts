@@ -14,9 +14,9 @@ export const endT = { h: 22, m: 0 }
 export const end = '10:00 pm'
 
 export const closed = {
-  from: { hour: 13, minute: 44 },
-  to: { hour: 13, minute: 59 },
-  message: 'Sorry we are closed from 1:44 PM to 1:59 PM',
+  from: { hour: 18, minute: 0 },
+  to: { hour: 22, minute: 0 },
+  message: 'Sorry we are closed from 6:00 PM to 10:00 PM',
 }
 // prettier-ignore
 export const userRoles = ['user', 'chef', 'delivery', 'vendor', 'manager', 'admin'] // This should be in ascending order of authority. e.g. In this case guest will not have access to any other role, where as admin will have the role of guest+user+vendor+manager+admin
