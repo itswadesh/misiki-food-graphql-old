@@ -161,6 +161,8 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
     }
     i.delivery = delivery
     i.vendor = vendor
+    product.stock = product.stock - i.qty
+    product.save()
     fast2Sms({
       // Order accepted for { #FF# }.\nQrNo: { #EE# } \nDelivery boy will reach you by { #DD# }  // FAST2SMS
       phone: vendor.phone,
