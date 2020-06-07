@@ -223,7 +223,7 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
     phone: me.phone,
     message: '29150',
     variables: '{DD}|{BB}|{EE}',
-    variables_values: `Misiki|${o.amount.total}|${o.orderNo}`,
+    variables_values: `Misiki|Rs ${o.amount.total}|${o.orderNo}`,
   })
   // vm.sms({ // Order for {#FF#} is placed \r\nAmount to pay: {#AA#} \r\nExpected delivery: {#EE#}  // FAST2SMS
   //   phone: o.phone,

@@ -14,7 +14,7 @@ export default gql`
       sort: String
       vendor: String
       category: String
-      active: String
+      active: Boolean
     ): SearchRes
     myProducts(
       page: Int

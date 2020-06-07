@@ -3,14 +3,14 @@ import {
   IResolvers,
   UserInputError,
   ForbiddenError,
-  withFilter
+  withFilter,
 } from 'apollo-server-express'
 import {
   Request,
   MessageDocument,
   UserDocument,
   ProductDocument,
-  ChatDocument
+  ChatDocument,
 } from '../types'
 import { validate, objectId, productSchema, ifImage } from '../validation'
 import { Product, User, Slug } from '../models'
@@ -28,12 +28,15 @@ const resolvers: IResolvers = {
     productsByIds: (root, args, { req }: { req: Request }, info) => {
       return Product.find({
         _id: {
-          $in: args.ids
-        }
+          $in: args.ids,
+        },
       }).limit(10)
     },
     products: (root, args, { req }: { req: Request }, info) => {
       args.populate = 'category'
+      // if (args.active) {
+      //   args.stock = { $gt: 0 }
+      // }
       return index({ model: Product, args, info })
     },
     popular: (root, args, { req }: { req: Request }, info) => {
@@ -93,7 +96,7 @@ const resolvers: IResolvers = {
       return Product.findById(args.id, fields(info))
         .populate('categories')
         .populate('category')
-    }
+    },
   },
 
   Mutation: {
@@ -220,7 +223,7 @@ const resolvers: IResolvers = {
         stock,
         img,
         time,
-        category
+        category,
       } = args
 
       const user = await User.findById(userId)
@@ -237,12 +240,12 @@ const resolvers: IResolvers = {
         time,
         city,
         vendor: userId,
-        category
+        category,
       })
 
       await product.save()
       return product.populate('category').execPopulate()
-    }
+    },
   },
 
   Product: {
@@ -254,8 +257,8 @@ const resolvers: IResolvers = {
     ): Promise<UserDocument> => {
       return (await product.populate('vendor', fields(info)).execPopulate())
         .vendor
-    }
-  }
+    },
+  },
   // lastMessage: async (
   //   chat: ChatDocument,
   //   args,
