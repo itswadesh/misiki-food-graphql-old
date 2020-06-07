@@ -5,7 +5,7 @@ import {
   saveMyCart,
   getTotal,
   calculateSummary,
-  validateCart
+  validateCart,
 } from './cart'
 // import { calculateOffers } from './promotions'
 import { generateOTP } from './'
@@ -19,10 +19,11 @@ import {
   UserDocument,
   CartItemDocument,
   AddressDocument,
-  SettingsDocument
+  SettingsDocument,
 } from '../types'
 import { objectId } from '../validation'
 import { UserInputError } from 'apollo-server-express'
+import { fast2Sms } from './sms'
 
 export const getData = async (start: Date, end: Date, q: any) => {
   let data = await Order.aggregate([
@@ -30,8 +31,8 @@ export const getData = async (start: Date, end: Date, q: any) => {
       $match: {
         ...q,
         status: { $nin: ['Cancelled'] },
-        createdAt: { $gte: start, $lte: end }
-      }
+        createdAt: { $gte: start, $lte: end },
+      },
     },
     { $unwind: '$items' },
     { $project: { items: 1, createdAt: 1, vendor: 1, updatedAt: 1 } },
@@ -42,9 +43,9 @@ export const getData = async (start: Date, end: Date, q: any) => {
             $dateToString: {
               format: '%d-%m-%Y',
               date: '$createdAt',
-              timezone: '+0530'
-            }
-          }
+              timezone: '+0530',
+            },
+          },
         },
         items: {
           $addToSet: {
@@ -58,14 +59,14 @@ export const getData = async (start: Date, end: Date, q: any) => {
             type: '$items.type',
             ratings: '$items.ratings',
             reviews: '$items.reviews',
-            restaurant: '$vendor.restaurant'
-          }
+            restaurant: '$vendor.restaurant',
+          },
         },
         count: { $sum: '$amount.qty' },
-        amount: { $sum: '$amount.subtotal' }
-      }
+        amount: { $sum: '$amount.subtotal' },
+      },
     },
-    { $sort: { count: -1 } }
+    { $sort: { count: -1 } },
   ])
   return data
 }
@@ -76,9 +77,9 @@ export const updateStats = async (product: ProductDocument) => {
       $group: {
         _id: '$product',
         avg: { $avg: '$rating' },
-        count: { $sum: 1 }
-      }
-    }
+        count: { $sum: 1 },
+      },
+    },
   ])
   const vendorReviews = await Review.aggregate([
     { $match: { vendor: product.vendor } },
@@ -86,13 +87,13 @@ export const updateStats = async (product: ProductDocument) => {
       $group: {
         _id: '$vendor',
         avg: { $avg: '$rating' },
-        count: { $sum: 1 }
-      }
-    }
+        count: { $sum: 1 },
+      },
+    },
   ])
   await User.findByIdAndUpdate(product.vendor, {
     ratings: Math.round(vendorReviews[0].avg * 10) / 10,
-    reviews: vendorReviews[0].count
+    reviews: vendorReviews[0].count,
   })
   const orders = await Order.countDocuments({ 'items.pid': product._id })
   if (reviews.length > 0) {
@@ -102,8 +103,8 @@ export const updateStats = async (product: ProductDocument) => {
         $set: {
           ratings: Math.round(reviews[0].avg * 10) / 10,
           reviews: reviews[0].count,
-          sales: orders
-        }
+          sales: orders,
+        },
       }
     )
   }
@@ -150,16 +151,29 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
       address: v.address, // required during aggregation for delivery boy
       firstName: v.firstName, // required during aggregation for delivery boy
       lastName: v.lastName, // required during aggregation for delivery boy
-      id: v._id
+      id: v._id,
     }
     let delivery = {
       otp,
       days: 1,
       start: vendor.address && vendor.address.coords,
-      finish: address && address.coords
+      finish: address && address.coords,
     }
     i.delivery = delivery
     i.vendor = vendor
+    fast2Sms({
+      // Order accepted for { #FF# }.\nQrNo: { #EE# } \nDelivery boy will reach you by { #DD# }  // FAST2SMS
+      phone: vendor.phone,
+      message: '29153',
+      variables: '{AA}|{FF}|{DD}|{CC}',
+      variables_values: `${i.qty}|${i.name}|${address.address}|${
+        i.price * i.qty
+      }`,
+    })
+    // sms({
+    //   phone: vendor.phone,
+    //   msg: `Order accepted for ${i.qty} ${product.name}.\nQrNo: ${address.address}\n`,
+    // })
   }
   let subtotal = await getSubTotal(items)
   let total = await getTotal(req.session.cart)
@@ -185,7 +199,7 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
       lastName: me.lastName,
       address: me.address,
       phone: me.phone,
-      id: userId
+      id: userId,
     },
     payment: { state: 'Pending', method: req.body.paymentMethod },
     platform: 'Mobile',
@@ -199,11 +213,29 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
       discount,
       shipping,
       qty,
-      tax
+      tax,
     },
-    coupon: cart.discount
+    coupon: cart.discount,
   }
   const o = await Order.create(orderDetails)
+  fast2Sms({
+    // Order accepted for { #FF# }.\nQrNo: { #EE# } \nDelivery boy will reach you by { #DD# }  // FAST2SMS
+    phone: me.phone,
+    message: '29150',
+    variables: '{DD}|{BB}|{EE}',
+    variables_values: `Misiki|${o.amount.total}|${o.orderNo}`,
+  })
+  // vm.sms({ // Order for {#FF#} is placed \r\nAmount to pay: {#AA#} \r\nExpected delivery: {#EE#}  // FAST2SMS
+  //   phone: o.phone,
+  //   msg: "8988",
+  //   variables: "{#FF#}|{#AA#}|{#EE#}",
+  //   variables_value: `||`
+  // })
+  // sms({
+  //   phone: me.phone,
+  //   msg: `Order for ${qty} items is placed \r\nAmount to pay: Rs${o.amount.total} - Misiki`,
+  // })
+
   // clear(req)
   // await User.updateOne(
   //   { _id: userId },
