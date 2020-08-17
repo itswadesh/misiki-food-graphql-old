@@ -23,7 +23,7 @@ export default gql`
       search: String
       sort: String
       category: String
-      active: String
+      active: Boolean
     ): SearchRes
     product(id: ID!): Product
     popular(
