@@ -94,7 +94,7 @@ export const orderStatuses = [
     title: 'Order Cancelled',
     body: 'Order cancelled by user',
     icon: '/images/order/account-verified.svg',
-    public: false,
+    public: true,
   },
 ]
 // prettier-ignore

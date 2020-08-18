@@ -3,7 +3,7 @@ import {
   IResolvers,
   UserInputError,
   ForbiddenError,
-  withFilter
+  withFilter,
 } from 'apollo-server-express'
 import {
   Request,
@@ -11,7 +11,7 @@ import {
   UserDocument,
   ReviewDocument,
   SettingsDocument,
-  ProductDocument
+  ProductDocument,
 } from '../types'
 import { validate, objectId } from '../validation'
 import { Review, Setting, Order, Product, User } from '../models'
@@ -44,21 +44,21 @@ const resolvers: IResolvers = {
             avg: { $avg: '$rating' },
             count: { $sum: 1 },
             total: { $sum: '$rating' },
-            reviews: { $addToSet: '$message' }
-          }
+            reviews: { $addToSet: '$message' },
+          },
         },
         {
           $project: {
             _id: 1,
-            avg: { $round: ['$avg', 1] },
+            avg: '$avg',
             count: 1,
             total: 1,
-            reviews: 1
-          }
-        }
+            reviews: 1,
+          },
+        },
       ])
       return reviews[0]
-    }
+    },
   },
   Mutation: {
     removeReview: async (
@@ -88,10 +88,10 @@ const resolvers: IResolvers = {
       if (!product) throw new UserInputError('Product not found')
       const order = await Order.findOne({
         'items.pid': new ObjectId(product._id),
-        'user.id': userId
+        'user.id': userId,
       })
       if (!order) throw new UserInputError('You have never ordered this item')
-      const p = order.items.find(element => element.pid == args.product)
+      const p = order.items.find((element) => element.pid == args.product)
       if (p.reviewed)
         throw new UserInputError('You have already reviewed this item...')
 
@@ -108,8 +108,8 @@ const resolvers: IResolvers = {
       // await Order.updateMany({ 'items.pid': new ObjectId(product._id), 'user.id': userId }, { $set: { 'items.$.reviewed': true } })
       updateStats(product)
       return review
-    }
-  }
+    },
+  },
 }
 
 export default resolvers
