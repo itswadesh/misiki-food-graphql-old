@@ -2,11 +2,11 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   extend type Query {
-    carts: [Cart!] @auth
-    abandoned: Cart @auth
+    carts: cartRes @admin
+    abandoned: cartRes @admin
     cart: Cart
     # checkCart(pid: ID!): Boolean
-    getCartQty(pid: ID!): Int!
+    getCartQty(pid: ID!, vid: ID!, options: String): Int!
     # getCartValue: Int!
   }
 
@@ -35,13 +35,23 @@ export default gql`
 
   type CartItem {
     pid: ID
+    vid: ID
     name: String
     img: String
     slug: String
     price: Float
     status: String
     vendor: Vendor
+    tracking: String
     qty: Int
     time: String
+    options: String
+  }
+
+  type cartRes {
+    data: [Cart]
+    count: Int
+    pageSize: Int
+    page: Int
   }
 `

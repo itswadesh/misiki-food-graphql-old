@@ -21,14 +21,13 @@ const settingSchema = new Schema(
       charge: Number,
       free: Number,
       method: String,
-      delivery_days: Number
+      delivery_days: Number,
     },
     enableTax: Boolean,
-    RAZORPAY_KEY: String,
     tax: {
       cgst: { type: Number, default: 0 },
       sgst: { type: Number, default: 0 },
-      igst: { type: Number, default: 0 }
+      igst: { type: Number, default: 0 },
     },
     currency_code: String,
     currency_symbol: String,
@@ -45,15 +44,19 @@ const settingSchema = new Schema(
     logoMobile: String,
     logoMobileDark: String,
     favicon: String,
-    CDN_URL: String,
+    CDN_URL: { type: String, default: '' },
     demo: Boolean,
     pageSize: Number,
     review: {
       enabled: { type: Boolean, default: true },
-      moderate: { type: Boolean, default: false }
+      moderate: { type: Boolean, default: false },
     },
     product: { moderate: false },
     GOOGLE_MAPS_API: String,
+    enableStripe: { type: Boolean, default: false },
+    enableRazorpay: { type: Boolean, default: false },
+    RAZORPAY_KEY_ID: String,
+    stripePublishableKey: String,
     facebook: String,
     twitter: String,
     google: String,
@@ -63,24 +66,24 @@ const settingSchema = new Schema(
     closedMessage: String,
     zips: Array,
     userRoles: { type: Array, default: ['user', 'vendor', 'manager', 'admin'] }, // This should be in ascending order of authority. e.g. In this case guest will not have access to any other role, where as admin will have the role of guest+user+vendor+manager+admin
-    orderStatuses: {
-      type: Array,
-      default: [
-        'Received',
-        'Order Placed',
-        'Order Accepted',
-        'Order Executed',
-        'Shipped',
-        'Delivered',
-        'Not in Stock',
-        'Cancellation Requested',
-        'Cancelled'
-      ]
-    },
-    paymentStatuses: { type: Array, default: ['Pending', 'Cancelled', 'Paid'] },
+    // orderStatuses: {
+    //   type: Array,
+    //   default: [
+    //     'Received',
+    //     'Order Placed',
+    //     'Order Accepted',
+    //     'Order Executed',
+    //     'Shipped',
+    //     'Delivered',
+    //     'Not in Stock',
+    //     'Cancellation Requested',
+    //     'Cancelled',
+    //   ],
+    // },
+    // paymentStatuses: { type: Array, default: ['Pending', 'Cancelled', 'Paid'] },
     paymentMethods: {
       type: Array,
-      default: ['Stripe', 'PayPal', 'COD', 'Instamojo']
+      default: ['Stripe', 'Razorpay', 'COD'],
     },
     returnReasons: {
       type: Array,
@@ -88,28 +91,28 @@ const settingSchema = new Schema(
         { val: 'DEFECTIVE_PRODUCT', name: 'Item or part defective' },
         {
           val: 'DAMAGED_PRODUCT',
-          name: 'Item or part was broken/damaged on arrival'
+          name: 'Item or part was broken/damaged on arrival',
         },
         { val: 'SIZE_FIT_ISSUES', name: 'Size fit issue' },
         { val: 'QUALITY_ISSUES', name: 'Quality issue' },
         { val: 'MISSHIPMENT', name: 'Received a different item' },
         { val: 'COLOR_STYLE_ISSUES', name: 'Color style issue' },
         { val: 'MISSING_ITEM', name: 'Item missing' },
-        { val: 'DEAD_ON_ARRIVAL', name: 'Item was dead on arrival' }
-      ]
+        { val: 'DEAD_ON_ARRIVAL', name: 'Item was dead on arrival' },
+      ],
     },
     sms: {
       enabled: Boolean,
       provider: { type: String, default: 'twilio' },
-      TWILIO_API_KEY: String
+      TWILIO_API_KEY: String,
     },
     email: {
       enabled: Boolean,
       SENDGRID_API_KEY: String,
-      from: { type: String, default: 'CodeNx.com <no-reply@litekart.in>' },
-      printers: { type: Array, default: ['CodeNx.com <print@hpeprint.com>'] },
-      cc: { type: Array, default: ['Swadesh Behera <swadesh@litekart.in>'] },
-      bcc: { type: Array, default: ['Customer Service <care@litekart.in>'] }
+      from: { type: String, default: 'misiki.in <no-reply@misiki.in>' },
+      printers: { type: Array, default: ['misiki.in <print@hpeprint.com>'] },
+      cc: { type: Array, default: ['Swadesh Behera <swadesh@misiki.in>'] },
+      bcc: { type: Array, default: ['Customer Service <care@misiki.in>'] },
     },
     login: {
       FACEBOOK_ID: String,
@@ -121,7 +124,7 @@ const settingSchema = new Schema(
       GITHUB_ID: String,
       GITHUB_SECRET: String,
       LINKEDIN_ID: String,
-      LINKEDIN_SECRET: String
+      LINKEDIN_SECRET: String,
     },
     payment: {
       STRIPE_APIKEY: String,
@@ -130,14 +133,18 @@ const settingSchema = new Schema(
       PAYPAL_CLIENT_SECRET: String,
       INSTAMOJO_SANDBOX_MODE: { type: Boolean, default: true },
       INSTAMOJO_API_KEY: String,
-      INSTAMOJO_AUTH_TOKEN: String
-    }
+      INSTAMOJO_AUTH_TOKEN: String,
+    },
   },
   {
     versionKey: false,
-    timestamps: true
+    timestamps: true,
   }
 )
+
+settingSchema.index({
+  '$**': 'text',
+})
 
 export const Setting = mongoose.model<SettingsDocument>(
   'Setting',

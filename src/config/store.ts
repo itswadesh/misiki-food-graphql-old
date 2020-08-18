@@ -31,6 +31,7 @@ export const sorts = [
   { name: 'Price low to high', val: 'price' },
   { name: 'Price high to low', val: '-price' },
 ]
+export const paymentStatuses = ['pending', 'cancelled', 'paid']
 
 export const orderStatuses = [
   {

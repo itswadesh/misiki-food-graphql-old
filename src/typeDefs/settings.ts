@@ -5,8 +5,10 @@ export default gql`
     shutter: Boolean
     worldCurrencies: [String!]
     orderStatuses: [OrderStatus!]
+    paymentStatuses: [String!]
     sorts: [NameVal!]
     timesList: [String!]
+    userRoles: [String!]
     settings: Setting
     settingsAdmin: Setting
   }
@@ -21,7 +23,6 @@ export default gql`
       description: String
       minimumOrderValue: Int
       shipping: ShippingIp
-      RAZORPAY_KEY: String
       tax: TaxIp
       shopEmail: String
       shopPhone: String
@@ -54,17 +55,21 @@ export default gql`
       product: ProductSettingIp
       login: LoginSettingIp
       GOOGLE_MAPS_API: String
+      RAZORPAY_KEY_ID: String
+      stripePublishableKey: String
+      enableStripe: Boolean
+      enableRazorpay: Boolean
       facebook: String
       twitter: String
       google: String
       instagram: String
       enableTax: Boolean
       locationExpiry: Float
-    ): Setting @admin
+    ): Setting @admin @demo
   }
 
   extend type Subscription {
-    settingsUpdated: Setting @admin
+    settingsUpdated: Setting
   }
 
   type OrderStatus {
@@ -72,6 +77,8 @@ export default gql`
     title: String
     body: String
     icon: String
+    public: Boolean
+    index: Int
   }
 
   input ProductSettingIp {
@@ -168,6 +175,11 @@ export default gql`
     val: String
   }
 
+  input NameValIp {
+    name: String
+    val: String
+  }
+
   type Sms {
     enabled: Boolean
   }
@@ -196,7 +208,7 @@ export default gql`
     currency_decimals: Int
     userRoles: [String]
     sorts: [NameVal]
-    RAZORPAY_KEY: String
+    RAZORPAY_KEY_ID: String
     tax: Tax
     shopEmail: String
     shopPhone: String
@@ -216,7 +228,7 @@ export default gql`
     closed: Boolean
     closedMessage: String
     zips: [String]
-    orderStatuses: [String]
+    orderStatuses: [OrderStatus]
     paymentStatuses: [String]
     sms: Sms
     email: Email
@@ -224,6 +236,9 @@ export default gql`
     product: ProductSetting
     login: LoginSetting
     GOOGLE_MAPS_API: String
+    stripePublishableKey: String
+    enableStripe: Boolean
+    enableRazorpay: Boolean
     facebook: String
     twitter: String
     google: String

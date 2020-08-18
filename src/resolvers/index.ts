@@ -16,6 +16,7 @@ import settings from './settings'
 import banner from './banner'
 import city from './city'
 import emailTemplate from './emailTemplate'
+import paymentMethod from './paymentMethod'
 
 export default [
   user,
@@ -35,5 +36,6 @@ export default [
   wishlist,
   banner,
   city,
-  emailTemplate
+  emailTemplate,
+  paymentMethod,
 ]

@@ -11,6 +11,8 @@ import {
   sorts,
   timesList,
   orderStatuses,
+  userRoles,
+  paymentStatuses,
 } from './../config'
 
 const SETTINGS_UPDATED = 'SETTINGS_UPDATED'
@@ -30,14 +32,25 @@ const resolvers: IResolvers = {
     orderStatuses: (root, args, { req }: { req: Request }, info) => {
       return orderStatuses.filter((o) => o.public)
     },
+    paymentStatuses: (root, args, { req }: { req: Request }, info) => {
+      return paymentStatuses
+    },
     sorts: (root, args, { req }: { req: Request }, info) => {
       return sorts
     },
     timesList: (root, args, { req }: { req: Request }, info) => {
       return timesList
     },
-    settings: (root, args, { req }: { req: Request }, info) => {
-      return Setting.findOne({}, fields(info)).exec()
+    userRoles: (root, args, { req }: { req: Request }, info) => {
+      return userRoles
+    },
+    settings: async (root, args, { req }: { req: Request }, info) => {
+      let s: any = await Setting.findOne({}, fields(info)).exec()
+      s.userRoles = userRoles
+      s.paymentStatuses = paymentStatuses
+      s.orderStatuses = orderStatuses
+      s.worldCurrencies = worldCurrencies
+      return s
     },
     settingsAdmin: (root, args, { req }: { req: Request }, info) => {
       args.uid = req.session.userId
