@@ -84,12 +84,14 @@ export default gql`
   input InputInfo {
     public: Boolean
     restaurant: String
+    about: String
     kitchenPhotos: [String]
   }
 
   type Info {
     public: Boolean
     restaurant: String
+    about: String
     kitchenPhotos: [String]
   }
 
