@@ -1,7 +1,7 @@
 import {
   IResolvers,
   UserInputError,
-  AuthenticationError
+  AuthenticationError,
 } from 'apollo-server-express'
 import {
   Request,
@@ -9,7 +9,7 @@ import {
   UserDocument,
   ChatDocument,
   InfoDocument,
-  AddressDocument
+  AddressDocument,
 } from '../types'
 import {
   signUp,
@@ -19,7 +19,7 @@ import {
   validate,
   registerSchema,
   loginSchema,
-  changePasswordSchema
+  changePasswordSchema,
 } from '../validation'
 import { logIn, verifyOtp, signOut, changePassword } from '../auth'
 import { User } from '../models'
@@ -47,7 +47,7 @@ const resolvers: IResolvers = {
     ): Promise<UserDocument | null> => {
       await objectId.validateAsync(args)
       return User.findById(args.id, fields(info))
-    }
+    },
   },
   Mutation: {
     changePassword: async (
@@ -171,7 +171,7 @@ const resolvers: IResolvers = {
         firstName,
         lastName,
         password,
-        referrer
+        referrer,
       })
 
       logIn(req, user.id)
@@ -208,8 +208,8 @@ const resolvers: IResolvers = {
       { req, res }: { req: Request; res: Response }
     ): Promise<boolean> => {
       return signOut(req, res)
-    }
-  }
+    },
+  },
 }
 
 export default resolvers

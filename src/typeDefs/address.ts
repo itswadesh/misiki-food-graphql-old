@@ -49,13 +49,13 @@ export default gql`
     firstName: String
     lastName: String
     address: String
+    coords: Coords
     town: String
     city: String
     district: String
-    country: String
     state: String
-    coords: Coords
     zip: Int
+    country: String
     phone: String
     active: Boolean
     createdAt: String!
