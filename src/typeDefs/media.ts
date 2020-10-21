@@ -7,9 +7,9 @@ export default gql`
   }
 
   extend type Mutation {
-    singleUpload(file: Upload!, folder: String): File
-    fileUpload(files: [Upload!], folder: String): [File]
-    deleteFile(path: String): File
+    singleUpload(file: Upload!, folder: String): File 
+    fileUpload(files: [Upload!], folder: String): [File] 
+    deleteFile(path: String): File 
     createMedia(
       originalFilename: String
       src: String

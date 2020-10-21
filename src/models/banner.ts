@@ -7,6 +7,7 @@ const bannerSchema = new Schema(
     heading: String,
     img: String,
     type: String,
+    city: String,
     active: { type: Boolean, default: true },
     q: String
   },

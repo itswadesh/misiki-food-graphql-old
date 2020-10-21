@@ -32,9 +32,10 @@ export default gql`
       limit: Int
       search: String
       sort: String
+      city: String
       q: String
     ): SearchRes
-    bestSellers: BestSellers
+    bestSellers(city: String): BestSellers
     productSlug(slug: String!): Product
     search(
       page: Int

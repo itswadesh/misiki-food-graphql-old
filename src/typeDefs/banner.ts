@@ -8,6 +8,7 @@ export default gql`
       limit: Int
       sort: String
       type: String
+      city: String
       active: Boolean
     ): bannerRes
     banner(id: String!): Banner
@@ -20,6 +21,7 @@ export default gql`
       heading: String
       img: String!
       type: String
+      city: String
       active: Boolean
     ): Banner @auth
   }
@@ -30,6 +32,7 @@ export default gql`
     heading: String
     img: String
     type: String
+    city: String
     active: Boolean
     createdAt: String!
     updatedAt: String!

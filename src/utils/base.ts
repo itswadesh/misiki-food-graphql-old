@@ -18,7 +18,6 @@ export const index = async ({ model, args, info, userId }: any) => {
   delete args.populate
   delete args.limit
   let where = args
-
   for (let k in where) {
     if (
       (where[k] == '' ||

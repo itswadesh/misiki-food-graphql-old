@@ -18,7 +18,7 @@ export const imgUrl = (img: any, single: Boolean) => {
       return {
         small: url + i.small,
         medium: url + i.medium,
-        large: url + i.large
+        large: url + i.large,
       }
     })
   // If a single object than an array
@@ -26,7 +26,7 @@ export const imgUrl = (img: any, single: Boolean) => {
     return {
       small: url + img.small,
       medium: url + img.medium,
-      large: url + img.large
+      large: url + img.large,
     }
 }
 export const store1ToFileSystem = async (args: {
@@ -75,7 +75,7 @@ const fileWriteRequest = async (stream: any, path: PathLike) => {
   return new Promise((resolve, reject) => {
     const writeStream = createWriteStream(path)
     writeStream.on('finish', resolve)
-    writeStream.on('error', error => {
+    writeStream.on('error', (error) => {
       unlink(path, () => {
         reject(error)
       })
@@ -125,7 +125,7 @@ export const generateImg = async (
       if (img.indexOf('?') > 0) img = img.substring(0, img.indexOf('?')) // Remove anything after ?
       try {
         await fsx.moveSync(url, UPLOAD_DIR + '/' + finalDir + filename, {
-          overwrite: true
+          overwrite: true,
         })
       } catch (e) {
         // console.log('Image upload err:: ', e.toString());
@@ -198,7 +198,7 @@ const readFile = async (url: string) => {
       stream = await request({ url, encoding: null })
     } else {
       stream = await fsx.createReadStream(path.resolve(url))
-      stream.on('error', function(err: Error) {})
+      stream.on('error', function (err: Error) {})
     }
     return stream
   } catch (e) {
@@ -208,7 +208,7 @@ const readFile = async (url: string) => {
 }
 
 export const checkIfImage = async (photos: any[]) => {
-  let p = await photos.map(photo => {
+  let p = await photos.map((photo) => {
     if (
       !photo ||
       !photo.originalFilename

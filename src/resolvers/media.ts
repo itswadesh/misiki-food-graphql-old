@@ -3,7 +3,7 @@ import {
   IResolvers,
   UserInputError,
   ForbiddenError,
-  withFilter
+  withFilter,
 } from 'apollo-server-express'
 import { Request, UserDocument, MediaDocument } from '../types'
 import { validate, mediaSchema, objectId } from '../validation'
@@ -13,7 +13,7 @@ import pubsub from '../pubsub'
 import {
   storeToFileSystem,
   store1ToFileSystem,
-  deleteFile
+  deleteFile,
 } from '../utils/image'
 
 const MESSAGE_SENT = 'MESSAGE_SENT'
@@ -31,7 +31,7 @@ const resolvers: IResolvers = {
     ): Promise<MediaDocument | null> => {
       await objectId.validateAsync(args)
       return Media.findById(args.id, fields(info))
-    }
+    },
   },
   Mutation: {
     deleteFile: async (root, args, { req }: { req: Request }) => {
@@ -68,8 +68,8 @@ const resolvers: IResolvers = {
       await media.save()
 
       return media
-    }
-  }
+    },
+  },
 }
 
 export default resolvers

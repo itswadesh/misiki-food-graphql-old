@@ -23,7 +23,7 @@ const resolvers: IResolvers = {
       const end = closed.to.hour * 60 + closed.to.minute
       const date = new Date()
       const now = date.getHours() * 60 + date.getMinutes()
-      if (start <= now && now <= end) throw new UserInputError(closed.message)
+      if (start <= now && now <= end) return true //throw new UserInputError(closed.message)
       else return true
     },
     worldCurrencies: (root, args, { req }: { req: Request }, info) => {
