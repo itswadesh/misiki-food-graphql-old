@@ -2,7 +2,7 @@ import { Types } from 'mongoose'
 import { IResolvers, UserInputError, withFilter } from 'apollo-server-express'
 import { Request, SettingsDocument } from '../types'
 import { objectId, ifImage } from '../validation'
-import { Setting, Product } from '../models'
+import { Setting, Product, User } from '../models'
 import { fields, hasSubfields } from '../utils'
 import pubsub from '../pubsub'
 import {
@@ -29,8 +29,17 @@ const resolvers: IResolvers = {
     worldCurrencies: (root, args, { req }: { req: Request }, info) => {
       return worldCurrencies
     },
-    orderStatuses: (root, args, { req }: { req: Request }, info) => {
-      return orderStatuses.filter((o) => o.public)
+    orderStatuses:async (root, args, { req }: { req: Request }, info) => {
+     const uid = req.session.userId
+     const role = (await User.findById(uid) || {}).role
+      if(role == 'admin')
+        return orderStatuses
+      else if(role == 'chef')
+        return orderStatuses.filter((o) => o.chef) 
+        else if(role == 'delivery')
+        return orderStatuses.filter((o) => o.delivery)
+      else
+        return orderStatuses.filter((o) => o.public)
     },
     paymentStatuses: (root, args, { req }: { req: Request }, info) => {
       return paymentStatuses

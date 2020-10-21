@@ -40,13 +40,15 @@ export const orderStatuses = [
     body: 'Waiting for the chef to confirm the order',
     icon: '/images/order/chef.png',
     public: true,
+    chef: true,
   },
   {
     status: 'Food is being prepared',
-    title: 'Chef at work!!',
+    title: 'Chef at Work!!',
     body: 'Chef is preparing your order',
     icon: '/images/order/chef.png',
     public: true,
+    chef: true,
   },
   {
     status: 'Ready',
@@ -54,13 +56,15 @@ export const orderStatuses = [
     body: 'Your order is ready for self pickup',
     icon: '/images/order/chef.svg',
     public: true,
+    chef: true,
   },
   {
-    status: 'Delivery Guy Assigned',
+    status: 'Delivery guy assigned',
     title: 'Delivery Guy Assigned',
     body: 'On the way to pickup your order',
     icon: '/images/order/food-delivery-man.png',
     public: true,
+    delivery: true,
   },
   {
     status: 'Out for delivery',
@@ -68,6 +72,7 @@ export const orderStatuses = [
     body: 'Order has been picked up and on the way',
     icon: '/images/order/delivery-man.svg',
     public: true,
+    delivery: true,
   },
   {
     status: 'Delivered',
@@ -75,13 +80,15 @@ export const orderStatuses = [
     body: 'The order has been delivered to you',
     icon: '/images/order/account-verified.svg',
     public: true,
+    delivery: true,
   },
   {
-    status: 'Payment Pending',
+    status: 'Payment pending',
     title: 'Payment Pending',
     body: 'Payment for order is pending',
     icon: '/images/order/account-verified.svg',
     public: false,
+    delivery: true,
   },
   {
     status: 'NIS',
@@ -89,6 +96,7 @@ export const orderStatuses = [
     body: 'Item is out of stock and could not delivered',
     icon: '/images/order/account-verified.svg',
     public: false,
+    delivery: true,
   },
   {
     status: 'Cancelled',
