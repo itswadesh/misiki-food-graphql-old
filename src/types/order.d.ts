@@ -37,6 +37,9 @@ export interface OrderDocument extends Document {
     active: boolean
     uid: UserDocument['_id']
   }
+  user:{
+    phone:string
+  }
   vendor: {
     restaurant: string
     id: UserDocument['_id']

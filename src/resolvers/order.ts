@@ -25,6 +25,7 @@ import {
   validateCart,
   validateCoupon,
   calculateSummary,
+  fast2Sms,
 } from '../utils'
 import { ObjectId } from 'mongodb'
 import pubsub from '../pubsub'
@@ -521,7 +522,14 @@ const resolvers: IResolvers = {
       )
       if (!order) throw new UserInputError('Order not found.')
       pubsub.publish(ORDER_UPDATED, { orderUpdated: order })
-
+      if(args.status == 'Cancelled'){
+        fast2Sms({
+          phone: order.user.phone,
+          message: '29150',
+          variables: '{DD}',
+          variables_values: `Misiki order no: ${order.orderNo} cancelled`,
+        })
+      }
       return order
     },
     collectPayment: async (
