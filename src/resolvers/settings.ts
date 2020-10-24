@@ -74,7 +74,7 @@ const resolvers: IResolvers = {
       { req }: { req: Request }
     ): Promise<Boolean> => {
       const p = await Product.updateMany(
-        { stock: { $gt: 0 } },
+        { city:'Sunabeda', stock: { $gt: 0 } },
         { $set: { stock: 0 } }
       )
       return p.nModified

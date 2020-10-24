@@ -67,7 +67,7 @@ export const createApp = (store?: session.Store) => {
 
   server.applyMiddleware({ app, cors: false })
 
-  // To backup a database
+  // Close restaurant at 6:00PM
   cron.schedule('00 18 * * *', async function () {
     var now = Date.now(),
       oneDay = 1000 * 60 * 60 * 24,
@@ -87,7 +87,7 @@ export const createApp = (store?: session.Store) => {
     ] = dateTimeFormat.formatToParts(now)
 
     console.log('---------------------')
-    console.log('Running Cron Job - Misiki', `${day}-${month}-${year}`)
+    console.log('Running Cron Job - Sunabeda', `${day}-${month}-${year}`)
     try {
       await Axios({
         url: `http://localhost:6600/graphql`,
@@ -103,7 +103,7 @@ export const createApp = (store?: session.Store) => {
     } catch (e) {
       console.log('CRON Error...', e)
     }
-    console.log('Cron Job Finished - Misiki')
+    console.log('Cron Job Finished - Sunabeda')
     console.log('---------------------')
   })
 

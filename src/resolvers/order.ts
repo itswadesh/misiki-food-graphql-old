@@ -525,8 +525,8 @@ const resolvers: IResolvers = {
       if(args.status == 'Cancelled'){
         fast2Sms({
           phone: order.user.phone,
-          message: '29150',
-          variables: '{DD}',
+          message: '38458',
+          variables: '{FF}',
           variables_values: `Misiki order no: ${order.orderNo} cancelled`,
         })
       }
