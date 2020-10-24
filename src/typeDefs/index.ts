@@ -21,6 +21,7 @@ import banner from './banner'
 import city from './city'
 import emailTemplate from './emailTemplate'
 import paymentMethod from './paymentMethod'
+import state from './state'
 
 export default [
   root,
@@ -44,6 +45,7 @@ export default [
   settings,
   banner,
   city,
+  state,
   emailTemplate,
   paymentMethod,
 ]

@@ -1,5 +1,4 @@
 import { Document } from 'mongoose'
-import { UserDocument, ChatDocument } from './'
 
 export interface AddressDocument extends Document {
   email: string
@@ -7,8 +6,8 @@ export interface AddressDocument extends Document {
   lastName: string
   address: string
   town: string
-  city: string
   district: string
+  city: string
   country: string
   state: string
   coords: { lat: [number, number]; lng: [number, number] }

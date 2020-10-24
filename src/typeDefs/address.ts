@@ -24,7 +24,22 @@ export default gql`
       zip: Int
       phone: String
     ): Address @auth
-
+    saveAddress(
+      id: String
+      email: String
+      firstName: String
+      lastName: String
+      address: String
+      town: String
+      district: String
+      city: String
+      country: String
+      state: String
+      coords: Geo
+      zip: Int
+      phone: String
+      active: Boolean
+    ): Address @auth @demo
     updateAddress(
       id: ID!
       email: String

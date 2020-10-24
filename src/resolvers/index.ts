@@ -17,6 +17,7 @@ import banner from './banner'
 import city from './city'
 import emailTemplate from './emailTemplate'
 import paymentMethod from './paymentMethod'
+import state from './state'
 
 export default [
   user,
@@ -36,6 +37,7 @@ export default [
   wishlist,
   banner,
   city,
+  state,
   emailTemplate,
   paymentMethod,
 ]

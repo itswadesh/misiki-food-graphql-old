@@ -10,7 +10,7 @@ export const addressSchema = Joi.object({
   district: Joi.allow('').label('District'),
   city: Joi.allow('').label('City'),
   country: Joi.allow('').label('Country'),
-  state: Joi.allow('').label('State'),
+  state: Joi.string().required().label('State'),
   zip: Joi.allow('').label('Zip'),
   phone: Joi.allow('').label('Phone'),
 })

@@ -52,7 +52,7 @@ const resolvers: IResolvers = {
       info
     ): Promise<AddressDocument[]> => {
       const { userId } = req.session
-      return Address.find({ user: userId }, fields(info)).exec()
+      return Address.find({ user: userId }, fields(info)).sort('-updatedAt').exec()
     },
     address: async (
       root,
@@ -89,6 +89,24 @@ const resolvers: IResolvers = {
       await address.save()
       User.updateOne({ _id: userId }, { address })
       return address
+    },
+    saveAddress: async (
+      root,
+      args,
+      { req }: { req: Request }
+    ): Promise<AddressDocument | null> => {
+      const { userId } = req.session
+      args.user = userId
+      if (args.id == 'new') return await Address.create(args)
+      else {
+        const address = await Address.findOneAndUpdate(
+          { _id: args.id },
+          args,
+          { new: true, upsert: true }
+        )
+        await address.save() // To fire pre save hoook
+        return address
+      }
     },
     updateAddress: async (
       root,
