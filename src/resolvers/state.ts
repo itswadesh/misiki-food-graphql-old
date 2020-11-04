@@ -1,12 +1,9 @@
 import { Types } from 'mongoose'
 import {
   IResolvers,
-  UserInputError,
-  ForbiddenError,
-  withFilter,
 } from 'apollo-server-express'
-import { Request, UserDocument, StateDocument } from '../types'
-import { validate, stateSchema, objectId } from '../validation'
+import { Request, StateDocument } from '../types'
+import { objectId } from '../validation'
 import { State, Slug } from '../models'
 import { fields, hasSubfields, index } from '../utils'
 

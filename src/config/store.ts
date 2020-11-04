@@ -8,15 +8,17 @@ export const STATIC_PATH = './../misiki-images'
 
 export const UPLOAD_DIR = '/images/'
 
-export const startT = { h: 18, m: 0 }
-export const start = '06:00 pm'
+// Used for bestseller query
+export const startT = { h: 20, m: 0 }
+export const start = '08:00 pm'
 export const endT = { h: 22, m: 0 }
 export const end = '10:00 pm'
 
+// Used for shutter
 export const closed = {
-  from: { hour: 18, minute: 0 },
+  from: { hour: 20, minute: 0 },
   to: { hour: 22, minute: 0 },
-  message: 'Sorry we are closed from 6:00 PM to 10:00 PM',
+  message: 'Sorry we are closed from 8:00 PM to 10:00 PM',
 }
 // prettier-ignore
 export const userRoles = ['user', 'chef', 'delivery', 'vendor', 'manager', 'admin'] // This should be in ascending order of authority. e.g. In this case guest will not have access to any other role, where as admin will have the role of guest+user+vendor+manager+admin
@@ -108,3 +110,23 @@ export const orderStatuses = [
 ]
 // prettier-ignore
 export const timesList = ['1 AM', '2 AM', '3 AM', '4 AM', '5 AM', '6 AM', '7 AM', '8 AM', '9 AM', '10 AM', '11 AM', '12 PM', '1 PM', '2 PM', '3 PM', '4 PM', '5 PM', '6 PM', '7 PM', '8 PM', '9 PM', '10 PM', '11 PM', '12 AM']
+
+export const getDMY=()=>{
+    var now = Date.now(),
+      oneDay = 1000 * 60 * 60 * 24,
+      today = new Date(now - (now % oneDay)),
+      tomorrow = new Date(today.valueOf() + oneDay)
+    const dateTimeFormat = new Intl.DateTimeFormat('en', {
+      year: 'numeric',
+      month: 'short',
+      day: '2-digit',
+    })
+    const [
+      { value: month },
+      ,
+      { value: day },
+      ,
+      { value: year },
+    ] = dateTimeFormat.formatToParts(now)
+    return { day, month, year }
+}

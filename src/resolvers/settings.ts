@@ -73,13 +73,37 @@ const resolvers: IResolvers = {
       args,
       { req }: { req: Request }
     ): Promise<Boolean> => {
+      let q:any = {stock: { $gt: 0 }}
+      if(args.city) q.city= args.city
+      if(args.time) q.time= args.time
       const p = await Product.updateMany(
-        { city:'Sunabeda', stock: { $gt: 0 } },
+        q,
         { $set: { stock: 0 } }
       )
       return p.nModified
     },
-
+    // closeDinner: async (
+    //       root,
+    //       args,
+    //       { req }: { req: Request }
+    //     ): Promise<Boolean> => {
+    //   const p = await Product.updateMany(
+    //     { city:args.city, type:'Dinner', stock: { $gt: 0 } },
+    //     { $set: { stock: 0 } }
+    //   )
+    //   return p.nModified
+    // },
+    // closeLunch: async (
+    //       root,
+    //       args,
+    //       { req }: { req: Request }
+    //     ): Promise<Boolean> => {
+    //   const p = await Product.updateMany(
+    //     { city:args.city, type:'Launch', stock: { $gt: 0 } },
+    //     { $set: { stock: 0 } }
+    //   )
+    //   return p.nModified
+    // },
     saveSettings: async (
       root,
       args,
