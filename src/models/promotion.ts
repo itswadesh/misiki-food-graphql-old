@@ -1,5 +1,6 @@
 import mongoose, { Schema } from 'mongoose'
 import { PromotionDocument } from '../types'
+const { ObjectId } = Schema.Types
 
 const promotionSchema = new Schema(
   {
@@ -12,7 +13,7 @@ const promotionSchema = new Schema(
     action: { type: Object, default: { type: 'Fixed', val: '0' } },
     description: String,
     img: String,
-    uid: String,
+    user: { type: ObjectId, ref: 'User' },
     featured: Boolean,
     priority: Number,
     validFromDate: { type: Date, default: Date.now() },

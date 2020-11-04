@@ -219,7 +219,8 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
     },
     coupon: cart.discount,
   }
-  const o = await Order.create(orderDetails)
+  let o = new Order(orderDetails)
+  await o.save()
   fast2Sms({
     // Order accepted for { #FF# }.\nQrNo: { #EE# } \nDelivery boy will reach you by { #DD# }  // FAST2SMS
     phone: me.phone,

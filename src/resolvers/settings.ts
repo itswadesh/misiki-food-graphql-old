@@ -18,7 +18,7 @@ import {
 const SETTINGS_UPDATED = 'SETTINGS_UPDATED'
 const resolvers: IResolvers = {
   Query: {
-    shutter: (root, args, { req }: { req: Request }, info) => {
+    shutter: (root:any, args:any, { req }: { req: Request }, info) => {
       const start = closed.from.hour * 60 + closed.from.minute
       const end = closed.to.hour * 60 + closed.to.minute
       const date = new Date()
@@ -26,10 +26,10 @@ const resolvers: IResolvers = {
       if (start <= now && now <= end) return true //throw new UserInputError(closed.message)
       else return true
     },
-    worldCurrencies: (root, args, { req }: { req: Request }, info) => {
+    worldCurrencies: (root:any, args:any, { req }: { req: Request }, info) => {
       return worldCurrencies
     },
-    orderStatuses:async (root, args, { req }: { req: Request }, info) => {
+    orderStatuses:async (root:any, args:any, { req }: { req: Request }, info) => {
      const uid = req.session.userId
      const role = (await User.findById(uid) || {}).role
       if(role == 'admin')
@@ -41,19 +41,19 @@ const resolvers: IResolvers = {
       else
         return orderStatuses.filter((o) => o.public)
     },
-    paymentStatuses: (root, args, { req }: { req: Request }, info) => {
+    paymentStatuses: (root:any, args:any, { req }: { req: Request }) => {
       return paymentStatuses
     },
-    sorts: (root, args, { req }: { req: Request }, info) => {
+    sorts: (root:any, args:any, { req }: { req: Request }, info) => {
       return sorts
     },
-    timesList: (root, args, { req }: { req: Request }, info) => {
+    timesList: (root:any, args:any, { req }: { req: Request }, info) => {
       return timesList
     },
-    userRoles: (root, args, { req }: { req: Request }, info) => {
+    userRoles: (root:any, args:any, { req }: { req: Request }, info) => {
       return userRoles
     },
-    settings: async (root, args, { req }: { req: Request }, info) => {
+    settings: async (root:any, args:any, { req }: { req: Request }, info) => {
       let s: any = await Setting.findOne({}, fields(info)).exec()
       s.userRoles = userRoles
       s.paymentStatuses = paymentStatuses
@@ -61,16 +61,16 @@ const resolvers: IResolvers = {
       s.worldCurrencies = worldCurrencies
       return s
     },
-    settingsAdmin: (root, args, { req }: { req: Request }, info) => {
-      args.uid = req.session.userId
+    settingsAdmin: (root:any, args:any, { req }: { req: Request }, info) => {
+      // args.user = req.session.userId
       return Setting.find({}, fields(info)).exec()
     },
   },
 
   Mutation: {
     closeRestaurant: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request }
     ): Promise<Boolean> => {
       let q:any = {stock: { $gt: 0 }}
@@ -83,8 +83,8 @@ const resolvers: IResolvers = {
       return p.nModified
     },
     // closeDinner: async (
-    //       root,
-    //       args,
+    //       root:any,
+    //       args:any,
     //       { req }: { req: Request }
     //     ): Promise<Boolean> => {
     //   const p = await Product.updateMany(
@@ -94,8 +94,8 @@ const resolvers: IResolvers = {
     //   return p.nModified
     // },
     // closeLunch: async (
-    //       root,
-    //       args,
+    //       root:any,
+    //       args:any,
     //       { req }: { req: Request }
     //     ): Promise<Boolean> => {
     //   const p = await Product.updateMany(
@@ -105,8 +105,8 @@ const resolvers: IResolvers = {
     //   return p.nModified
     // },
     saveSettings: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request }
     ): Promise<SettingsDocument> => {
       const { userId } = req.session
@@ -131,7 +131,7 @@ const resolvers: IResolvers = {
     settingsUpdated: {
       resolve: (
         { settingsUpdated }: { settingsUpdated: SettingsDocument },
-        args,
+        args:any,
         ctx,
         info
       ) => {

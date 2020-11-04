@@ -5,7 +5,7 @@ export const generateOTP = () => {
   let otp = Math.floor(1000 + Math.random() * 9000)
   return otp
 }
-export const requestOTP = async (phone: string, otp: number) => {
+export const requestOTP = async (phone: string, otp: string) => {
   try {
     sms({ phone, msg: `Hi. ${otp} is your OTP to login to Misiki`, otp })
   } catch (e) {

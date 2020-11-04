@@ -54,9 +54,9 @@ export const index = async ({ model, args, info, userId }: any) => {
     limit = setting.pageSize || 10
     skip = (page - 1) * (setting.pageSize || 10)
   }
-  if (args.uid) {
+  if (args.user) {
     // Find only records that belong to the logged in user
-    where.uid = args.uid
+    where.user = args.user
   }
   let searchString = where
   if (search != 'null' && !!search)
@@ -121,9 +121,9 @@ export const indexSub = async ({ model, args, info }: any) => {
     limit = setting.pageSize || 10
     skip = (page - 1) * (setting.pageSize || 10)
   }
-  if (args.uid) {
+  if (args.user) {
     // Find only records that belong to the logged in user
-    where.uid = args.uid
+    where.user = args.user
   }
   let searchString = where
   if (search != 'null' && !!search)

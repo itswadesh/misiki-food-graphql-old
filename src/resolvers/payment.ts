@@ -26,11 +26,11 @@ var instance = new Razorpay({
 
 const resolvers: IResolvers = {
   Query: {
-    payments: (root, args, { req }: { req: Request }, info) => {
+    payments: (root:any, args:any, { req }: { req: Request }, info) => {
       return index({ model: Payment, args, info })
     },
     payment: async (
-      root,
+      root:any,
       args: { id: string },
       ctx,
       info
@@ -38,7 +38,7 @@ const resolvers: IResolvers = {
       await objectId.validateAsync(args)
       return Payment.findById(args.id, fields(info))
     },
-    razorpays: async (root, args, ctx, info): Promise<PaymentDocument[]> => {
+    razorpays: async (root:any, args:any, ctx, info): Promise<PaymentDocument[]> => {
       const payments = await instance.payments.all()
       payments.data = payments.items
       return payments
@@ -46,7 +46,7 @@ const resolvers: IResolvers = {
   },
   Mutation: {
     razorpay: async (
-      root,
+      root:any,
       args: { address: any },
       { req }
     ): Promise<PaymentDocument> => {
@@ -75,7 +75,7 @@ const resolvers: IResolvers = {
       // }
     },
     capturePay: async (
-      root,
+      root:any,
       args: { payment_id: string; oid: string },
       { req }: { req: Request },
       info

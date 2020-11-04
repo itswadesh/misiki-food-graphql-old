@@ -13,17 +13,17 @@ import { clearCart, addToCart } from '../utils/cart'
 
 const resolvers: IResolvers = {
   Query: {
-    abandoned: async (root, args, ctx, info): Promise<CartDocument[]> => {
+    abandoned: async (root:any, args:any, ctx, info): Promise<CartDocument[]> => {
       return await Cart.find({ subtotal: { $gt: 0 } }, fields(info))
         .sort('-updatedAt')
         .exec()
     },
-    carts: (root, args, ctx, info): Promise<CartDocument[]> => {
+    carts: (root:any, args:any, ctx, info): Promise<CartDocument[]> => {
       return Cart.find({}, fields(info)).exec()
     },
     getCartQty: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request },
       info
     ): Promise<Number> => {
@@ -31,8 +31,8 @@ const resolvers: IResolvers = {
       return 10
     },
     cart: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request },
       info
     ): Promise<CartDocument | null> => {
@@ -46,7 +46,7 @@ const resolvers: IResolvers = {
   },
   Mutation: {
     addToCart: async (
-      root,
+      root:any,
       args: {
         pid: string
         vid: string
@@ -61,7 +61,7 @@ const resolvers: IResolvers = {
       // await cart.save()
       return addToCart(req, { pid, vid, qty, replace })
     },
-    clearCart: async (root, _, { req }: { req: Request }): Promise<Boolean> => {
+    clearCart: async (root:any, _, { req }: { req: Request }): Promise<Boolean> => {
       clearCart(req)
       return true
     }

@@ -25,27 +25,27 @@ import product from '../typeDefs/product'
 const MESSAGE_SENT = 'MESSAGE_SENT'
 const resolvers: IResolvers = {
   Query: {
-    productsByIds: (root, args, { req }: { req: Request }, info) => {
+    productsByIds: (root:any, args:any, { req }: { req: Request }, info) => {
       return Product.find({
         _id: {
           $in: args.ids,
         },
       }).limit(10)
     },
-    products: (root, args, { req }: { req: Request }, info) => {
+    products: (root:any, args:any, { req }: { req: Request }, info) => {
       args.populate = 'category'
       // if (args.active) {
       //   args.stock = { $gt: 0 }
       // }
       return index({ model: Product, args, info })
     },
-    popular: (root, args, { req }: { req: Request }, info) => {
+    popular: (root:any, args:any, { req }: { req: Request }, info) => {
       args.stock = { $gt: 0 }
       args.sort = '-popularity'
       args.limit = 10
       return index({ model: Product, args, info })
     },
-    bestSellers: async (root, args, { req }: { req: Request }, info) => {
+    bestSellers: async (root:any, args:any, { req }: { req: Request }, info) => {
       let q: any = {}
       if (req.query.daily && req.query.daily != 'null') {
         q.daily = req.query.daily
@@ -53,7 +53,8 @@ const resolvers: IResolvers = {
       if (req.query.type && req.query.type != 'null') {
         q.type = req.query.type
       }
-      if (req.query.search) q.q = { $regex: new RegExp(req.query.search, 'ig') }
+      const s:any = req.query.search
+      if (req.query.search) q.q = { $regex: new RegExp(s, 'ig') }
       // q.stock = { $gt: 0 }
 
       const { start, end } = getStartEndDate3(0)
@@ -68,18 +69,18 @@ const resolvers: IResolvers = {
       let t4 = await getData(startEnd4.start, startEnd4.end, q)
       return { t, t1, t2, t3, t4 }
     },
-    search: (root, args, { req }: { req: Request }, info) => {
+    search: (root:any, args:any, { req }: { req: Request }, info) => {
       if (!args.city) throw new UserInputError('Please select city')
       args.stock = { $gt: 0 }
       return index({ model: Product, args, info })
     },
-    myProducts: (root, args, { req }: { req: Request }, info) => {
+    myProducts: (root:any, args:any, { req }: { req: Request }, info) => {
       args.vendor = req.session.userId
       // args.populate = 'vendor'
       return index({ model: Product, args, info })
     },
     productSlug: async (
-      root,
+      root:any,
       args: { slug: string },
       ctx,
       info
@@ -87,7 +88,7 @@ const resolvers: IResolvers = {
       return Product.findOne({ slug: args.slug }, fields(info))
     },
     product: async (
-      root,
+      root:any,
       args: { id: string },
       ctx,
       info
@@ -101,8 +102,8 @@ const resolvers: IResolvers = {
 
   Mutation: {
     deleteProduct: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request }
     ): Promise<Boolean> => {
       const { userId } = req.session
@@ -126,7 +127,7 @@ const resolvers: IResolvers = {
       }
     },
     saveProduct: async (
-      root,
+      root:any,
       args: {
         id: string
         name: string
@@ -164,14 +165,15 @@ const resolvers: IResolvers = {
           { new: true }
         ) // If pre hook to be executed for product.save()
       } else {
-        newProduct = await Product.create(forUpdate)
+        let newProduct = new Product(forUpdate)
+        await newProduct.save()
       }
       if (!newProduct) throw new UserInputError(`Error updating item id= ${id}`)
       await newProduct.save() // To fire pre save hoook
       return newProduct.populate('category').execPopulate()
     },
     // saveVariant: async (
-    //   root,
+    //   root:any,
     //   args: {
     //     id: string
     //     name: string
@@ -181,14 +183,14 @@ const resolvers: IResolvers = {
     //   },
     //   { req }: { req: Request }
     // ): Promise<ProductDocument> => {
-    //   await productValidation.validateAsync(args, { abortEarly: false })
+    //   await productValidation.validateAsync(args:any, { abortEarly: false })
 
     //   const { userId } = req.session
     //   const { id, name, price, stock, img } = args
     //   console.log('zzzzzzzzzzzzzzzzzzzzzzzzzzz', args);
     //   // let product = await Product.findOneAndUpdate(
     //   //   { _id: id },
-    //   //   { $set: { ...args, uid: userId } }
+    //   //   { $set: { ...args:any, uid: userId } }
     //   // )
     //   // if (!product) throw new UserInputError(`Product with id= ${id} not found`)
 
@@ -197,7 +199,7 @@ const resolvers: IResolvers = {
     //   // return product
     // },
     createProduct: async (
-      root,
+      root:any,
       args: {
         name: string
         description: string
@@ -230,7 +232,7 @@ const resolvers: IResolvers = {
       if (!user || !user.verified)
         throw new UserInputError('You must be verified by admin to create item')
 
-      const product = await Product.create({
+      const product = new Product({
         name,
         description,
         type,
@@ -251,7 +253,7 @@ const resolvers: IResolvers = {
   Product: {
     vendor: async (
       product: ProductDocument,
-      args,
+      args:any,
       ctx,
       info
     ): Promise<UserDocument> => {
@@ -261,7 +263,7 @@ const resolvers: IResolvers = {
   },
   // lastMessage: async (
   //   chat: ChatDocument,
-  //   args,
+  //   args:any,
   //   ctx,
   //   info
   // ): Promise<MessageDocument> => {

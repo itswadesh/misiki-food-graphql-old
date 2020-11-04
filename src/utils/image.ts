@@ -5,7 +5,7 @@ const dload = require('image-downloader')
 import { createWriteStream, unlink, ReadStream, PathLike } from 'fs'
 import { UPLOAD_DIR, STATIC_PATH } from '../config'
 import mkdirp from 'mkdirp'
-import shortid from 'shortid'
+import { nanoid } from 'nanoid'
 import { validate, ifImage } from '../validation'
 mkdirp.sync(STATIC_PATH + UPLOAD_DIR)
 
@@ -38,7 +38,7 @@ export const store1ToFileSystem = async (args: {
   let { createReadStream, filename, mimetype, encoding } = await args.file
   await validate(ifImage, { filename, mimetype, encoding })
   const stream = createReadStream()
-  const id = shortid.generate()
+  const id = nanoid()
   filename = `${UPLOAD_DIR}${folder}/${id}-${filename}`
   const path = `${STATIC_PATH + filename}`
   const file = { filename, mimetype, encoding }
@@ -58,7 +58,7 @@ export const storeToFileSystem = async (args: {
     let { createReadStream, filename, mimetype, encoding }: any = await f
     // await ifImage.validateAsync({ f.filename, f.mimetype, f.encoding })
     const stream = createReadStream()
-    const id = shortid.generate()
+    const id = nanoid()
     filename = `${UPLOAD_DIR}${folder}/${id}-${filename}`
     const path = `${STATIC_PATH + filename}`
     try {

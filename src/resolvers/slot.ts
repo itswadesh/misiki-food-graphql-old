@@ -13,11 +13,11 @@ import { slotSchema } from '../validation/slot'
 
 const resolvers: IResolvers = {
   Query: {
-    slots: (root, args, { req }: { req: Request }, info) => {
+    slots: (root:any, args:any, { req }: { req: Request }, info) => {
       return index({ model: Slot, args, info })
     },
     slot: async (
-      root,
+      root:any,
       args: { id: string },
       ctx,
       info
@@ -28,8 +28,8 @@ const resolvers: IResolvers = {
   },
   Mutation: {
     saveSlot: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request }
     ): Promise<SlotDocument | null> => {
       const { userId } = req.session

@@ -7,17 +7,17 @@ import { Types } from 'mongoose'
 
 const resolvers: IResolvers = {
   Query: {
-    couponsAdmin: async (root, args, { req }: { req: Request }, info) => {
+    couponsAdmin: async (root:any, args:any, { req }: { req: Request }, info) => {
       return index({ model: Coupon, args, info })
     },
-    coupons: async (root, args, { req }: { req: Request }, info) => {
+    coupons: async (root:any, args:any, { req }: { req: Request }, info) => {
       args.active = true
       args.validFromDate = { $lte: new Date() }
       args.validToDate = { $gte: new Date() }
       return index({ model: Coupon, args, info })
     },
     coupon: async (
-      root,
+      root:any,
       args: { id: string },
       ctx,
       info
@@ -28,24 +28,24 @@ const resolvers: IResolvers = {
   },
   Mutation: {
     applyCoupon: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request }
     ): Promise<any> => {
       await calculateSummary(req, args.code)
       return req.session.cart
     },
     removeCoupon: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request }
     ): Promise<any> => {
       await calculateSummary(req)
       return req.session.cart
     },
     saveCoupon: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request }
     ): Promise<CouponDocument | null> => {
       const { userId } = req.session
@@ -59,7 +59,7 @@ const resolvers: IResolvers = {
       return coupon
     },
     createCoupon: async (
-      root,
+      root:any,
       args: {
         code: string
         value: number
@@ -72,13 +72,15 @@ const resolvers: IResolvers = {
         maxAmount: number
         from: string
         to: string
+        user: string
         active: boolean
       },
       { req }: { req: Request }
     ): Promise<CouponDocument> => {
       await validate(couponSchema, args)
       const { userId } = req.session
-      const coupon = await Coupon.create({ ...args, uid: userId })
+      args.user = userId
+      const coupon = new Coupon(args)
       await coupon.save()
       return coupon
     }

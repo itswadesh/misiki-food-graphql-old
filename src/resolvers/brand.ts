@@ -12,11 +12,11 @@ import { fields, hasSubfields } from '../utils'
 
 const resolvers: IResolvers = {
   Query: {
-    brands: (root, args, ctx, info): Promise<BrandDocument[]> => {
+    brands: (root:any, args:any, ctx, info): Promise<BrandDocument[]> => {
       return Brand.find({}, fields(info)).exec()
     },
     brand: async (
-      root,
+      root:any,
       args: { id: string },
       ctx,
       info
@@ -27,7 +27,7 @@ const resolvers: IResolvers = {
   },
   Mutation: {
     createBrand: async (
-      root,
+      root:any,
       args: {
         originalFilename: string
         src: string
@@ -36,14 +36,15 @@ const resolvers: IResolvers = {
         type: string
         name: string
         use: string
+        user: string
         active: boolean
       },
       { req }: { req: Request }
     ): Promise<BrandDocument> => {
       await validate(brandSchema, args)
       const { userId } = req.session
-      const brand = await Brand.create({ ...args, uid: userId })
-
+      args.user = userId
+      const brand = new Brand(args)
       await brand.save()
 
       return brand

@@ -18,7 +18,7 @@ import { STATIC_PATH } from '../config'
 
 const resolvers: IResolvers = {
   Query: {
-    emailTemplates: async (root, args, ctx, info) => {
+    emailTemplates: async (root:any, args:any, ctx, info) => {
       const result: any = await fs.readFileSync(
         `${STATIC_PATH}/templates/${args.folder}/${args.name}.hbs`,
         'utf8'
@@ -27,7 +27,7 @@ const resolvers: IResolvers = {
       else return result
     },
     emailTemplate: async (
-      root,
+      root:any,
       args: { id: string; name: string },
       ctx,
       info
@@ -41,7 +41,7 @@ const resolvers: IResolvers = {
     }
   },
   Mutation: {
-    // removeEmailTemplate: async (root, args, { req }: { req: Request }): Promise<EmailTemplateDocument | null> => {
+    // removeEmailTemplate: async (root:any, args:any, { req }: { req: Request }): Promise<EmailTemplateDocument | null> => {
     //   const { userId } = req.session
     //   const emailTemplate = await Page.findById(args.id)
     //   if (!emailTemplate) throw new UserInputError('Page not found')
@@ -52,8 +52,8 @@ const resolvers: IResolvers = {
     //   return await Page.findByIdAndDelete({ _id: args.id })
     // },
     saveEmailTemplate: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request }
     ): Promise<EmailTemplateDocument> => {
       return fs.writeFileSync(

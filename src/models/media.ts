@@ -11,7 +11,7 @@ const mediaSchema = new Schema(
     size: String,
     type: String,
     name: String, // used for single image upload like Logo. helps while deleting
-    uid: { type: ObjectId, ref: 'User' },
+    user: { type: ObjectId, ref: 'User' },
     uname: String,
     uemail: String,
     uphone: String,

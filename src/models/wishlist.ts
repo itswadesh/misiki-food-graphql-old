@@ -24,7 +24,7 @@ const wishlistSchema = new Schema(
       mrp: Number,
       img: Object
     },
-    uid: { type: ObjectId, ref: 'User' },
+    user: { type: ObjectId, ref: 'User' },
     q: String,
     email: String,
     status: { type: Boolean, default: true }

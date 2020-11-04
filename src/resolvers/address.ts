@@ -11,11 +11,12 @@ import { Address, User } from '../models'
 import { fields, hasSubfields } from '../utils'
 import pubsub from '../pubsub'
 import axios from 'axios'
+import address from '../typeDefs/address'
 const { OPENCAGE_KEY, GOOGLE_MAPS_KEY, MAPBOX_KEY } = process.env
 const MESSAGE_SENT = 'MESSAGE_SENT'
 const resolvers: IResolvers = {
   Query: {
-    getLocation: async (root, args, ctx, info) => {
+    getLocation: async (root:any, args:any, ctx, info) => {
       try {
         let res = await axios.get(
           // `https://api.mapbox.com/geocoding/v5/mapbox.places/${args.lat},${args.lng}.json?access_token=${MAPBOX_KEY}`
@@ -46,8 +47,8 @@ const resolvers: IResolvers = {
       }
     },
     addresses: (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request },
       info
     ): Promise<AddressDocument[]> => {
@@ -55,7 +56,7 @@ const resolvers: IResolvers = {
       return Address.find({ user: userId }, fields(info)).sort('-updatedAt').exec()
     },
     address: async (
-      root,
+      root:any,
       args: { id: string },
       ctx,
       info
@@ -66,7 +67,7 @@ const resolvers: IResolvers = {
   },
   Mutation: {
     addAddress: async (
-      root,
+      root:any,
       args: {
         email: string
         firstName: string
@@ -78,26 +79,33 @@ const resolvers: IResolvers = {
         country: string
         state: string
         zip: string
+        user: string
         phone: string
         coords: { lat: number; lng: number }
+        active: boolean
       },
       { req }: { req: Request }
     ): Promise<AddressDocument> => {
       await validate(addressSchema, args)
       const { userId } = req.session
-      const address = await Address.create({ ...args, user: userId })
+      args.user = userId
+      const address = new Address(args)
       await address.save()
       User.updateOne({ _id: userId }, { address })
       return address
     },
     saveAddress: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request }
     ): Promise<AddressDocument | null> => {
       const { userId } = req.session
       args.user = userId
-      if (args.id == 'new') return await Address.create(args)
+      if (args.id == 'new') {
+        const address = new Address(args)
+        await address.save()
+        return address
+      }
       else {
         const address = await Address.findOneAndUpdate(
           { _id: args.id },
@@ -109,7 +117,7 @@ const resolvers: IResolvers = {
       }
     },
     updateAddress: async (
-      root,
+      root:any,
       args: {
         user: string
         id: string
@@ -122,7 +130,7 @@ const resolvers: IResolvers = {
         city: string
         country: string
         state: string
-        zip: string
+        zip: number
         phone: string
         coords: { lat: number; lng: number }
       },
@@ -136,25 +144,11 @@ const resolvers: IResolvers = {
         args,
         { new: true }
       )
-      await User.updateOne(
-        { _id: userId },
-        {
-          address: {
-            firstName: address.firstName,
-            lastName: address.lastName,
-            address: address.address,
-            town: address.town,
-            city: address.city,
-            state: address.state,
-            zip: address.zip,
-            country: address.country,
-          },
-        }
-      )
+      await User.updateOne(        { _id: userId },        {          address        }      )
       return address
     },
     deleteAddress: async (
-      root,
+      root:any,
       args: { id: string },
       { req }: { req: Request }
     ): Promise<Boolean> => {

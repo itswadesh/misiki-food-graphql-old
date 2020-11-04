@@ -7,11 +7,11 @@ import { Types } from 'mongoose'
 
 const resolvers: IResolvers = {
   Query: {
-    messages: (root, args, { req }: { req: Request }, info) => {
+    messages: (root:any, args:any, { req }: { req: Request }, info) => {
       return index({ model: Message, args, info })
     },
     message: async (
-      root,
+      root:any,
       args: { id: string },
       ctx,
       info
@@ -21,8 +21,8 @@ const resolvers: IResolvers = {
   },
   Mutation: {
     removeMessage: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request }
     ): Promise<MessageDocument | null> => {
       const { userId } = req.session
@@ -35,8 +35,8 @@ const resolvers: IResolvers = {
       return await Message.findByIdAndDelete({ _id: args.id })
     },
     saveMessage: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request }
     ): Promise<MessageDocument | null> => {
       const { userId } = req.session
