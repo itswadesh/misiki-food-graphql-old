@@ -21,7 +21,7 @@ export default gql`
     metaTitle: String
     metaDescription: String
     metaKeywords: String
-    uid: User
+    user: User
     featured: Boolean
     sizechart: String
     position: Int

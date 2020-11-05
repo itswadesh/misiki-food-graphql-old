@@ -58,7 +58,7 @@ let productSchema = new mongoose.Schema(
     position: { type: Number, default: 0 },
     keyFeatures: Array,
     popularity: { type: Number, default: 0 },
-    uid: String, // can not use ObjectId for join(as of Category) as we store email here
+    user: String, // can not use ObjectId for join(as of Category) as we store email here
     vendor_id: { type: ObjectId, ref: 'User' },
     vendor_name: String, // Store vendor name here
     vendor_email: String, // can not use ObjectId for join(as of Category) as we store vendor email here

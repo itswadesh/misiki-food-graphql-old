@@ -37,7 +37,7 @@ const resolvers: IResolvers = {
       else {
         const slot = await Slot.findOneAndUpdate(
           { _id: args.id },
-          { ...args, uid: userId },
+          { ...args, user: userId },
           { new: true, upsert: true }
         )
         await slot.save() // To fire pre save hoook

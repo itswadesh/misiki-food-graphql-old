@@ -8,7 +8,7 @@ import {
 } from './'
 
 export interface OrderDocument extends Document {
-  uid: UserDocument['_id']
+  user: UserDocument['_id']
   orderNo: string
   amount: {
     qty: number
@@ -35,7 +35,7 @@ export interface OrderDocument extends Document {
     zip: number
     phone: string
     active: boolean
-    uid: UserDocument['_id']
+    user: UserDocument['_id']
   }
   user:{
     phone:string

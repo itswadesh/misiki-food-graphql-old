@@ -190,7 +190,7 @@ const resolvers: IResolvers = {
     //   console.log('zzzzzzzzzzzzzzzzzzzzzzzzzzz', args);
     //   // let product = await Product.findOneAndUpdate(
     //   //   { _id: id },
-    //   //   { $set: { ...args:any, uid: userId } }
+    //   //   { $set: { ...args:any, user: userId } }
     //   // )
     //   // if (!product) throw new UserInputError(`Product with id= ${id} not found`)
 

@@ -8,6 +8,6 @@ export interface MediaDocument extends Document {
   size: string
   type: string
   name: string
-  uid: UserDocument['_id']
+  user: UserDocument['_id']
   use: string
 }

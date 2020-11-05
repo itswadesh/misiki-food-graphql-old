@@ -36,7 +36,7 @@ export default gql`
     val: String
     slug: String!
     info: String
-    uid: User!
+    user: User!
     active: Boolean!
     createdAt: String!
     updatedAt: String!

@@ -14,7 +14,7 @@ export default gql`
     id: ID!
     product: Product!
     variant: Variant
-    uid: User!
+    user: User!
     active: Boolean!
     createdAt: String!
     updatedAt: String!

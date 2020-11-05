@@ -29,7 +29,7 @@ const resolvers: IResolvers = {
       else {
         let banner = await Banner.findOneAndUpdate(
           { _id: args.id },
-          { ...args, uid: userId },
+          { ...args, user: userId },
           { new: true, upsert: true }
         )
         await banner.save() // To fire pre save hoook

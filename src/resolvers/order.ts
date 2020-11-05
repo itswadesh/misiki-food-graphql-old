@@ -240,7 +240,7 @@ const resolvers: IResolvers = {
       //     }
       //   }
       //   // { $unwind: '$items' },
-      //   // { $project: { items: 1, address: 1, uid: 1, amount: 1, vendor: 1, createdAt: 1, 'vendor': 1 } },
+      //   // { $project: { items: 1, address: 1, user: 1, amount: 1, vendor: 1, createdAt: 1, 'vendor': 1 } },
       //   // {
       //   //   $group: {
       //   //     _id: "$status",
@@ -250,7 +250,7 @@ const resolvers: IResolvers = {
       //   //       $push: {
       //   //         items: "$items",
       //   //         address: "$address",
-      //   //         uid: "$uid",
+      //   //         user: "$user",
       //   //         amount: "$amount",
       //   //         vendor: "$vendor"
       //   //       }

@@ -30,8 +30,8 @@ const resolvers: IResolvers = {
       return worldCurrencies
     },
     orderStatuses:async (root:any, args:any, { req }: { req: Request }, info) => {
-     const uid = req.session.userId
-     const role = (await User.findById(uid) || {}).role
+     const user = req.session.userId
+     const role = (await User.findById(user) || {}).role
       if(role == 'admin')
         return orderStatuses
       else if(role == 'chef')
@@ -113,7 +113,7 @@ const resolvers: IResolvers = {
       const { id } = args
       let settings = await Setting.findByIdAndUpdate(
         id,
-        { $set: { ...args, uid: userId } },
+        { $set: { ...args, user: userId } },
         { new: true }
       ) // If pre hook to be executed for product.save()
       if (!settings)

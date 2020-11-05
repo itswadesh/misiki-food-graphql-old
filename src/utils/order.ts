@@ -186,7 +186,7 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
   cart.items = items
   cart.subtotal = subtotal
   cart.total = total
-  cart.uid = userId
+  cart.user = userId
   cart.qty = qty
   req.session.cart = cart
   saveMyCart(req.session.cart)

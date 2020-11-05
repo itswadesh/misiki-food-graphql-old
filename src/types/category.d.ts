@@ -22,7 +22,7 @@ export interface CategoryDocument extends Document {
   active: boolean
   shopbycategory: boolean
   children: CategoryDocument['_id']
-  uid: UserDocument['_id']
+  user: UserDocument['_id']
   count: number
   sizechart: string
   q: string

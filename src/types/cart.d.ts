@@ -4,7 +4,7 @@ import { VariantDocument } from './variant'
 
 export interface CartDocument extends Document {
   body: string
-  uid: UserDocument['_id']
+  user: UserDocument['_id']
   cart_id: CartDocument['_id']
   price: number
   qty: number

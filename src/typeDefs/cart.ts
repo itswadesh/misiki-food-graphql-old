@@ -17,7 +17,7 @@ export default gql`
 
   type Cart {
     id: ID!
-    uid: User
+    user: User
     cart_id: Cart
     qty: Int
     discount: Coupon

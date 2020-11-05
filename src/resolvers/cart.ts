@@ -39,7 +39,7 @@ const resolvers: IResolvers = {
       const { userId } = req.session
       let cart = null
       if (!userId) cart = req.session.cart
-      else cart = await Cart.findOne({ uid: userId })
+      else cart = await Cart.findOne({ user: userId })
       if (!cart) cart = req.session.cart
       return cart || req.session.cart
     }

@@ -3,7 +3,7 @@ import { gql } from 'apollo-server-express'
 export default gql`
   extend type Query {
     me: User @auth
-    users(page: Int, search: String, limit: Int, sort: String): userRes @admin
+    users(page: Int, search: String, limit: Int, sort: String): userRes @manager
     user(id: String!): User @auth
   }
 

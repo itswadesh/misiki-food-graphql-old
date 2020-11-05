@@ -12,7 +12,7 @@ export interface BrandDocument extends Document {
   metaTitle: string
   metaDescription: string
   metaKeywords: string
-  uid: UserDocument['_id']
+  user: UserDocument['_id']
   featured: boolean
   sizechart: string
   position: number

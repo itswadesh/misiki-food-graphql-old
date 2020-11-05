@@ -52,7 +52,7 @@ const resolvers: IResolvers = {
       if (args.id == 'new') delete args.id
       const coupon = await Coupon.findOneAndUpdate(
         { _id: args.id || Types.ObjectId() },
-        { ...args, uid: userId },
+        { ...args, user: userId },
         { new: true, upsert: true }
       )
       await coupon.save() // To fire pre save hoook

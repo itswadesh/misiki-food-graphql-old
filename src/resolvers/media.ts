@@ -63,7 +63,7 @@ const resolvers: IResolvers = {
     ): Promise<MediaDocument> => {
       await validate(mediaSchema, args)
       const { userId } = req.session
-      const media = await Media.create({ ...args, uid: userId })
+      const media = await Media.create({ ...args, user: userId })
 
       await media.save()
 
