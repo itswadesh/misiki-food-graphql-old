@@ -47,11 +47,11 @@ const resolvers: IResolvers = {
   Mutation: {
     razorpay: async (
       root:any,
-      args: { address: any },
+      args: { address: any, location: any },
       { req }
     ): Promise<PaymentDocument> => {
       // throw new UserInputError("Please specify your address");
-      const newOrder: any = await placeOrder(req, { address: args.address })
+      const newOrder: any = await placeOrder(req, { address: args.address,location:args.location })
       // try {
       const amount = Math.round(newOrder.amount.total * 100)
       const payment = await instance.orders.create({
