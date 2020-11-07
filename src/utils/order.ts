@@ -25,6 +25,9 @@ import { objectId } from '../validation'
 import { UserInputError } from 'apollo-server-express'
 import { fast2Sms } from './sms'
 
+export const getOrderPrefix = async (city:string) => {
+  return city.substr(0,1)
+}
 export const getData = async (start: Date, end: Date, q: any) => {
   let data = await Order.aggregate([
     {
@@ -110,7 +113,7 @@ export const updateStats = async (product: ProductDocument) => {
   }
 }
 
-export const placeOrder = async (req: Request, { address, comment }: any) => {
+export const placeOrder = async (req: Request, { address, comment, location }: any) => {
   await validateCart(req)
   await calculateSummary(req) // Validates coupon expiry
   let setting: SettingsDocument | null = await Setting.findOne().exec()
@@ -205,8 +208,9 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
     },
     payment: { state: 'Pending', method: req.body.paymentMethod },
     platform: 'Mobile',
-    orderNo: ORDER_PREFIX + Math.floor(new Date().valueOf() * Math.random()), //shortId.generate();
+    // orderNo: ORDER_PREFIX + Math.floor(new Date().valueOf() * Math.random()), //shortId.generate(); // Order No generated at order.model
     otp,
+    location, // If user selects Sunabeda address but GPS location selected is Brahmapur
     address,
     items,
     amount: {

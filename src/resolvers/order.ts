@@ -552,7 +552,7 @@ const resolvers: IResolvers = {
 
     checkout: async (root:any, args:any, { req }) => {
       // await checkout.validateAsync(args:any, { abortEarly: false })
-      const newOrder: any = await placeOrder(req, { address: args.address })
+      const newOrder: any = await placeOrder(req, { address: args.address, location: args.location })
       const amount = Math.round(newOrder.amount.total * 100)
       const payment = {
         payment_order_id: null,

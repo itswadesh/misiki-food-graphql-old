@@ -96,7 +96,7 @@ export default gql`
 
   extend type Mutation {
     create(chatId: ID!, body: String!): Order @auth
-    checkout(paymentMethod: String, address: AddressInput!): Order @auth
+    checkout(paymentMethod: String, address: AddressInput!, location: AddressInput): Order @auth
     updateOrder(id: ID!, pid: ID!, status: String): Order @auth
     collectPayment(id: ID!, cod_paid: Int): Boolean @auth
   }
@@ -168,6 +168,7 @@ export default gql`
     orderNo: String
     amount: Amount
     address: Address
+    location: Address
     payment_order_id: String
     cartId: Cart!
     items: [CartItem!]
