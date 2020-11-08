@@ -13,7 +13,7 @@ class ManagerDirective extends SchemaDirectiveVisitor {
       ensureSignedIn(context.req)
       const user = await User.findById(context.req.session.userId)
       if (!user) throw new UserInputError('User not found')
-      if (user.role !== 'manager')
+      if (user.role !== 'manager' && user.role !=='admin')
         throw new UserInputError('Sorry!!!. Only manager can access this')
       return resolve.apply(this, args)
     }
