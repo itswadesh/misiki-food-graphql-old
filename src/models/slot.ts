@@ -12,16 +12,16 @@ const slotSchema = new Schema(
     info: String,
     user: { type: ObjectId, ref: 'User' },
     active: { type: Boolean, default: true },
-    q: String
+    q: String,
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 )
 
-slotSchema.pre('save', async function(this: SlotDocument) {
+slotSchema.pre('save', async function (this: SlotDocument) {
   if (!this.slug) {
-    this.slug = await generateSlug(this.name)
+    this.slug = await generateSlug(this.name, this.slug)
   }
   this.q = this.name ? this.name.toLowerCase() + ' ' : ''
   this.q += this.val ? this.val.toLowerCase() + ' ' : ''
@@ -29,6 +29,6 @@ slotSchema.pre('save', async function(this: SlotDocument) {
   this.q = this.q.trim()
 })
 slotSchema.index({
-  '$**': 'text'
+  '$**': 'text',
 })
 export const Slot = mongoose.model<SlotDocument>('Slot', slotSchema)

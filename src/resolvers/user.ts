@@ -29,18 +29,18 @@ import { email } from '../utils/email'
 const resolvers: IResolvers = {
   Query: {
     me: (
-      root:any,
-      args:any,
+      root: any,
+      args: any,
       { req }: { req: Request },
       info
     ): Promise<UserDocument | null> => {
       return User.findById(req.session.userId, fields(info)).exec()
     },
-    users: (root:any, args:any, { req }: { req: Request }, info) => {
+    users: (root: any, args: any, { req }: { req: Request }, info) => {
       return index({ model: User, args, info })
     },
     user: async (
-      root:any,
+      root: any,
       args: { id: string },
       ctx,
       info
@@ -51,8 +51,8 @@ const resolvers: IResolvers = {
   },
   Mutation: {
     changePassword: async (
-      root:any,
-      args:any,
+      root: any,
+      args: any,
       { req }: { req: Request },
       info
     ): Promise<Boolean> => {
@@ -76,7 +76,7 @@ const resolvers: IResolvers = {
       return true
     },
     updateProfile: async (
-      root:any,
+      root: any,
       args: {
         id: string
         firstName: string
@@ -96,10 +96,12 @@ const resolvers: IResolvers = {
         { $set: args },
         { new: true }
       )
+      if (!user) throw new UserInputError('User Not Found.')
+      user.save()
       return user
     },
     saveUser: async (
-      root:any,
+      root: any,
       args: {
         id: string
         firstName: string
@@ -118,7 +120,7 @@ const resolvers: IResolvers = {
       return user
     },
     verifyOtp: async (
-      root:any,
+      root: any,
       args: { phone: string; otp: string },
       { req }: { req: Request },
       info
@@ -131,7 +133,7 @@ const resolvers: IResolvers = {
       return user
     },
     getOtp: async (
-      root:any,
+      root: any,
       args: { phone: string },
       { req }: { req: Request }
     ): Promise<String> => {
@@ -139,10 +141,9 @@ const resolvers: IResolvers = {
       let user = await User.findOne({ phone: args.phone })
       if (!user) {
         const u = new User({ phone: args.phone, password: otp })
-        if(!u) throw new UserInputError('User not found')
+        if (!u) throw new UserInputError('User not found')
         await u.save()
-      }
-      else {
+      } else {
         user.password = otp.toString()
         await user.save()
       }
@@ -150,7 +151,7 @@ const resolvers: IResolvers = {
       return otp
     },
     register: async (
-      root:any,
+      root: any,
       args: {
         email: string
         firstName: string
@@ -183,7 +184,7 @@ const resolvers: IResolvers = {
       return user
     },
     login: async (
-      root:any,
+      root: any,
       args: { email: string; password: string },
       { req }: { req: Request },
       info
@@ -207,8 +208,8 @@ const resolvers: IResolvers = {
       }
     },
     signOut: (
-      root:any,
-      args:any,
+      root: any,
+      args: any,
       { req, res }: { req: Request; res: Response }
     ): Promise<boolean> => {
       return signOut(req, res)

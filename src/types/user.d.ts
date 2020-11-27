@@ -27,6 +27,7 @@ export interface UserDocument extends Document {
   metaTitle: string
   metaDescription: string
   metaKeywords: string
+  slug: string
   q: string
 }
 

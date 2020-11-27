@@ -1,6 +1,7 @@
 import mongoose, { Schema } from 'mongoose'
 import { ProductDocument } from '../types'
 import { generateSlug } from '../utils'
+import { User } from './user'
 
 const { ObjectId } = Schema.Types
 
@@ -25,9 +26,9 @@ let variantsSchema = new Schema({
   saleFromDate: { type: Date, default: Date.now },
   saleToDate: {
     type: Date,
-    default: () => Date.now() + 1 * 365 * 24 * 60 * 60 * 1000
+    default: () => Date.now() + 1 * 365 * 24 * 60 * 60 * 1000,
   },
-  sort: Number
+  sort: Number,
 })
 
 let productSchema = new Schema(
@@ -64,7 +65,7 @@ let productSchema = new Schema(
       hot: { type: Boolean, default: false },
       sale: { type: Boolean, default: false },
       new: { type: Boolean, default: false },
-      featured: { type: Boolean, default: false }
+      featured: { type: Boolean, default: false },
     },
     position: { type: Number, default: 0 },
     popularity: { type: Number, default: 0 },
@@ -72,18 +73,22 @@ let productSchema = new Schema(
     ratings: { type: Number, default: 0 },
     reviews: { type: Number, default: 0 },
     related: { type: ObjectId, ref: 'Product' },
-    q: String
+    q: String,
   },
   {
     versionKey: false,
-    timestamps: true
+    timestamps: true,
   }
 )
 
-productSchema.pre('save', async function(this: ProductDocument) {
-  if (!this.slug) {
-    this.slug = await generateSlug(this.name)
-  }
+productSchema.pre('save', async function (this: ProductDocument) {
+  var doc: any = this
+  let userSlug = ''
+  const u: any = await User.findById(doc.vendor)
+  // console.log('zzzzzzzzzzzzzzzzzzzzzzzzzzz', u.info.restaurant)
+  userSlug = u ? u.info.restaurant + '-' : ''
+  if (!this.slug) doc.slug = await generateSlug(userSlug + doc.name, doc.slug)
+
   this.q = this.sku ? this.sku + ' ' : ''
   this.q = this.name ? this.name.toLowerCase() + ' ' : ''
   this.q += this.description ? this.description.toLowerCase() + ' ' : ''
@@ -93,6 +98,6 @@ productSchema.pre('save', async function(this: ProductDocument) {
   this.q = this.q.trim()
 })
 productSchema.index({
-  '$**': 'text'
+  '$**': 'text',
 })
 export const Product = mongoose.model<ProductDocument>('Product', productSchema)

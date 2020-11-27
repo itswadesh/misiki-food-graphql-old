@@ -14,12 +14,12 @@ const pageSchema = new Schema(
     menuTitle: String,
     user: { type: ObjectId, ref: 'User' },
     q: String,
-    active: { type: Boolean, default: true }
+    active: { type: Boolean, default: true },
   },
   { versionKey: false, timestamps: true }
 )
-pageSchema.pre('save', async function(this: PageDocument) {
-  if (!this.slug) this.slug = await generateSlug(this.name)
+pageSchema.pre('save', async function (this: PageDocument) {
+  if (!this.slug) this.slug = await generateSlug(this.name, this.slug)
 })
 pageSchema.index({ '$**': 'text' })
 export const Page = mongoose.model<PageDocument>('Page', pageSchema)

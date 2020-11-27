@@ -1,6 +1,6 @@
 import { Slug } from '../models'
 import { SlugDocument } from './../types'
-export const generateSlug = async (str: string) => {
+export const generateSlug = async (str: string, currentSlug: string) => {
   if (!str) return ''
   let rawSlug = str
     .toString()
@@ -14,11 +14,13 @@ export const generateSlug = async (str: string) => {
     let newSlug = rawSlug
     let foundSlug: SlugDocument | null
     do {
+      await Slug.deleteMany({ slug: currentSlug })
       foundSlug = await Slug.findOne({ slug: newSlug })
       if (foundSlug) newSlug = newSlug + '-en'
     } while (foundSlug)
-    let slug = new Slug({ slug: newSlug })
-    await slug.save()
+    const s = new Slug({ slug: newSlug })
+    await s.save()
+    // await Slug.create({ slug: 'newSlug' })
     return newSlug
   } catch (e) {
     return rawSlug

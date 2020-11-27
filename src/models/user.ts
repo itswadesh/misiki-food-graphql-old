@@ -2,6 +2,7 @@
 import { model, Schema } from 'mongoose'
 import { hash, compare } from 'bcryptjs'
 import { UserDocument, UserModel } from '../types'
+import { generateSlug } from '../utils'
 
 const userSchema = new Schema(
   {
@@ -34,6 +35,7 @@ const userSchema = new Schema(
     metaTitle: String,
     metaDescription: String,
     metaKeywords: String,
+    slug: String,
     ratings: Number,
     reviews: Number,
     avg_rating: Number,
@@ -61,6 +63,12 @@ userSchema.methods.matchesPassword = function (
 }
 
 userSchema.pre('save', async function (this: UserDocument) {
+  let userSlug = ''
+  this.slug = await generateSlug(
+    userSlug + this.firstName + ' ' + this.lastName,
+    this.slug
+  )
+
   this.q = this.firstName ? this.firstName.toLowerCase() + ' ' : ''
   this.q += this.lastName ? this.lastName.toLowerCase() + ' ' : ''
   this.q += this.phone ? this.phone + ' ' : ''

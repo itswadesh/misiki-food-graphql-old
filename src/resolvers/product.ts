@@ -25,27 +25,32 @@ import product from '../typeDefs/product'
 const MESSAGE_SENT = 'MESSAGE_SENT'
 const resolvers: IResolvers = {
   Query: {
-    productsByIds: (root:any, args:any, { req }: { req: Request }, info) => {
+    productsByIds: (root: any, args: any, { req }: { req: Request }, info) => {
       return Product.find({
         _id: {
           $in: args.ids,
         },
       }).limit(10)
     },
-    products: (root:any, args:any, { req }: { req: Request }, info) => {
+    products: (root: any, args: any, { req }: { req: Request }, info) => {
       args.populate = 'category'
       // if (args.active) {
       //   args.stock = { $gt: 0 }
       // }
       return index({ model: Product, args, info })
     },
-    popular: (root:any, args:any, { req }: { req: Request }, info) => {
+    popular: (root: any, args: any, { req }: { req: Request }, info) => {
       args.stock = { $gt: 0 }
       args.sort = '-popularity'
       args.limit = 10
       return index({ model: Product, args, info })
     },
-    bestSellers: async (root:any, args:any, { req }: { req: Request }, info) => {
+    bestSellers: async (
+      root: any,
+      args: any,
+      { req }: { req: Request },
+      info
+    ) => {
       let q: any = {}
       if (req.query.daily && req.query.daily != 'null') {
         q.daily = req.query.daily
@@ -53,7 +58,7 @@ const resolvers: IResolvers = {
       if (req.query.type && req.query.type != 'null') {
         q.type = req.query.type
       }
-      const s:any = req.query.search
+      const s: any = req.query.search
       if (req.query.search) q.q = { $regex: new RegExp(s, 'ig') }
       // q.stock = { $gt: 0 }
 
@@ -69,18 +74,18 @@ const resolvers: IResolvers = {
       let t4 = await getData(startEnd4.start, startEnd4.end, q)
       return { t, t1, t2, t3, t4 }
     },
-    search: (root:any, args:any, { req }: { req: Request }, info) => {
+    search: (root: any, args: any, { req }: { req: Request }, info) => {
       if (!args.city) throw new UserInputError('Please select city')
       args.stock = { $gt: 0 }
       return index({ model: Product, args, info })
     },
-    myProducts: (root:any, args:any, { req }: { req: Request }, info) => {
+    myProducts: (root: any, args: any, { req }: { req: Request }, info) => {
       args.vendor = req.session.userId
       // args.populate = 'vendor'
       return index({ model: Product, args, info })
     },
     productSlug: async (
-      root:any,
+      root: any,
       args: { slug: string },
       ctx,
       info
@@ -88,7 +93,7 @@ const resolvers: IResolvers = {
       return Product.findOne({ slug: args.slug }, fields(info))
     },
     product: async (
-      root:any,
+      root: any,
       args: { id: string },
       ctx,
       info
@@ -102,8 +107,8 @@ const resolvers: IResolvers = {
 
   Mutation: {
     deleteProduct: async (
-      root:any,
-      args:any,
+      root: any,
+      args: any,
       { req }: { req: Request }
     ): Promise<Boolean> => {
       const { userId } = req.session
@@ -127,7 +132,7 @@ const resolvers: IResolvers = {
       }
     },
     saveProduct: async (
-      root:any,
+      root: any,
       args: {
         id: string
         name: string
@@ -199,7 +204,7 @@ const resolvers: IResolvers = {
     //   // return product
     // },
     createProduct: async (
-      root:any,
+      root: any,
       args: {
         name: string
         description: string
@@ -253,7 +258,7 @@ const resolvers: IResolvers = {
   Product: {
     vendor: async (
       product: ProductDocument,
-      args:any,
+      args: any,
       ctx,
       info
     ): Promise<UserDocument> => {
