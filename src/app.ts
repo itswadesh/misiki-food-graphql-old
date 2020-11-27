@@ -92,9 +92,9 @@ export const createApp = (store?: session.Store) => {
   cron.schedule('00 14 * * *', async function () {
   const {day,month,year} = getDMY()
     console.log('---------------------')
-    console.log('Close Lunch - Sunabeda - Start', `${day}-${month}-${year}-2:00 PM`)
+    console.log('Close Lunch - Sunabeda+Brahmapur - Start', `${day}-${month}-${year}-2:00 PM`)
     closeRestaurant({time: '12 - 2 PM'})
-    console.log('Close Lunch - Sunabeda - Finish')
+    console.log('Close Lunch - Sunabeda+Brahmapur - Finish')
     console.log('---------------------')
   })
 

@@ -5,7 +5,7 @@ const { ObjectId } = Schema.Types
 
 const itemSchema = new Schema({
   pid: { type: ObjectId, ref: 'Product' },
-  uid: { type: ObjectId, ref: 'User' },
+  user: { type: ObjectId, ref: 'User' },
   name: String,
   img: String,
   slug: String,
@@ -16,7 +16,7 @@ const itemSchema = new Schema({
 
 const cartSchema = new Schema(
   {
-    uid: { type: ObjectId, ref: 'User' },
+    user: { type: ObjectId, ref: 'User' },
     cart_id: String,
     qty: Number,
     discount: Object,

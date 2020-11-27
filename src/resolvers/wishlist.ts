@@ -18,14 +18,14 @@ import { wishlistSchema } from '../validation/wishlist'
 
 const resolvers: IResolvers = {
   Query: {
-    wishlists: (root, args, ctx, info): Promise<WishlistDocument[]> => {
+    wishlists: (root:any, args:any, ctx:any, info:any): Promise<WishlistDocument[]> => {
       return Wishlist.find({}, fields(info)).exec()
     },
     wishlist: async (
-      root,
+      root:any,
       args: { id: string },
-      ctx,
-      info
+      ctx:any,
+      info:any
     ): Promise<WishlistDocument | null> => {
       await objectId.validateAsync(args)
       return Wishlist.findById(args.id, fields(info))
@@ -33,7 +33,7 @@ const resolvers: IResolvers = {
   },
   Mutation: {
     createWishlist: async (
-      root,
+      root:any,
       args: {
         originalFilename: string
         src: string
@@ -42,14 +42,15 @@ const resolvers: IResolvers = {
         type: string
         name: string
         use: string
+        user: string
         active: boolean
       },
       { req }: { req: Request }
     ): Promise<WishlistDocument> => {
       await wishlistSchema.validateAsync(args, { abortEarly: false })
       const { userId } = req.session
-      const wishlist = await Wishlist.create({ ...args, uid: userId })
-
+      args.user = userId
+      const wishlist = new Wishlist(args)
       await wishlist.save()
 
       return wishlist

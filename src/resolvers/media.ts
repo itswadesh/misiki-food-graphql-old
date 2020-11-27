@@ -20,11 +20,11 @@ const MESSAGE_SENT = 'MESSAGE_SENT'
 
 const resolvers: IResolvers = {
   Query: {
-    medias: (root, args, ctx, info): Promise<MediaDocument[]> => {
+    medias: (root:any, args:any, ctx, info): Promise<MediaDocument[]> => {
       return Media.find({}, fields(info)).exec()
     },
     media: async (
-      root,
+      root:any,
       args: { id: string },
       ctx,
       info
@@ -34,21 +34,21 @@ const resolvers: IResolvers = {
     },
   },
   Mutation: {
-    deleteFile: async (root, args, { req }: { req: Request }) => {
+    deleteFile: async (root:any, args:any, { req }: { req: Request }) => {
       return await deleteFile(args.path)
     },
-    singleUpload: async (root, args, { req }: { req: Request }) => {
+    singleUpload: async (root:any, args:any, { req }: { req: Request }) => {
       const { userId } = req.session
       const file = await store1ToFileSystem(args)
       return file
     },
-    fileUpload: async (root, args, { req }: { req: Request }) => {
+    fileUpload: async (root:any, args:any, { req }: { req: Request }) => {
       const { userId } = req.session
       const files = await storeToFileSystem(args)
       return files
     },
     createMedia: async (
-      root,
+      root:any,
       args: {
         originalFilename: string
         src: string
@@ -63,7 +63,7 @@ const resolvers: IResolvers = {
     ): Promise<MediaDocument> => {
       await validate(mediaSchema, args)
       const { userId } = req.session
-      const media = await Media.create({ ...args, uid: userId })
+      const media = await Media.create({ ...args, user: userId })
 
       await media.save()
 

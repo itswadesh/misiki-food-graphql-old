@@ -11,7 +11,7 @@ export interface PromotionDocument extends Document {
   action: { type: 'Fixed'; val: '0' }
   description: string
   img: string
-  uid: UserDocument['_id']
+  user: UserDocument['_id']
   featured: boolean
   priority: number
   validFromDate: string

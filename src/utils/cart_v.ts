@@ -9,12 +9,12 @@ import {
 import { UserInputError } from 'apollo-server-express'
 
 export const saveMyCart = async (cart: CartDocument) => {
-  const { qty, uid } = cart
+  const { qty, user } = cart
   // Silent. no error or success
   if (qty == 0) {
-    await Cart.deleteOne({ uid })
+    await Cart.deleteOne({ user })
   } else {
-    let c = await Cart.findOneAndUpdate({ uid }, cart, {
+    let c = await Cart.findOneAndUpdate({ user }, cart, {
       new: true,
       upsert: true,
       setDefaultsOnInsert: true,
@@ -29,9 +29,9 @@ export const clear = async (req: Request) => {
 }
 
 //cart merge function
-export const merge = async (req: Request, uid: String) => {
-  if (!uid) return
-  let dbCart = await Cart.findOne({ uid })
+export const merge = async (req: Request, user: String) => {
+  if (!user) return
+  let dbCart = await Cart.findOne({ user })
   if (dbCart) {
     let items = dbCart.items
     if (items.length > 0) {
@@ -43,7 +43,7 @@ export const merge = async (req: Request, uid: String) => {
   }
 
   req.session.cart = req.session.cart || {}
-  req.session.cart.uid = uid
+  req.session.cart.user = user
   await saveMyCart(req.session.cart) // email inside cart is mandatory
   return req.session.cart
 }
@@ -256,7 +256,7 @@ export const calculateSummary = async (req: Request, code?: string) => {
     igst: (total * +tax.igst) / 100
   }
   cart.total = total + total * (+tax.cgst + +tax.sgst + +tax.igst) * 0.01
-  cart.uid = userId
+  cart.user = userId
   cart.cart_id = id
   req.session.cart = cart
   await saveMyCart(req.session.cart)

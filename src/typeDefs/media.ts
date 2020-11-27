@@ -30,7 +30,7 @@ export default gql`
     size: String
     type: String
     name: String
-    uid: User
+    user: User
     use: String
     active: Boolean
     createdAt: String!

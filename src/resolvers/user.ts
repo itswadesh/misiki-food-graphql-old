@@ -29,18 +29,18 @@ import { email } from '../utils/email'
 const resolvers: IResolvers = {
   Query: {
     me: (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request },
       info
     ): Promise<UserDocument | null> => {
       return User.findById(req.session.userId, fields(info)).exec()
     },
-    users: (root, args, { req }: { req: Request }, info) => {
+    users: (root:any, args:any, { req }: { req: Request }, info) => {
       return index({ model: User, args, info })
     },
     user: async (
-      root,
+      root:any,
       args: { id: string },
       ctx,
       info
@@ -51,8 +51,8 @@ const resolvers: IResolvers = {
   },
   Mutation: {
     changePassword: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request },
       info
     ): Promise<Boolean> => {
@@ -76,7 +76,7 @@ const resolvers: IResolvers = {
       return true
     },
     updateProfile: async (
-      root,
+      root:any,
       args: {
         id: string
         firstName: string
@@ -99,7 +99,7 @@ const resolvers: IResolvers = {
       return user
     },
     saveUser: async (
-      root,
+      root:any,
       args: {
         id: string
         firstName: string
@@ -118,7 +118,7 @@ const resolvers: IResolvers = {
       return user
     },
     verifyOtp: async (
-      root,
+      root:any,
       args: { phone: string; otp: string },
       { req }: { req: Request },
       info
@@ -131,13 +131,17 @@ const resolvers: IResolvers = {
       return user
     },
     getOtp: async (
-      root,
+      root:any,
       args: { phone: string },
       { req }: { req: Request }
-    ): Promise<Number> => {
-      const otp = generateOTP()
+    ): Promise<String> => {
+      const otp = generateOTP().toString()
       let user = await User.findOne({ phone: args.phone })
-      if (!user) await User.create({ phone: args.phone, password: otp })
+      if (!user) {
+        const u = new User({ phone: args.phone, password: otp })
+        if(!u) throw new UserInputError('User not found')
+        await u.save()
+      }
       else {
         user.password = otp.toString()
         await user.save()
@@ -146,7 +150,7 @@ const resolvers: IResolvers = {
       return otp
     },
     register: async (
-      root,
+      root:any,
       args: {
         email: string
         firstName: string
@@ -166,20 +170,20 @@ const resolvers: IResolvers = {
         throw new UserInputError('Email already registed with us')
       }
 
-      const user = await User.create({
+      const user = new User({
         email,
         firstName,
         lastName,
         password,
         referrer,
       })
-
+      await user.save()
       logIn(req, user.id)
 
       return user
     },
     login: async (
-      root,
+      root:any,
       args: { email: string; password: string },
       { req }: { req: Request },
       info
@@ -203,8 +207,8 @@ const resolvers: IResolvers = {
       }
     },
     signOut: (
-      root,
-      args,
+      root:any,
+      args:any,
       { req, res }: { req: Request; res: Response }
     ): Promise<boolean> => {
       return signOut(req, res)

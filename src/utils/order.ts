@@ -25,6 +25,9 @@ import { objectId } from '../validation'
 import { UserInputError } from 'apollo-server-express'
 import { fast2Sms } from './sms'
 
+export const getOrderPrefix = async (city:string) => {
+  return city.substr(0,1)
+}
 export const getData = async (start: Date, end: Date, q: any) => {
   let data = await Order.aggregate([
     {
@@ -110,7 +113,7 @@ export const updateStats = async (product: ProductDocument) => {
   }
 }
 
-export const placeOrder = async (req: Request, { address, comment }: any) => {
+export const placeOrder = async (req: Request, { address, comment, location }: any) => {
   await validateCart(req)
   await calculateSummary(req) // Validates coupon expiry
   let setting: SettingsDocument | null = await Setting.findOne().exec()
@@ -186,7 +189,7 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
   cart.items = items
   cart.subtotal = subtotal
   cart.total = total
-  cart.uid = userId
+  cart.user = userId
   cart.qty = qty
   req.session.cart = cart
   saveMyCart(req.session.cart)
@@ -205,8 +208,9 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
     },
     payment: { state: 'Pending', method: req.body.paymentMethod },
     platform: 'Mobile',
-    orderNo: ORDER_PREFIX + Math.floor(new Date().valueOf() * Math.random()), //shortId.generate();
+    // orderNo: ORDER_PREFIX + Math.floor(new Date().valueOf() * Math.random()), //shortId.generate(); // Order No generated at order.model
     otp,
+    location, // If user selects Sunabeda address but GPS location selected is Brahmapur
     address,
     items,
     amount: {
@@ -219,7 +223,8 @@ export const placeOrder = async (req: Request, { address, comment }: any) => {
     },
     coupon: cart.discount,
   }
-  const o = await Order.create(orderDetails)
+  let o = new Order(orderDetails)
+  await o.save()
   fast2Sms({
     // Order accepted for { #FF# }.\nQrNo: { #EE# } \nDelivery boy will reach you by { #DD# }  // FAST2SMS
     phone: me.phone,

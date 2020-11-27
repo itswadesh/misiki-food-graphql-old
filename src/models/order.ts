@@ -1,5 +1,7 @@
 import mongoose, { Schema } from 'mongoose'
 import { OrderDocument } from '../types'
+import { getOrderPrefix } from '../utils';
+const autoIncrementModelID = require('./counterModel');
 
 const { ObjectId } = Schema.Types
 
@@ -15,6 +17,12 @@ const orderSchema = new Schema(
       phone: String,
       id: { type: ObjectId, ref: 'User' },
     },
+    location: {
+      city:String,
+      coords: { lat: Number, lng: Number },
+      state: String,
+      zip: Number,
+    },
     address: {
       email: String,
       firstName: String,
@@ -29,7 +37,7 @@ const orderSchema = new Schema(
       zip: Number,
       phone: String,
       active: { type: Boolean, default: true },
-      uid: { type: ObjectId, ref: 'User' },
+      user: { type: ObjectId, ref: 'User' },
     },
     payment: {
       type: Object,
@@ -105,4 +113,20 @@ const orderSchema = new Schema(
 orderSchema.index({
   '$**': 'text',
 })
+orderSchema.pre('save', async function (next) {
+  let vm:any = this
+  if (!vm.isNew) {
+    next();
+    return;
+  }
+  //getOrderPrefix(vm.city)
+  let OrderPre = ''
+  try{
+  if(vm.location.city && vm.location.city !='' && vm.location.city.length>0)
+    OrderPre = vm.location.city.substr(0,1).toUpperCase()
+  }catch(e){}
+  let orderNo = OrderPre + ('-' + (await autoIncrementModelID('Order'))).slice(-8)
+  vm.orderNo = orderNo
+  next();
+});
 export const Order = mongoose.model<OrderDocument>('Order', orderSchema)

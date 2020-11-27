@@ -7,7 +7,7 @@ import { Types } from 'mongoose'
 
 const resolvers: IResolvers = {
   Query: {
-    cities: async (root, args, { req }: { req: Request }, info) => {
+    cities: async (root:any, args:any, { req }: { req: Request }, info) => {
       const { userId } = req.session
       const user = await User.findById(userId)
       if (!user) args.active = true
@@ -15,7 +15,7 @@ const resolvers: IResolvers = {
       return index({ model: City, args, info })
     },
     city: async (
-      root,
+      root:any,
       args: { id: string },
       ctx,
       info
@@ -25,8 +25,8 @@ const resolvers: IResolvers = {
   },
   Mutation: {
     removeCity: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request }
     ): Promise<CityDocument | null> => {
       const { userId } = req.session
@@ -39,8 +39,8 @@ const resolvers: IResolvers = {
       return await City.findByIdAndDelete({ _id: args.id })
     },
     saveCity: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request }
     ): Promise<CityDocument | null> => {
       if (args.id == 'new') delete args.id

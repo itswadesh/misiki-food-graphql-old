@@ -5,7 +5,7 @@ const { ObjectId } = Schema.Types
 
 const orderSchema = new Schema(
   {
-    uid: { type: ObjectId, ref: 'User' },
+    user: { type: ObjectId, ref: 'User' },
     email: String,
     user_ref: String,
     phone: String,

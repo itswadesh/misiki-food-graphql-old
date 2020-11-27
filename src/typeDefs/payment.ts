@@ -13,7 +13,7 @@ export default gql`
     razorpays: Payment
   }
   extend type Mutation {
-    razorpay(address: AddressInput!): Payment @auth
+    razorpay(address: AddressInput!,location: AddressInput): Payment @auth
     capturePay(payment_id: String!, oid: String!): Order @auth
   }
 

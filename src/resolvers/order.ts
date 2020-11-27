@@ -34,16 +34,16 @@ const ORDER_UPDATED = 'ORDER_UPDATED'
 
 const resolvers: IResolvers = {
   Query: {
-    validateCoupon: async (root, args, { req }) => {
+    validateCoupon: async (root:any, args:any, { req }) => {
       const { cart } = req.session
       const code = req.session.cart.discount && req.session.cart.discount.code
       await calculateSummary(req, code)
       // await validateCoupon(cart, code)
     },
-    validateCart: async (root, args, { req }) => {
+    validateCart: async (root:any, args:any, { req }) => {
       await validateCart(req)
     },
-    hasOrder: async (root, args, { req }: { req: Request }, info) => {
+    hasOrder: async (root:any, args:any, { req }: { req: Request }, info) => {
       const { userId } = req.session
       const order = await Order.findOne({
         'user.id': userId,
@@ -53,12 +53,12 @@ const resolvers: IResolvers = {
       const p = order.items.find((element) => element.pid == args.product)
       return p && !p.reviewed
     },
-    orders: (root, args, { req }: { req: Request }, info) => {
+    orders: (root:any, args:any, { req }: { req: Request }, info) => {
       const { userId } = req.session
       args['user.id'] = userId
       return index({ model: Order, args, info })
     },
-    allOrders: (root, args, { req }: { req: Request }, info) => {
+    allOrders: (root:any, args:any, { req }: { req: Request }, info) => {
       if (args.vendor) {
         args['items.vendor.id'] = args.vendor
         delete args.vendor
@@ -68,7 +68,7 @@ const resolvers: IResolvers = {
       if (args.today) args.createdAt = { $gte: start, $lte: end }
       return index({ model: Order, args, info })
     },
-    todaysChefs: async (root, args, ctx, info): Promise<any> => {
+    todaysChefs: async (root:any, args:any, ctx, info): Promise<any> => {
       const { start, end } = getStartEndDate(0)
       let result = await Order.aggregate([
         {
@@ -95,7 +95,7 @@ const resolvers: IResolvers = {
       ])
       return result
     },
-    delivery: async (root, args, ctx, info): Promise<any> => {
+    delivery: async (root:any, args:any, ctx, info): Promise<any> => {
       // let q: any = {
       //   // createdAt: { $gte: start, $lte: end },
       //   // status: "Order Placed"
@@ -240,7 +240,7 @@ const resolvers: IResolvers = {
       //     }
       //   }
       //   // { $unwind: '$items' },
-      //   // { $project: { items: 1, address: 1, uid: 1, amount: 1, vendor: 1, createdAt: 1, 'vendor': 1 } },
+      //   // { $project: { items: 1, address: 1, user: 1, amount: 1, vendor: 1, createdAt: 1, 'vendor': 1 } },
       //   // {
       //   //   $group: {
       //   //     _id: "$status",
@@ -250,7 +250,7 @@ const resolvers: IResolvers = {
       //   //       $push: {
       //   //         items: "$items",
       //   //         address: "$address",
-      //   //         uid: "$uid",
+      //   //         user: "$user",
       //   //         amount: "$amount",
       //   //         vendor: "$vendor"
       //   //       }
@@ -261,8 +261,8 @@ const resolvers: IResolvers = {
       // ])
     },
     myItemsSummaryByName: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request },
       info
     ) => {
@@ -288,7 +288,7 @@ const resolvers: IResolvers = {
       ])
       return result
     },
-    // todayOrderSummary: async (root, args, { req }: { req: Request }, info) => {
+    // todayOrderSummary: async (root:any, args:any, { req }: { req: Request }, info) => {
     //   const { start, end } = getStartEndDate(0)
     //   let data = await await Order.aggregate(
     //     [
@@ -305,7 +305,7 @@ const resolvers: IResolvers = {
     //     ])
     //   return data[0]
     // },
-    todaysSummary: async (root, args, { req }: { req: Request }, info) => {
+    todaysSummary: async (root:any, args:any, { req }: { req: Request }, info) => {
       const { start, end } = getStartEndDate(0)
       const { userId } = req.session
       let data = await Order.aggregate([
@@ -326,7 +326,7 @@ const resolvers: IResolvers = {
       ])
       return data[0]
     },
-    paymentsSummary: async (root, args, { req }: { req: Request }, info) => {
+    paymentsSummary: async (root:any, args:any, { req }: { req: Request }, info) => {
       let data = await Order.aggregate([
         {
           $group: {
@@ -339,7 +339,7 @@ const resolvers: IResolvers = {
       ])
       return data[0]
     },
-    allOrderSummary: async (root, args, { req }: { req: Request }, info) => {
+    allOrderSummary: async (root:any, args:any, { req }: { req: Request }, info) => {
       let data = await Order.aggregate([
         { $unwind: '$items' },
         {
@@ -353,7 +353,7 @@ const resolvers: IResolvers = {
       ])
       return data[0]
     },
-    // todayTotalPaid: async (root, args, { req }: { req: Request }, info) => {
+    // todayTotalPaid: async (root:any, args:any, { req }: { req: Request }, info) => {
     //   let data = await Order.aggregate([
     //     { $unwind: '$items' },
     //     {
@@ -368,7 +368,7 @@ const resolvers: IResolvers = {
     //   ])
     //   return data[0]
     // },
-    mySummary: async (root, args, { req }: { req: Request }, info) => {
+    mySummary: async (root:any, args:any, { req }: { req: Request }, info) => {
       const { userId } = req.session
       let data = await Order.aggregate([
         { $unwind: '$items' },
@@ -384,7 +384,7 @@ const resolvers: IResolvers = {
       ])
       return data[0]
     },
-    myTodaysSummary: async (root, args, { req }: { req: Request }, info) => {
+    myTodaysSummary: async (root:any, args:any, { req }: { req: Request }, info) => {
       const { start, end } = getStartEndDate(0)
       const { userId } = req.session
       let data = await Order.aggregate([
@@ -408,8 +408,8 @@ const resolvers: IResolvers = {
     },
 
     todaysStatusSummary: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request },
       info
     ) => {
@@ -435,8 +435,8 @@ const resolvers: IResolvers = {
       return data
     },
     myTodaysStatusSummary: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request },
       info
     ) => {
@@ -461,17 +461,17 @@ const resolvers: IResolvers = {
       ])
       return data
     },
-    // pendingOrders: (root, args, { req }: { req: Request }, info) => {
+    // pendingOrders: (root:any, args:any, { req }: { req: Request }, info) => {
     //   args.status = 'Waiting for confirmation'
-    //   return index({ model: Order, args, info })
+    //   return index({ model: Order, args:any, info })
     // },
-    ordersByStatus: (root, args, { req }: { req: Request }, info) => {
+    ordersByStatus: (root:any, args:any, { req }: { req: Request }, info) => {
       // let userId = Types.ObjectId(args.id)
       args['items.status'] = args.status
       delete args.status
       return indexSub({ model: Order, args, info })
     },
-    ordersForPickup: async (root, args, { req }: { req: Request }, info) => {
+    ordersForPickup: async (root:any, args:any, { req }: { req: Request }, info) => {
       const { start, end } = getStartEndDate(0)
       let vendor = Types.ObjectId(args.vendor)
       args['items.vendor.id'] = vendor
@@ -481,7 +481,7 @@ const resolvers: IResolvers = {
       args.createdAt = { $gte: start, $lte: end }
       return indexSub({ model: Order, args, info })
     },
-    myCustomers: async (root, args, { req }: { req: Request }, info) => {
+    myCustomers: async (root:any, args:any, { req }: { req: Request }, info) => {
       const { start, end } = getStartEndDate(0)
       let { userId } = req.session
       userId = Types.ObjectId(userId)
@@ -489,17 +489,17 @@ const resolvers: IResolvers = {
       args.createdAt = { $gte: start, $lte: end }
       return indexSub({ model: Order, args, info, userId })
     },
-    // myOrders: async (root, args, { req }: { req: Request }, info) => {
+    // myOrders: async (root:any, args:any, { req }: { req: Request }, info) => {
     //   const { start, end } = getStartEndDate(0)
     //   let userId = Types.ObjectId(args.id)
     //   delete args.id
     //   args['items.vendor.id'] = userId
     //   args['items.status'] = 'Prepared'
     //   // args.createdAt = { $gte: start, $lte: end }
-    //   return indexSub({ model: Order, args, info, userId })
+    //   return indexSub({ model: Order, args:any, info, userId })
     // },
     order: async (
-      root,
+      root:any,
       args: { id: string },
       ctx,
       info
@@ -510,7 +510,7 @@ const resolvers: IResolvers = {
   },
   Mutation: {
     updateOrder: async (
-      root,
+      root:any,
       args: { id: string; pid: string; status: string },
       { req }: { req: Request }
     ): Promise<OrderDocument | null> => {
@@ -533,7 +533,7 @@ const resolvers: IResolvers = {
       return order
     },
     collectPayment: async (
-      root,
+      root:any,
       args: { id: string; cod_paid: number },
       { req }: { req: Request }
     ): Promise<Boolean> => {
@@ -550,9 +550,9 @@ const resolvers: IResolvers = {
       return o.nModified
     },
 
-    checkout: async (root, args, { req }) => {
-      // await checkout.validateAsync(args, { abortEarly: false })
-      const newOrder: any = await placeOrder(req, { address: args.address })
+    checkout: async (root:any, args:any, { req }) => {
+      // await checkout.validateAsync(args:any, { abortEarly: false })
+      const newOrder: any = await placeOrder(req, { address: args.address, location: args.location })
       const amount = Math.round(newOrder.amount.total * 100)
       const payment = {
         payment_order_id: null,
@@ -579,14 +579,14 @@ const resolvers: IResolvers = {
       )
     },
     create: async (
-      root,
-      args: { address: string; comment: string },
+      root:any,
+      args: { address: string; comment: string,user:string },
       { req }: { req: Request }
     ): Promise<OrderDocument> => {
       await validate(orderSchema, args)
       const { userId } = req.session
-      const order = await Order.create(req, { ...args, uid: userId })
-
+      args.user = userId
+      const order = new Order(args)
       await order.save()
 
       return order
@@ -597,7 +597,7 @@ const resolvers: IResolvers = {
     orderUpdated: {
       resolve: (
         { orderUpdated }: { orderUpdated: OrderDocument },
-        args,
+        args:any,
         ctx,
         info
       ) => {

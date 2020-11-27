@@ -10,7 +10,7 @@ const slotSchema = new Schema(
     val: String,
     slug: String,
     info: String,
-    uid: { type: ObjectId, ref: 'User' },
+    user: { type: ObjectId, ref: 'User' },
     active: { type: Boolean, default: true },
     q: String
   },

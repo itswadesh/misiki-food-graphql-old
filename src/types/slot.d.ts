@@ -7,6 +7,6 @@ export interface SlotDocument extends Document {
   slug: string
   info: string
   active: boolean
-  uid: ChatDocument['_id']
+  user: ChatDocument['_id']
   q: string
 }

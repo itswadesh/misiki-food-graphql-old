@@ -19,6 +19,7 @@ const couponSchema = new Schema(
     validFromDate: Date,
     validToDate: Date,
     color: String,
+    user: { type: ObjectId, ref: 'User' },
     q: String
   },
   {

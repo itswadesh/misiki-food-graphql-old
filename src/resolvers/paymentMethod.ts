@@ -7,12 +7,12 @@ import { ObjectId } from 'mongodb'
 
 const resolvers: IResolvers = {
   Query: {
-    paymentMethods: (root, args, { req }: { req: Request }, info) => {
+    paymentMethods: (root:any, args:any, { req }: { req: Request }, info) => {
       args.sort = 'position'
       return index({ model: PaymentMethod, args, info })
     },
     paymentMethod: async (
-      root,
+      root:any,
       args: { id: string; slug: string },
       ctx,
       info
@@ -27,8 +27,8 @@ const resolvers: IResolvers = {
   },
   Mutation: {
     deletePaymentMethod: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request }
     ): Promise<Boolean> => {
       const paymentMethod: any = await PaymentMethod.findByIdAndDelete(args.id)
@@ -40,8 +40,8 @@ const resolvers: IResolvers = {
       }
     },
     savePaymentMethod: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request }
     ): Promise<PaymentMethodDocument | null> => {
       const { userId } = req.session

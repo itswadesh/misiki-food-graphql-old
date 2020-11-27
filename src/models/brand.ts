@@ -1,6 +1,8 @@
 import mongoose, { Schema } from 'mongoose'
 import { BrandDocument } from '../types'
 
+const { ObjectId } = Schema.Types
+
 const brandSchema = new Schema(
   {
     name: String,
@@ -13,7 +15,7 @@ const brandSchema = new Schema(
     metaTitle: String,
     metaDescription: String,
     metaKeywords: String,
-    uid: String,
+    user: { type: ObjectId, ref: 'User' },
     featured: { type: Boolean, default: false },
     sizechart: String,
     position: { type: Number, default: 0 },

@@ -6,11 +6,11 @@ import { fields, index } from '../utils'
 
 const resolvers: IResolvers = {
   Query: {
-    banners: (root, args, { req }: { req: Request }, info) => {
+    banners: (root:any, args:any, { req }: { req: Request }, info) => {
       return index({ model: Banner, args, info })
     },
     banner: async (
-      root,
+      root:any,
       args: { id: string },
       ctx,
       info
@@ -20,8 +20,8 @@ const resolvers: IResolvers = {
   },
   Mutation: {
     saveBanner: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request }
     ): Promise<BannerDocument | null> => {
       const { userId } = req.session
@@ -29,7 +29,7 @@ const resolvers: IResolvers = {
       else {
         let banner = await Banner.findOneAndUpdate(
           { _id: args.id },
-          { ...args, uid: userId },
+          { ...args, user: userId },
           { new: true, upsert: true }
         )
         await banner.save() // To fire pre save hoook

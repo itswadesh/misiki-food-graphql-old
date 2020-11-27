@@ -10,7 +10,9 @@ import passport from 'passport'
 import { Strategy as FacebookStrategy } from 'passport-facebook'
 
 export const logIn = (req: Request, userId: string) => {
+  // @ts-ignore
   req.session!.userId = userId
+  // @ts-ignore
   req.session!.createdAt = Date.now()
 }
 
@@ -55,7 +57,7 @@ export const localLogin = async (
     })({ body: { email, password } })
   })
 }
-
+// @ts-ignore
 export const isLoggedIn = (req: Request): boolean => !!req.session!.userId
 
 export const ensureSignedIn = (req: Request): void => {
@@ -72,6 +74,7 @@ export const ensureSignedOut = (req: Request): void => {
 
 export const signOut = (req: Request, res: Response): Promise<boolean> =>
   new Promise((resolve, reject) => {
+    // @ts-ignore
     req.session!.userId = null
     resolve(true)
     // req.session!.destroy((err: Error) => {

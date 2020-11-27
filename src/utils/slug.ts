@@ -17,7 +17,8 @@ export const generateSlug = async (str: string) => {
       foundSlug = await Slug.findOne({ slug: newSlug })
       if (foundSlug) newSlug = newSlug + '-en'
     } while (foundSlug)
-    await Slug.create({ slug: newSlug })
+    let slug = new Slug({ slug: newSlug })
+    await slug.save()
     return newSlug
   } catch (e) {
     return rawSlug

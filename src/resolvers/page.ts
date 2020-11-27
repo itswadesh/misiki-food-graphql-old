@@ -13,11 +13,11 @@ import { pageSchema } from '../validation/page'
 
 const resolvers: IResolvers = {
   Query: {
-    pages: (root, args, ctx, info) => {
+    pages: (root:any, args:any, ctx, info) => {
       return index({ model: Page, args, info })
     },
     pageSlug: async (
-      root,
+      root:any,
       args: { slug: string },
       ctx,
       info
@@ -26,7 +26,7 @@ const resolvers: IResolvers = {
       return Page.findOne({ slug: args.slug }, fields(info))
     },
     page: async (
-      root,
+      root:any,
       args: { id: string },
       ctx,
       info
@@ -41,8 +41,8 @@ const resolvers: IResolvers = {
   },
   Mutation: {
     removePage: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request }
     ): Promise<PageDocument | null> => {
       const { userId } = req.session
@@ -55,9 +55,9 @@ const resolvers: IResolvers = {
       return await Page.findByIdAndDelete({ _id: args.id })
     },
     savePage: async (
-      root,
+      root:any,
       args: {
-        id: string
+        id: any
         originalFilename: string
         src: string
         path: string

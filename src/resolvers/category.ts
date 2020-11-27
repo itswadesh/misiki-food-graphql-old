@@ -12,11 +12,11 @@ import { fields, hasSubfields, index } from '../utils'
 
 const resolvers: IResolvers = {
   Query: {
-    categories: (root, args, { req }: { req: Request }, info) => {
+    categories: (root:any, args:any, { req }: { req: Request }, info) => {
       return index({ model: Category, args, info })
     },
     category: async (
-      root,
+      root:any,
       args: { id: string; slug: string },
       ctx,
       info
@@ -31,8 +31,8 @@ const resolvers: IResolvers = {
   },
   Mutation: {
     deleteCategory: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request }
     ): Promise<Boolean> => {
       const category: any = await Category.findByIdAndDelete(args.id)
@@ -44,8 +44,8 @@ const resolvers: IResolvers = {
       }
     },
     saveCategory: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request }
     ): Promise<CategoryDocument | null> => {
       const { userId } = req.session

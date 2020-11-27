@@ -4,7 +4,7 @@ import joi, {
   Root,
   StringSchema,
   ObjectSchema
-} from '@hapi/joi'
+} from 'joi'
 import { UserInputError } from 'apollo-server-express'
 
 const objectId: ExtensionFactory = joi => ({

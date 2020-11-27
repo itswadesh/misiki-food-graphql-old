@@ -21,12 +21,12 @@ import { ObjectId } from 'mongodb'
 
 const resolvers: IResolvers = {
   Query: {
-    reviews: (root, args, ctx, info) => {
+    reviews: (root:any, args:any, ctx, info) => {
       args.populate = 'product user vendor'
       return index({ model: Review, args, info })
     },
     review: async (
-      root,
+      root:any,
       args: { id: string },
       ctx,
       info
@@ -34,8 +34,8 @@ const resolvers: IResolvers = {
       await objectId.validateAsync(args)
       return Review.findById(args.id, fields(info))
     },
-    productReviews: async (root, args, ctx, info) => {},
-    reviewSummary: async (root, args, ctx, info) => {
+    productReviews: async (root:any, args:any, ctx, info) => {},
+    reviewSummary: async (root:any, args:any, ctx, info) => {
       const reviews = await Review.aggregate([
         { $match: { product: Types.ObjectId(args.product) } },
         {
@@ -62,8 +62,8 @@ const resolvers: IResolvers = {
   },
   Mutation: {
     removeReview: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request }
     ): Promise<ReviewDocument | null> => {
       const { userId } = req.session
@@ -76,8 +76,8 @@ const resolvers: IResolvers = {
       return await Review.findByIdAndDelete({ _id: args.id })
     },
     saveReview: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request }
     ): Promise<ReviewDocument | null> => {
       const { userId } = req.session

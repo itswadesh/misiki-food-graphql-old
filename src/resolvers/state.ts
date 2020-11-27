@@ -9,11 +9,11 @@ import { fields, hasSubfields, index } from '../utils'
 
 const resolvers: IResolvers = {
   Query: {
-    states: (root, args, { req }: { req: Request }, info) => {
+    states: (root:any, args:any, { req }: { req: Request }, info) => {
       return index({ model: State, args, info })
     },
     state: async (
-      root,
+      root:any,
       args: { id: string; slug: string },
       ctx,
       info
@@ -28,8 +28,8 @@ const resolvers: IResolvers = {
   },
   Mutation: {
     deleteState: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request }
     ): Promise<Boolean> => {
       const state: any = await State.findByIdAndDelete(args.id)
@@ -41,8 +41,8 @@ const resolvers: IResolvers = {
       }
     },
     saveState: async (
-      root,
-      args,
+      root:any,
+      args:any,
       { req }: { req: Request }
     ): Promise<StateDocument | null> => {
       const { userId } = req.session
