@@ -132,7 +132,7 @@ const resolvers: IResolvers = {
       }
     },
     saveProduct: async (
-      root: any,
+      _root,
       args: {
         id: string
         name: string
@@ -141,8 +141,11 @@ const resolvers: IResolvers = {
         price: number
         stock: number
         img: string
+        images: [string]
         time: string
         category: string
+        categories: [string]
+        brand: string
         vendor: UserDocument
       },
       { req }: { req: Request }
@@ -157,7 +160,7 @@ const resolvers: IResolvers = {
       const forUpdate =
         user.role == 'admin' ? args : { ...args, vendor: userId }
       let newProduct
-      if (args.id) {
+      if (args.id != 'new') {
         const product = await Product.findById(args.id)
         if (!product)
           throw new UserInputError(`Product with id= ${id} not found`)
@@ -170,12 +173,12 @@ const resolvers: IResolvers = {
           { new: true }
         ) // If pre hook to be executed for product.save()
       } else {
-        let newProduct = new Product(forUpdate)
-        await newProduct.save()
+        newProduct = new Product(forUpdate)
+        // await newProduct.save()
       }
       if (!newProduct) throw new UserInputError(`Error updating item id= ${id}`)
       await newProduct.save() // To fire pre save hoook
-      return newProduct.populate('category').execPopulate()
+      return newProduct.populate('category brand').execPopulate()
     },
     // saveVariant: async (
     //   root:any,
