@@ -68,11 +68,11 @@ export const createApp = (store?: session.Store) => {
 
   server.applyMiddleware({ app, cors: false })
 
-  const closeRestaurant=async(variables:any)=>{
-    const {API='https://api.mcqworld.in'} = process.env
+  const closeRestaurant = async (variables: any) => {
+    const { APP_PORT = '6600' } = process.env
     try {
       await Axios({
-        url: `${API}/graphql`,
+        url: `http://localhost:${APP_PORT}/graphql`,
         method: 'post',
         data: {
           query: `
@@ -80,7 +80,7 @@ export const createApp = (store?: session.Store) => {
             closeRestaurant(city: $city, time: $time)
           }
           `,
-          variables
+          variables,
         },
       })
     } catch (e) {
@@ -90,29 +90,32 @@ export const createApp = (store?: session.Store) => {
 
   // Close lunch at 2:00PM
   cron.schedule('00 14 * * *', async function () {
-  const {day,month,year} = getDMY()
+    const { day, month, year } = getDMY()
     console.log('---------------------')
-    console.log('Close Lunch - Sunabeda+Brahmapur - Start', `${day}-${month}-${year}-2:00 PM`)
-    closeRestaurant({time: '12 - 2 PM'})
+    console.log(
+      'Close Lunch - Sunabeda+Brahmapur - Start',
+      `${day}-${month}-${year}-2:00 PM`
+    )
+    closeRestaurant({ time: '12 - 2 PM' })
     console.log('Close Lunch - Sunabeda+Brahmapur - Finish')
     console.log('---------------------')
   })
 
   // Close dinner at 6:00PM
   cron.schedule('00 18 * * *', async function () {
-  const {day,month,year} = getDMY()
+    const { day, month, year } = getDMY()
     console.log('---------------------')
     console.log('Close Dinner - Sunabeda', `${day}-${month}-${year}-6:00 PM`)
-    closeRestaurant({city:'Sunabeda', time: '8:30 - 9:30 PM'})
+    closeRestaurant({ city: 'Sunabeda', time: '8:30 - 9:30 PM' })
     console.log('---------------------')
   })
 
   // Close dinner for berhampur at 8:00PM
   cron.schedule('00 20 * * *', async function () {
-  const {day,month,year} = getDMY()
+    const { day, month, year } = getDMY()
     console.log('---------------------')
     console.log('Close Dinner - Berhampur', `${day}-${month}-${year}-8:00 PM`)
-    closeRestaurant({city:'Berhampur', time: '8:30 - 9:30 PM'})
+    closeRestaurant({ city: 'Berhampur', time: '8:30 - 9:30 PM' })
     console.log('---------------------')
   })
 

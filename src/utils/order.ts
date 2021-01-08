@@ -25,8 +25,8 @@ import { objectId } from '../validation'
 import { UserInputError } from 'apollo-server-express'
 import { fast2Sms } from './sms'
 
-export const getOrderPrefix = async (city:string) => {
-  return city.substr(0,1)
+export const getOrderPrefix = async (city: string) => {
+  return city.substr(0, 1)
 }
 export const getData = async (start: Date, end: Date, q: any) => {
   let data = await Order.aggregate([
@@ -113,7 +113,10 @@ export const updateStats = async (product: ProductDocument) => {
   }
 }
 
-export const placeOrder = async (req: Request, { address, comment, location }: any) => {
+export const placeOrder = async (
+  req: Request,
+  { address, comment, location }: any
+) => {
   await validateCart(req)
   await calculateSummary(req) // Validates coupon expiry
   let setting: SettingsDocument | null = await Setting.findOne().exec()
@@ -167,7 +170,10 @@ export const placeOrder = async (req: Request, { address, comment, location }: a
     product.stock = product.stock - i.qty
     product.save()
     fast2Sms({
-      // Order accepted for { #FF# }.\nQrNo: { #EE# } \nDelivery boy will reach you by { #DD# }  // FAST2SMS
+      // Order No: B-200\n Item: 2 paneer butter masala\n Amount: ₹300(COD)\n Expected delivery: 1PM, 02-JAN-2020\n - Misiki
+      // Order No: {#BB#}\n Item: {#FF#}\n Amount: {#CC#}\n Expected delivery: {#DD#}\n {#EE#}
+      // OrderNo: B-100 accepted for 2 paneer butter masala(lunch).\nAddr: Y-200. Delivery boy will reach you by { #DD# }. Order value ₹100
+      // OrderNo: { #DD# } accepted for { #EE# }.\nAddr: { #EE# }. Delivery boy will reach you by { #DD# }. \n{ #EE# }
       phone: vendor.phone,
       message: '29153',
       variables: '{AA}|{FF}|{DD}|{CC}',
@@ -227,6 +233,7 @@ export const placeOrder = async (req: Request, { address, comment, location }: a
   await o.save()
   fast2Sms({
     // Order accepted for { #FF# }.\nQrNo: { #EE# } \nDelivery boy will reach you by { #DD# }  // FAST2SMS
+    // Can not list individual items. If ordering more than 1 item (lunch+dinner)
     phone: me.phone,
     message: '29150',
     variables: '{DD}|{BB}|{EE}',
