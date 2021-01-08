@@ -6,22 +6,22 @@ import { fields, index } from '../utils'
 
 const resolvers: IResolvers = {
   Query: {
-    banners: (root:any, args:any, { req }: { req: Request }, info) => {
+    banners: (root: any, args: any, { req }: { req: Request }, info) => {
       return index({ model: Banner, args, info })
     },
     banner: async (
-      root:any,
+      root: any,
       args: { id: string },
       ctx,
       info
     ): Promise<BannerDocument | null> => {
       return Banner.findById(args.id, fields(info))
-    }
+    },
   },
   Mutation: {
     saveBanner: async (
-      root:any,
-      args:any,
+      root: any,
+      args: any,
       { req }: { req: Request }
     ): Promise<BannerDocument | null> => {
       const { userId } = req.session
@@ -35,8 +35,8 @@ const resolvers: IResolvers = {
         await banner.save() // To fire pre save hoook
         return banner
       }
-    }
-  }
+    },
+  },
 }
 
 export default resolvers
