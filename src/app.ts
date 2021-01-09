@@ -96,7 +96,7 @@ export const createApp = (store?: session.Store) => {
       'Close Lunch - Sunabeda+Brahmapur - Start',
       `${day}-${month}-${year}-2:00 PM`
     )
-    closeRestaurant({ time: '12 - 2 PM' })
+    await closeRestaurant({ time: '12 - 2 PM' })
     console.log('Close Lunch - Sunabeda+Brahmapur - Finish')
     console.log('---------------------')
   })
@@ -106,7 +106,8 @@ export const createApp = (store?: session.Store) => {
     const { day, month, year } = getDMY()
     console.log('---------------------')
     console.log('Close Dinner - Sunabeda', `${day}-${month}-${year}-6:00 PM`)
-    closeRestaurant({ city: 'Sunabeda', time: '8:30 - 9:30 PM' })
+    await closeRestaurant({ city: 'Sunabeda', time: '8:30 - 9:30 PM' })
+    await closeRestaurant({ city: 'Sunabeda', time: '8:30 - 10:00 PM' })
     console.log('---------------------')
   })
 
@@ -115,7 +116,8 @@ export const createApp = (store?: session.Store) => {
     const { day, month, year } = getDMY()
     console.log('---------------------')
     console.log('Close Dinner - Berhampur', `${day}-${month}-${year}-8:00 PM`)
-    closeRestaurant({ city: 'Berhampur', time: '8:30 - 9:30 PM' })
+    await closeRestaurant({ city: 'Berhampur', time: '8:30 - 9:30 PM' })
+    await closeRestaurant({ city: 'Berhampur', time: '8:30 - 10:00 PM' })
     console.log('---------------------')
   })
 
