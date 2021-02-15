@@ -3,7 +3,7 @@ import {
   IResolvers,
   UserInputError,
   ForbiddenError,
-  withFilter
+  withFilter,
 } from 'apollo-server-express'
 import { Request, CategoryDocument } from '../types'
 import { validate, objectId, categorySchema } from '../validation'
@@ -12,11 +12,12 @@ import { fields, hasSubfields, index } from '../utils'
 
 const resolvers: IResolvers = {
   Query: {
-    categories: (root:any, args:any, { req }: { req: Request }, info) => {
+    categories: (root: any, args: any, { req }: { req: Request }, info) => {
+      console.log('zzzzzzzzzzzzzzzzzzzzzzzzzzz', args.active)
       return index({ model: Category, args, info })
     },
     category: async (
-      root:any,
+      root: any,
       args: { id: string; slug: string },
       ctx,
       info
@@ -27,12 +28,12 @@ const resolvers: IResolvers = {
       } else {
         return Category.findOne({ slug: args.slug }, fields(info))
       }
-    }
+    },
   },
   Mutation: {
     deleteCategory: async (
-      root:any,
-      args:any,
+      root: any,
+      args: any,
       { req }: { req: Request }
     ): Promise<Boolean> => {
       const category: any = await Category.findByIdAndDelete(args.id)
@@ -44,8 +45,8 @@ const resolvers: IResolvers = {
       }
     },
     saveCategory: async (
-      root:any,
-      args:any,
+      root: any,
+      args: any,
       { req }: { req: Request }
     ): Promise<CategoryDocument | null> => {
       const { userId } = req.session
@@ -59,8 +60,8 @@ const resolvers: IResolvers = {
         await category.save() // To fire pre save hoook
         return category
       }
-    }
-  }
+    },
+  },
 }
 
 export default resolvers
