@@ -14,7 +14,7 @@
     "liveS": "node devops/live",
     "copy": "node devops/copy",
     "prod": "run-s build copy",
-    "start": "cross-env NODE_ENV=production node dist/index.js",
+    "start": "cross-env NODE_ENV=production node dist/src/index.js",
     "test": "jest"
   },
   "homepage": "https://bitbucket.org/itswadesh/misiki-graphql#readme",
