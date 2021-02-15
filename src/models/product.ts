@@ -85,7 +85,6 @@ productSchema.pre('save', async function (this: ProductDocument) {
   var doc: any = this
   let userSlug = ''
   const u: any = await User.findById(doc.vendor)
-  // console.log('zzzzzzzzzzzzzzzzzzzzzzzzzzz', u.info.restaurant)
   userSlug = u ? u.info.restaurant + '-' : ''
   if (!this.slug) doc.slug = await generateSlug(userSlug + doc.name, doc.slug)
 

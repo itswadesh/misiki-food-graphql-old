@@ -48,13 +48,14 @@ const userSchema = new Schema(
 
 userSchema.pre('save', async function (this: UserDocument) {
   if (this.isModified('password')) {
+    // @ts-ignore
     this.password = await User.hash(this.password)
   }
 })
 
 userSchema.statics.hash = (password: string): Promise<string> =>
   hash(password, 10)
-
+// @ts-ignore
 userSchema.methods.matchesPassword = function (
   this: UserDocument,
   password: string
@@ -82,4 +83,5 @@ userSchema.pre('save', async function (this: UserDocument) {
 userSchema.index({
   '$**': 'text',
 })
+// @ts-ignore
 export const User = model<UserDocument, UserModel>('User', userSchema)

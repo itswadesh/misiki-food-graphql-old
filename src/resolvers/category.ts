@@ -13,7 +13,6 @@ import { fields, hasSubfields, index } from '../utils'
 const resolvers: IResolvers = {
   Query: {
     categories: (root: any, args: any, { req }: { req: Request }, info) => {
-      console.log('zzzzzzzzzzzzzzzzzzzzzzzzzzz', args.active)
       return index({ model: Category, args, info })
     },
     category: async (

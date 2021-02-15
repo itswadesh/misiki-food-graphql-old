@@ -195,7 +195,6 @@ const resolvers: IResolvers = {
 
     //   const { userId } = req.session
     //   const { id, name, price, stock, img } = args
-    //   console.log('zzzzzzzzzzzzzzzzzzzzzzzzzzz', args);
     //   // let product = await Product.findOneAndUpdate(
     //   //   { _id: id },
     //   //   { $set: { ...args:any, user: userId } }
