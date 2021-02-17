@@ -58,7 +58,7 @@ export default gql`
       limit: Int
       search: String
       sort: String
-      status: String!
+      status: String
       vendor: ID!
     ): myCustomerRes @auth
     myOrders(
@@ -96,7 +96,11 @@ export default gql`
 
   extend type Mutation {
     create(chatId: ID!, body: String!): Order @auth
-    checkout(paymentMethod: String, address: AddressInput!, location: AddressInput): Order @auth
+    checkout(
+      paymentMethod: String
+      address: AddressInput!
+      location: AddressInput
+    ): Order @auth
     updateOrder(id: ID!, pid: ID!, status: String): Order @auth
     collectPayment(id: ID!, cod_paid: Int): Boolean @auth
   }
