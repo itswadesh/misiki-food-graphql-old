@@ -101,6 +101,15 @@ export const createApp = (store?: session.Store) => {
     console.log('---------------------')
   })
 
+  // Close snacks at 6:00PM
+  cron.schedule('00 18 * * *', async function () {
+    const { day, month, year } = getDMY()
+    console.log('---------------------')
+    console.log('Close Dinner - Sunabeda', `${day}-${month}-${year}-6:00 PM`)
+    await closeRestaurant({ time: '5 - 8 PM' })
+    console.log('---------------------')
+  })
+
   // Close dinner at 6:00PM
   cron.schedule('00 18 * * *', async function () {
     const { day, month, year } = getDMY()
