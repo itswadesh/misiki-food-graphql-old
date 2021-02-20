@@ -55,7 +55,7 @@ const resolvers: IResolvers = {
     },
     orders: (root: any, args: any, { req }: { req: Request }, info) => {
       const { userId } = req.session
-      args['user.id'] = userId
+      args['items.vendor.id'] = userId
       return index({ model: Order, args, info })
     },
     allOrders: (root: any, args: any, { req }: { req: Request }, info) => {
