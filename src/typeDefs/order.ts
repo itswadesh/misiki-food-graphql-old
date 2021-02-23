@@ -67,7 +67,7 @@ export default gql`
       limit: Int
       search: String
       sort: String
-    ): myCustomerRes @auth
+    ): orderRes @auth
     myCustomers(
       page: Int
       skip: Int
