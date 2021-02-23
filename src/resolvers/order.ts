@@ -53,7 +53,14 @@ const resolvers: IResolvers = {
       const p = order.items.find((element) => element.pid == args.product)
       return p && !p.reviewed
     },
+    myOrders: (root: any, args: any, { req }: { req: Request }, info) => {
+      const { userId } = req.session
+      args['user.id'] = userId
+      return index({ model: Order, args, info })
+    },
+
     orders: (root: any, args: any, { req }: { req: Request }, info) => {
+      // For vendor
       const { userId } = req.session
       args['items.vendor.id'] = userId
       return index({ model: Order, args, info })
