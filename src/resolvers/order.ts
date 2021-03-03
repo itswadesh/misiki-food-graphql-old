@@ -102,6 +102,29 @@ const resolvers: IResolvers = {
       ])
       return result
     },
+    chefSummary: async (root: any, args: any, ctx, info): Promise<any> => {
+      const { start, end } = getStartEndDate(0)
+      let result = await Order.aggregate([
+        { $unwind: '$items' },
+        {
+          $group: {
+            _id: {
+              id: '$items.vendor.id',
+              restaurant: '$items.vendor.restaurant',
+              firstName: '$items.vendor.firstName',
+              lastName: '$items.vendor.lastName',
+              address: '$items.vendor.address',
+              phone: '$items.vendor.phone',
+              status: '$items.status',
+            },
+            count: { $sum: '$items.qty' },
+            amount: { $sum: '$items.price' },
+          },
+        },
+        { $sort: { '_id.address.address': 1 } },
+      ])
+      return result
+    },
     delivery: async (root: any, args: any, ctx, info): Promise<any> => {
       // let q: any = {
       //   // createdAt: { $gte: start, $lte: end },

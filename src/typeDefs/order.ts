@@ -76,6 +76,7 @@ export default gql`
       sort: String
     ): myCustomerRes @auth
     todaysChefs: [TC] @auth
+    chefSummary: [TC] @auth
     ordersOfChef(
       page: Int
       skip: Int
@@ -121,6 +122,8 @@ export default gql`
     firstName: String
     lastName: String
     address: Address
+    phone: String
+    status: String
   }
 
   type delivery {
