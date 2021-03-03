@@ -23,6 +23,8 @@ export default async function (req: any, res: any) {
           },
           count: { $sum: '$items.qty' },
           amount: { $sum: '$items.price' },
+          orderNo: { $max: '$orderNo' },
+          createdAt: { $max: '$createdAt' },
         },
       },
       { $sort: { '_id.address.address': 1 } },
@@ -31,6 +33,8 @@ export default async function (req: any, res: any) {
     try {
       const json2csvParser = new Json2csvParser({
         fields: [
+          'orderNo',
+          'createdAt',
           '_id.restaurant',
           '_id.firstName',
           '_id.lastName',
