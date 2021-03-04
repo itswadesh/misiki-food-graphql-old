@@ -7,7 +7,7 @@ export default async function (req: any, res: any) {
   try {
     let data = await Order.aggregate([
       {
-        $match: { 'address.city': 'Sunabeda' },
+        $match: { 'location.city': 'Sunabeda' },
       },
       { $unwind: '$items' },
       {
@@ -22,7 +22,7 @@ export default async function (req: any, res: any) {
             status: '$items.status',
           },
           count: { $sum: '$items.qty' },
-          amount: { $sum: '$items.price' },
+          amount: { $sum: { $multiply: ['$items.price', '$items.qty'] } },
           orderNo: { $max: '$orderNo' },
           createdAt: { $max: '$createdAt' },
         },
