@@ -16,7 +16,7 @@ const { OPENCAGE_KEY, GOOGLE_MAPS_KEY, MAPBOX_KEY } = process.env
 const MESSAGE_SENT = 'MESSAGE_SENT'
 const resolvers: IResolvers = {
   Query: {
-    getLocation: async (root:any, args:any, ctx, info) => {
+    getLocation: async (root: any, args: any, ctx, info) => {
       try {
         let res = await axios.get(
           // `https://api.mapbox.com/geocoding/v5/mapbox.places/${args.lat},${args.lng}.json?access_token=${MAPBOX_KEY}`
@@ -47,16 +47,18 @@ const resolvers: IResolvers = {
       }
     },
     addresses: (
-      root:any,
-      args:any,
+      root: any,
+      args: any,
       { req }: { req: Request },
       info
     ): Promise<AddressDocument[]> => {
       const { userId } = req.session
-      return Address.find({ user: userId }, fields(info)).sort('-updatedAt').exec()
+      return Address.find({ user: userId }, fields(info))
+        .sort('-updatedAt')
+        .exec()
     },
     address: async (
-      root:any,
+      root: any,
       args: { id: string },
       ctx,
       info
@@ -67,7 +69,7 @@ const resolvers: IResolvers = {
   },
   Mutation: {
     addAddress: async (
-      root:any,
+      root: any,
       args: {
         email: string
         firstName: string
@@ -95,29 +97,28 @@ const resolvers: IResolvers = {
       return address
     },
     saveAddress: async (
-      root:any,
-      args:any,
+      root: any,
+      args: any,
       { req }: { req: Request }
     ): Promise<AddressDocument | null> => {
       const { userId } = req.session
       args.user = userId
+      let address
       if (args.id == 'new') {
-        const address = new Address(args)
+        address = new Address(args)
         await address.save()
-        return address
-      }
-      else {
-        const address = await Address.findOneAndUpdate(
-          { _id: args.id },
-          args,
-          { new: true, upsert: true }
-        )
+      } else {
+        address = await Address.findOneAndUpdate({ _id: args.id }, args, {
+          new: true,
+          upsert: true,
+        })
         await address.save() // To fire pre save hoook
-        return address
       }
+      await User.findByIdAndUpdate(userId, { address }, { new: true })
+      return address
     },
     updateAddress: async (
-      root:any,
+      root: any,
       args: {
         user: string
         id: string
@@ -144,11 +145,11 @@ const resolvers: IResolvers = {
         args,
         { new: true }
       )
-      await User.updateOne(        { _id: userId },        {          address        }      )
+      await User.updateOne({ _id: userId }, { address })
       return address
     },
     deleteAddress: async (
-      root:any,
+      root: any,
       args: { id: string },
       { req }: { req: Request }
     ): Promise<Boolean> => {
