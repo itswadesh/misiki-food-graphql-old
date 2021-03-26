@@ -2,9 +2,11 @@ import { Setting, Product, Category, User } from '../models'
 import { toJson } from './json'
 import { fields } from './'
 import { searchFields } from './graphql'
+import { UserInputError } from 'apollo-server-express'
 
 export const index = async ({ model, args, info, userId }: any) => {
   const setting: any = await Setting.findOne()
+  if (!setting) throw new UserInputError('No settings defined in database')
   let page = !args.page && args.page != 0 ? 1 : parseInt(args.page)
   const qlimit = parseInt(args.limit || 0)
   const sort = args.sort || '-_id'
@@ -18,20 +20,25 @@ export const index = async ({ model, args, info, userId }: any) => {
   delete args.populate
   delete args.limit
   let where = args
+
   for (let k in where) {
     if (
-      (where[k] == '' ||
+      (where[k] === '' ||
         where[k] == 'null' ||
-        where[k] == 'undefined' ||
-        where[k] == undefined) &&
+        where[k] === 'undefined' ||
+        where[k] === undefined) &&
       typeof where[k] != 'boolean'
     )
       delete where[k]
+
     if (where[k] == 'blank') where[k] = null
   }
   if (where.category) {
-    const c = await Category.findOne({ slug: where.category })
-    if (c) where.category = c._id
+    const c: any = await Category.findOne({ slug: where.category })
+    if (c) {
+      where.categories = c.id
+      delete where.category
+    }
   }
   if (where.vendor) {
     const c = await User.findOne({ role: 'vendor', slug: where.vendor })
@@ -44,15 +51,20 @@ export const index = async ({ model, args, info, userId }: any) => {
   //   }
   let skip = 0,
     limit = 0,
-    pageSize = setting.pageSize || 10
+    pageSize = setting.pageSize || 1,
+    noOfPage = 1
+
   if (page == 0 && qlimit != 0) {
     // If page param supplied as 0, limit specified (Deactivate paging)
     limit = qlimit
     pageSize = limit
-  } else {
+  } else if(qlimit!=0) {
     // Normal pagination
-    limit = setting.pageSize || 10
-    skip = (page - 1) * (setting.pageSize || 10)
+    limit = setting.pageSize || 1
+    skip = (page - 1) * (setting.pageSize || 1)
+  }else{
+    limit = 40
+    skip = 0
   }
   if (args.user) {
     // Find only records that belong to the logged in user
@@ -61,7 +73,6 @@ export const index = async ({ model, args, info, userId }: any) => {
   let searchString = where
   if (search != 'null' && !!search)
     searchString = { ...where, $text: { $search: search } }
-
   try {
     let data: any = await model
       .find(searchString, searchFields(info))
@@ -71,7 +82,8 @@ export const index = async ({ model, args, info, userId }: any) => {
       .populate(populate)
       .exec()
     let count: any = await model.countDocuments(searchString)
-    return { data, count, pageSize, page }
+    noOfPage = Math.ceil(count / pageSize || 1)
+    return { data, count, pageSize, noOfPage, page }
   } catch (e) {
     throw e
   }
@@ -111,15 +123,16 @@ export const indexSub = async ({ model, args, info }: any) => {
   //   }
   let skip = 0,
     limit = 0,
-    pageSize = setting.pageSize || 10
+    pageSize = setting.pageSize || 1,
+    noOfPage = 1
   if (page == 0 && qlimit != 0) {
     // If page param supplied as 0, limit specified (Deactivate paging)
     limit = qlimit
     pageSize = limit
   } else {
     // Normal pagination
-    limit = setting.pageSize || 10
-    skip = (page - 1) * (setting.pageSize || 10)
+    limit = setting.pageSize || 1
+    skip = (page - 1) * (setting.pageSize || 1)
   }
   if (args.user) {
     // Find only records that belong to the logged in user
@@ -145,14 +158,15 @@ export const indexSub = async ({ model, args, info }: any) => {
           payment: '$payment',
           amount: '$amount',
           vendor: '$items.vendor',
-          user: '$user'
+          user: '$user',
         },
         items: { $addToSet: '$items' },
-        total: { $sum: '$items.price' }
-      }
+        total: { $sum: '$items.price' },
+      },
     },
-    { $sort: { _id: -1 } }
+    { $sort: { _id: -1 } },
   ])
   let count: any = await model.countDocuments(searchString)
-  return { data, count, pageSize, page }
+  noOfPage = Math.ceil(count / pageSize || 1)
+  return { data, count, pageSize, noOfPage, page }
 }

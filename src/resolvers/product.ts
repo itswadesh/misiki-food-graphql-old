@@ -42,7 +42,6 @@ const resolvers: IResolvers = {
     popular: (root: any, args: any, { req }: { req: Request }, info) => {
       args.stock = { $gt: 0 }
       args.sort = '-popularity'
-      args.limit = 10
       return index({ model: Product, args, info })
     },
     bestSellers: async (
