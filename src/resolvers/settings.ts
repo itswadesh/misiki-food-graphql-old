@@ -18,7 +18,7 @@ import {
 const SETTINGS_UPDATED = 'SETTINGS_UPDATED'
 const resolvers: IResolvers = {
   Query: {
-    shutter: (root:any, args:any, { req }: { req: Request }, info) => {
+    shutter: (root: any, args: any, { req }: { req: Request }, info) => {
       const start = closed.from.hour * 60 + closed.from.minute
       const end = closed.to.hour * 60 + closed.to.minute
       const date = new Date()
@@ -26,34 +26,34 @@ const resolvers: IResolvers = {
       if (start <= now && now <= end) return true //throw new UserInputError(closed.message)
       else return true
     },
-    worldCurrencies: (root:any, args:any, { req }: { req: Request }, info) => {
+    worldCurrencies: (root: any, args: any, { req }: { req: Request }, info) => {
       return worldCurrencies
     },
-    orderStatuses:async (root:any, args:any, { req }: { req: Request }, info) => {
-     const user = req.session.userId
-     const role = (await User.findById(user) || {}).role
-      if(role == 'admin')
+    orderStatuses: async (root: any, args: any, { req }: { req: Request }, info) => {
+      const user = req.session.userId
+      const role = (await User.findById(user) || {}).role
+      if (role == 'admin')
         return orderStatuses
-      else if(role == 'chef')
-        return orderStatuses.filter((o) => o.chef) 
-        else if(role == 'delivery')
+      else if (role == 'chef')
+        return orderStatuses.filter((o) => o.chef)
+      else if (role == 'delivery')
         return orderStatuses.filter((o) => o.delivery)
       else
         return orderStatuses.filter((o) => o.public)
     },
-    paymentStatuses: (root:any, args:any, { req }: { req: Request }) => {
+    paymentStatuses: (root: any, args: any, { req }: { req: Request }) => {
       return paymentStatuses
     },
-    sorts: (root:any, args:any, { req }: { req: Request }, info) => {
+    sorts: (root: any, args: any, { req }: { req: Request }, info) => {
       return sorts
     },
-    timesList: (root:any, args:any, { req }: { req: Request }, info) => {
+    timesList: (root: any, args: any, { req }: { req: Request }, info) => {
       return timesList
     },
-    userRoles: (root:any, args:any, { req }: { req: Request }, info) => {
+    userRoles: (root: any, args: any, { req }: { req: Request }, info) => {
       return userRoles
     },
-    settings: async (root:any, args:any, { req }: { req: Request }, info) => {
+    settings: async (root: any, args: any, { req }: { req: Request }, info) => {
       let s: any = await Setting.findOne({}, fields(info)).exec()
       s.userRoles = userRoles
       s.paymentStatuses = paymentStatuses
@@ -61,7 +61,7 @@ const resolvers: IResolvers = {
       s.worldCurrencies = worldCurrencies
       return s
     },
-    settingsAdmin: (root:any, args:any, { req }: { req: Request }, info) => {
+    settingsAdmin: (root: any, args: any, { req }: { req: Request }, info) => {
       // args.user = req.session.userId
       return Setting.find({}, fields(info)).exec()
     },
@@ -69,18 +69,18 @@ const resolvers: IResolvers = {
 
   Mutation: {
     closeRestaurant: async (
-      root:any,
-      args:any,
+      root: any,
+      args: any,
       { req }: { req: Request }
     ): Promise<Boolean> => {
-      let q:any = {stock: { $gt: 0 }}
-      if(args.city) q.city= args.city
-      if(args.time) q.time= args.time
+      let q: any = { stock: { $gt: 0 } }
+      if (args.city) q.city = args.city
+      if (args.time) q.time = args.time
       const p = await Product.updateMany(
         q,
         { $set: { stock: 0 } }
       )
-      return p.nModified
+      return p.nModified > 0
     },
     // closeDinner: async (
     //       root:any,
@@ -105,8 +105,8 @@ const resolvers: IResolvers = {
     //   return p.nModified
     // },
     saveSettings: async (
-      root:any,
-      args:any,
+      root: any,
+      args: any,
       { req }: { req: Request }
     ): Promise<SettingsDocument> => {
       const { userId } = req.session
@@ -131,7 +131,7 @@ const resolvers: IResolvers = {
     settingsUpdated: {
       resolve: (
         { settingsUpdated }: { settingsUpdated: SettingsDocument },
-        args:any,
+        args: any,
         ctx,
         info
       ) => {

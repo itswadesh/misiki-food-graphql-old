@@ -57,6 +57,7 @@ export default gql`
       type: String
       city: String
       price: Int
+      mrp: Int
       stock: Int
       img: String
       time: String
@@ -70,6 +71,7 @@ export default gql`
       type: String
       city: String
       price: Int
+      mrp: Int
       stock: Int
       img: String
       time: String
@@ -126,6 +128,7 @@ export default gql`
     slug: String
     img: String
     price: Float
+    mrp: Float
     category: Category
     updatedAt: String
     restaurant: String
@@ -189,6 +192,7 @@ export default gql`
     city: String
     stock: Int
     price: Int
+    mrp: Float
     time: String
     daily: Boolean
     features: [String]

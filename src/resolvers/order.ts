@@ -613,7 +613,7 @@ const resolvers: IResolvers = {
           },
         }
       )
-      return o.nModified
+      return o.nModified > 0
     },
 
     checkout: async (root: any, args: any, { req }) => {
