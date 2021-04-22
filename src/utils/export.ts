@@ -56,17 +56,6 @@ export const exportCSV = async ({
       const orders = await model
         .aggregate([
           { $match: where },
-          {
-            $lookup: {
-              from: 'users',
-              localField: 'user',
-              foreignField: '_id',
-              as: 'user',
-            },
-          },
-          {
-            $unwind: '$user',
-          },
           { $skip: skip },
           { $limit: limit },
         ])
