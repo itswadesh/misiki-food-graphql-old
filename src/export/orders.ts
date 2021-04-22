@@ -1,6 +1,6 @@
 import { exportCSV, toJson } from '../utils'
 import { Order } from '../models'
-export default async function(req: any, res: any) {
+export default async function (req: any, res: any) {
   const name = 'orders'
   const sort = req.query.sort || '-updatedAt'
   const skip = parseInt(req.query.skip || 0)
@@ -17,6 +17,8 @@ export default async function(req: any, res: any) {
       fields: [
         '_id',
         'orderNo',
+        'cartId',
+        'otp',
         'user.firstName',
         'user.lastName',
         'user.address',
@@ -26,25 +28,38 @@ export default async function(req: any, res: any) {
         'address.address',
         'address.phone',
         'address.zip',
+        'address.email',
+        'payment_id',
+        'payment.type',
         'amount.qty',
         'amount.subtotal',
         'amount.shipping',
         'amount.discount',
         'amount.tax',
         'amount.total',
+        'coupon',
+        'comment',
+        'cancellationReason',
+        'cancellationComment',
+        'returnComment',
+        'active',
+        'payment_order_id',
         'cod_paid',
-        'item.0.name',
-        'item.0.slug',
-        'item.0.img',
-        'item.0.qty',
-        'item.0.price',
-        'item.0.status',
-        'item.0.vendor.restaurant',
-        'item.0.vendor.address',
-        'item.0.vendor.phone',
-        'item.0.vendor.firstName',
-        'item.0.vendor.lastName'
-      ]
+        'item.status',
+        'item._id',
+        'item.pid',
+        'item.name',
+        'item.vendor.firstName',
+        'item.vendor.lastName',
+        'item.vendor.phone',
+        'item.vendor.email',
+        'item.price',
+        'item.qty',
+        'item.img',
+        'item.reviewed',
+        'createdAt',
+        'updatedAt',
+      ],
     })
     res.download(filePath)
   } catch (e) {
